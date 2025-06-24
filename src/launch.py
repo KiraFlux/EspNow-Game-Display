@@ -1,10 +1,10 @@
+import queue
 import tkinter as tk
-from tkinter import ttk, scrolledtext
 from dataclasses import dataclass
 from threading import Thread
+from tkinter import scrolledtext
+from tkinter import ttk
 from typing import Optional
-import queue
-import time
 
 from serialcmd.serializers import u16
 from serialcmd.serializers import u8
@@ -45,6 +45,7 @@ class GameListener:
 
     def readMac(self, stream: Stream):
         self.mac = stream.read(6)
+        print(self.mac.hex('-', 2))
         return
 
     def readLog(self, stream: Stream):
@@ -57,7 +58,10 @@ class GameListener:
         return
 
     def readBoardStateUpdate(self, stream: Stream):
+        self.board.clear()
+
         length = u16.read(stream)
+
         for _ in range(length):
             x = u8.read(stream)
             y = u8.read(stream)
@@ -66,10 +70,13 @@ class GameListener:
         return
 
     def readPlayerListUpdate(self, stream: Stream):
+        self.players.clear()
+
         length = u16.read(stream)
+
         for _ in range(length):
             mac = stream.read(6)
-            username = stream.read(16).rstrip(b'\x00').decode()
+            username = stream.read(32).rstrip(b'\x00').decode()
             team = u8.read(stream)
             self.players[mac] = Player(username, team)
         return
@@ -81,6 +88,7 @@ class GameListener:
                 handler = self.jt.get(opp)
                 if handler is not None:
                     handler(stream)
+
         except KeyboardInterrupt:
             return
 
@@ -230,6 +238,7 @@ class TkApp(tk.Tk):
                         fill=self._get_text_color(color),
                         font=("Arial", 10, "bold")
                     )
+
     def _get_team_color(self, team: int) -> str:
         # Расширенная палитра из 20 цветов
         colors = {
@@ -305,7 +314,7 @@ class App:
         self.listener = GameListener()
 
         # Настраиваем последовательное соединение
-        self.serial = Serial("COM8", 115200)
+        self.serial = Serial("COM19", 115200)
 
         # Запускаем поток слушателя
         self.thread = Thread(target=self.listener.run, args=(self.serial,))
