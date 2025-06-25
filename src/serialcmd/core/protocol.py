@@ -4,7 +4,6 @@ from typing import Iterable
 
 from rs.result import Result
 from rs.result import err
-from rs.result import ok
 from serialcmd.abc.serializer import Serializable
 from serialcmd.abc.serializer import Serializer
 from serialcmd.abc.stream import Stream
@@ -38,36 +37,20 @@ class Protocol:
         """Получить все обработчики на приём"""
         return (i for i, j in self._receive_handlers.values())
 
-    def addReceiver[T: Serializable](self, signature: Serializer[T], handler: OnReceiveFunction[T], name: str = None) -> Result[None, str]:
+    def addReceiver[T: Serializable](self, signature: Serializer[T], handler: OnReceiveFunction[T], name: str = None) -> None:
         """Зарегистрировать обработчик входящих сообщений"""
         index = len(self._receive_handlers)
-        code_result = self._local_instruction_code.pack(index)
-
-        if code_result.is_err():
-            return code_result.map(lambda _: None).map_err(
-                lambda e: f"Failed to pack receiver code: {e}")
-
-        code = code_result.unwrap()
-
+        code = self._local_instruction_code.pack(index).unwrap()
         instruction = Instruction(code, signature, name)
-
         self._receive_handlers[code] = (instruction, handler)
-        return ok(None)
 
-    def addSender[T: Serializable](self, signature: Serializer[T], name: str = None) -> Result[Instruction[T], str]:
+    def addSender[T: Serializable](self, signature: Serializer[T], name: str = None) -> Instruction[T]:
         """Зарегистрировать исходящую инструкцию"""
         index = len(self._send_handlers)
-        code_result = self._remote_instruction_code.pack(index)
-
-        if code_result.is_err():
-            # noinspection PyTypeChecker
-            return code_result.map_err(lambda e: f"Failed to pack sender code: {e}")
-
-        code = code_result.unwrap()
+        code = self._remote_instruction_code.pack(index).unwrap()
         instruction = Instruction(code, signature, name)
-
         self._send_handlers[code] = instruction
-        return ok(instruction)
+        return instruction
 
     def pull(self) -> Result[None, str]:
         """Обработать входящее сообщение"""

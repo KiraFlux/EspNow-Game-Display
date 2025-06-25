@@ -8,6 +8,8 @@ from rs.result import ok
 from serialcmd.abc.stream import Stream
 from serialcmd.core.protocol import Protocol
 from serialcmd.impl.serializer.array_ import ArraySerializer
+from serialcmd.impl.serializer.arraystring import ArrayStringSerializer
+from serialcmd.impl.serializer.bytearray_ import ByteArraySerializer
 from serialcmd.impl.serializer.primitive import u16
 from serialcmd.impl.serializer.primitive import u8
 from serialcmd.impl.serializer.struct_ import StructSerializer
@@ -18,37 +20,32 @@ class GameProtocol(Protocol):
     def __init__(self, stream: Stream) -> None:
         super().__init__(stream, u8, u8)
 
-        mac_serializer = ArraySerializer(u8, 6)
+        mac_serializer = ByteArraySerializer(6)
 
         player_serializer = StructSerializer((
             mac_serializer,
-            ArraySerializer(u8, 32),
+            ArrayStringSerializer(32),
             u8
         ))
 
         player_move_serializer = ArraySerializer(u8, 3)
 
-        host_message_serializer = ArraySerializer(u8, 128)
+        host_message_serializer = ArrayStringSerializer(128)
 
         self.addReceiver(u8, lambda _: ok(print(_)))
+
         self.addReceiver(mac_serializer, self.onMacMessage, "onMac")
         self.addReceiver(host_message_serializer, self.onLogMessage, "onLog")
         self.addReceiver(VectorSerializer(player_move_serializer, u16), self.onBoardUpdate, "onBoard")
         self.addReceiver(VectorSerializer(player_serializer, u16), self.onPlayerListUpdated, "onPlayerList")
 
-    def onMacMessage(self, mac: Sequence[int]):
-        print(f"MAC: {bytes(mac).hex('-')}")
+    def onMacMessage(self, mac: bytes):
+        print(f"mac: {mac.hex('-')}")
 
         return ok(None)
 
-    def onLogMessage(self, message: Sequence[int]):
-        msg = bytes(message).strip(b'\x00')
-
-        try:
-            print(f"LOG: {msg.decode()}")
-
-        except UnicodeDecodeError as e:
-            print(f"{e}: {msg.hex(sep='-', bytes_per_sep=2)}")
+    def onLogMessage(self, message: str):
+        print(f"log: {message}")
 
         return ok(None)
 

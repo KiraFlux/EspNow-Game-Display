@@ -29,5 +29,5 @@ class Instruction[T: Serializable]:
         return self.signature.read(stream).map_err(lambda e: f"{self.name} receive error: {e}")
 
     def __repr__(self) -> str:
-        name = self.name or "Anonymous"
+        name = self.name or "anonymous"
         return f"{name}@{self.code.hex()}({self.signature})"
