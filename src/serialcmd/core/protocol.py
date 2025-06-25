@@ -1,9 +1,9 @@
 from typing import Callable
 from typing import Final
-from typing import Iterable
 
 from rs.result import Result
 from rs.result import err
+from rs.result import ok
 from serialcmd.abc.serializer import Serializable
 from serialcmd.abc.serializer import Serializer
 from serialcmd.abc.stream import Stream
@@ -15,7 +15,7 @@ type OnReceiveFunction[T] = Callable[[T], Result[None, str]]
 
 
 class Protocol:
-    """Протокол P2P общения по потоку"""
+    """Протокол P2P общения по потоку с указанной структурой полей"""
 
     def __init__(
             self,
@@ -24,25 +24,10 @@ class Protocol:
             remote_code: PrimitiveSerializer[int]
     ) -> None:
         self._stream: Final = stream
-        """Поток общения"""
-
         self._local_instruction_code: Final = local_code
-        """Ширина локального кода инструкции (Локально: приём)"""
         self._remote_instruction_code: Final = remote_code
-        """Ширина удаленного кода инструкции (Локально: отправка)"""
-
         self._receive_handlers: Final = dict[bytes, tuple[Instruction, OnReceiveFunction]]()
-        """Обработчики на приём"""
         self._send_handlers: Final = dict[bytes, Instruction]()
-        """Обработчики на передачу"""
-
-    def getReceivers(self) -> Iterable:
-        """Получить вид на обработчиков приёма"""
-        return self._receive_handlers.values()
-
-    def getSenders(self) -> Iterable:
-        """Получить вид на обработчиков отправки"""
-        return self._send_handlers.values()
 
     def addReceiver[T: Serializable](
             self,
@@ -50,56 +35,70 @@ class Protocol:
             signature: Serializer[T],
             handler: OnReceiveFunction[T]
     ) -> Result[None, str]:
-        """Зарегистрировать обработчик приёма сообщений"""
-
-        def _register_handler(instruction: Instruction[T], f: Callable) -> None:
-            self._receive_handlers[instruction.code] = (instruction, f)
-
+        """Зарегистрировать обработчик входящих сообщений"""
+        # Генерируем код для нового обработчика
         index = len(self._receive_handlers)
+        code_result = self._local_instruction_code.pack(index)
 
-        return (
-            self._local_instruction_code.pack(index)
-            .map(lambda code: _register_handler(Instruction(code, name, signature), handler))
-            .map_err(lambda e: f"Protocol register receiver error: {e}")
-        )
+        if code_result.is_err():
+            return code_result.map(lambda _: None).map_err(
+                lambda e: f"Failed to pack receiver code: {e}")
+
+        code = code_result.unwrap()
+
+        # Создаем инструкцию
+        instruction = Instruction[T](code, name, signature)
+
+        # Регистрируем обработчик
+        self._receive_handlers[code] = (instruction, handler)
+        return ok(None)
 
     def addSender[T: Serializable](
             self,
             name: str,
             signature: Serializer[T]
     ) -> Result[Instruction[T], str]:
-        """Зарегистрировать обработчик отправки сообщений"""
-
-        def _register_handler(instruction: Instruction[T]) -> Instruction[T]:
-            self._send_handlers[instruction.code] = instruction
-            return instruction
-
+        """Зарегистрировать исходящую инструкцию"""
+        # Генерируем код для новой инструкции
         index = len(self._send_handlers)
-
-        return (
-            self._remote_instruction_code.pack(index)
-            .map(lambda code: Instruction[T](code, name, signature))
-            .map(_register_handler)
-            .map_err(lambda e: f"Protocol register sender error: {e}")
-        )
-
-    def pull(self) -> Result[None, str]:
-        """Обработка входящих сообщений"""
-
-        code_result = self._stream.read(self._remote_instruction_code.getSize())
+        code_result = self._remote_instruction_code.pack(index)
 
         if code_result.is_err():
-            return code_result.map(lambda _: None).map_err(lambda e: f"Code read error: {e}")
+            # noinspection PyTypeChecker
+            return code_result.map_err(lambda e: f"Failed to pack sender code: {e}")
 
-        handler_info = self._receive_handlers.get(code_result.unwrap())
+        code = code_result.unwrap()
 
-        if not handler_info:
-            return err(f"Invalid code: {code_result.unwrap().hex()}")
+        # Создаем инструкцию
+        instruction = Instruction[T](code, name, signature)
 
-        instruction, handler = handler_info
+        # Регистрируем инструкцию
+        self._send_handlers[code] = instruction
+        return ok(instruction)
+
+    def pull(self) -> Result[None, str]:
+        """Обработать входящее сообщение"""
+        # Читаем код инструкции
+        code_size = self._remote_instruction_code.getSize()
+        code_result = self._stream.read(code_size)
+
+        if code_result.is_err():
+            return code_result.map(lambda _: None).map_err(
+                lambda e: f"Failed to read instruction code: {e}")
+
+        code = code_result.unwrap()
+
+        # Находим зарегистрированный обработчик
+        if code not in self._receive_handlers:
+            return err(f"Unknown instruction code: {code.hex()}")
+
+        instruction, handler = self._receive_handlers[code]
+
+        # Читаем аргументы
         args_result = instruction.receive(self._stream)
-
         if args_result.is_err():
-            return args_result.map_err(lambda e: f"Arguments read error: {e}")
+            return args_result.map_err(
+                lambda e: f"Failed to receive arguments: {e}").map(lambda _: None)
 
+        # Вызываем обработчик
         return handler(args_result.unwrap())

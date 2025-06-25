@@ -33,8 +33,6 @@ device = DeviceProtocol(_device_stream, u8, u8)
 game.set_field_size.send(_game_stream, (15, 15))
 
 print(f"""
-{_device_stream.rx.hex(' ', 2)}
-{_device_stream.tx.hex(' ', 2)}
-{_game_stream.rx.hex(' ', 2)}
-{_game_stream.tx.hex(' ', 2)}
+RX: {_device_stream.rx.hex(' ')}
+TX: {_device_stream.tx.hex(' ')}
 """)
