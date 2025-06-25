@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Optional
 
 from rs.result import Result
 from serialcmd.abc.serializer import Serializable
@@ -7,13 +8,13 @@ from serialcmd.abc.stream import InputStream
 from serialcmd.abc.stream import OutputStream
 
 
-@dataclass
+@dataclass(frozen=True)
 class Instruction[T: Serializable]:
     """Исполняемая инструкция протокола"""
 
     code: bytes
-    name: str
     signature: Serializer[T]
+    name: Optional[str]
 
     def send(self, stream: OutputStream, args: T) -> Result[None, str]:
         """Отправить инструкцию с аргументами в поток"""
@@ -28,4 +29,5 @@ class Instruction[T: Serializable]:
         return self.signature.read(stream).map_err(lambda e: f"{self.name} receive error: {e}")
 
     def __repr__(self) -> str:
-        return f"{self.name}@{self.code.hex()}({self.signature})"
+        name = self.name or "Anonymous"
+        return f"{name}@{self.code.hex()}({self.signature})"

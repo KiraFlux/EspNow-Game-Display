@@ -9,14 +9,14 @@ from serialcmd.abc.stream import OutputStream
 from serialcmd.impl.serializer.primitive import PrimitiveSerializer
 
 
-@dataclass(frozen=True, kw_only=True)
+@dataclass(frozen=True)
 class VectorSerializer[T](Serializer[Sequence[T]]):
     """Сериализатор динамического массива"""
 
-    length: PrimitiveSerializer[int]
-    """Примитив описывающий длину"""
     item: Serializer[T]
     """Сериализатор элемента"""
+    length: PrimitiveSerializer[int]
+    """Примитив описывающий длину"""
 
     def read(self, stream: InputStream) -> Result[Sequence[T], str]:
         # Чтение длины вектора

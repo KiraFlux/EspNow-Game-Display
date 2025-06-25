@@ -2,80 +2,64 @@
 Protocol
 """
 
-from typing import Callable
-from typing import Optional
+from typing import Sequence
 
-from game.core.player import Player
-from serialcmd.serializers import u16
-from serialcmd.serializers import u8
+from rs.result import ok
 from serialcmd.abc.stream import Stream
+from serialcmd.core.protocol import Protocol
+from serialcmd.impl.serializer.array_ import ArraySerializer
+from serialcmd.impl.serializer.primitive import u16
+from serialcmd.impl.serializer.primitive import u8
+from serialcmd.impl.serializer.struct_ import StructSerializer
+from serialcmd.impl.serializer.vector import VectorSerializer
 
 
-class GameProtocol:
-    def __init__(self, log: Callable[[str], None]) -> None:
-        self.mac: Optional[bytes] = None
-        self.players = dict[bytes, Player]()
-        self.board = dict[tuple[int, int], int]()
-        self.log = log
+class GameProtocol(Protocol):
+    def __init__(self, stream: Stream) -> None:
+        super().__init__(stream, u8, u8)
 
-        SendMac = 0x01
-        LogOutput = 0x02
-        BoardStateUpdate = 0x03
-        PlayerListUpdate = 0x04
+        mac_serializer = ArraySerializer(u8, 6)
 
-        self.jt = {
-            SendMac: self.readMac,
-            LogOutput: self.readLog,
-            BoardStateUpdate: self.readBoardStateUpdate,
-            PlayerListUpdate: self.readPlayerListUpdate,
-        }
+        player_serializer = StructSerializer((
+            mac_serializer,
+            ArraySerializer(u8, 32),
+            u8
+        ))
 
-    def readMac(self, stream: Stream):
-        self.mac = stream.read(6)
+        player_move_serializer = ArraySerializer(u8, 3)
 
-        print(self.mac.hex('-', 2))
+        host_message_serializer = ArraySerializer(u8, 128)
 
-        return
+        self.addReceiver(u8, lambda _: ok(print(_)))
+        self.addReceiver(mac_serializer, self.onMacMessage, "onMac")
+        self.addReceiver(host_message_serializer, self.onLogMessage, "onLog")
+        self.addReceiver(VectorSerializer(player_move_serializer, u16), self.onBoardUpdate, "onBoard")
+        self.addReceiver(VectorSerializer(player_serializer, u16), self.onPlayerListUpdated, "onPlayerList")
 
-    def readLog(self, stream: Stream):
-        msg = stream.read(128).rstrip(b'\x00')
+    def onMacMessage(self, mac: Sequence[int]):
+        print(f"MAC: {bytes(mac).hex('-')}")
+
+        return ok(None)
+
+    def onLogMessage(self, message: Sequence[int]):
+        msg = bytes(message).strip(b'\x00')
 
         try:
-            self.log(f"LOG: {msg.decode()}")
+            print(f"LOG: {msg.decode()}")
 
         except UnicodeDecodeError as e:
-            self.log(f"{e}: {msg.hex(sep='-', bytes_per_sep=2)}")
+            print(f"{e}: {msg.hex(sep='-', bytes_per_sep=2)}")
 
-        return
+        return ok(None)
 
-    def readBoardStateUpdate(self, stream: Stream):
-        self.board.clear()
+    def onBoardUpdate(self, field: Sequence[tuple[int, int, int]]):
+        for x, y, team in field:
+            print(f"{x, y}: {team}")
 
-        length = u16.read(stream)
+        return ok(None)
 
-        for _ in range(length):
-            x = u8.read(stream)
-            y = u8.read(stream)
-            team = u8.read(stream)
-            self.board[(x, y)] = team
+    def onPlayerListUpdated(self, players: Sequence[tuple]):
+        for mac, username, team in players:
+            print(f"{mac=} {username=} {team=}")
 
-        return
-
-    def readPlayerListUpdate(self, stream: Stream):
-        self.players.clear()
-
-        length = u16.read(stream)
-
-        for _ in range(length):
-            mac = stream.read(6)
-            username = stream.read(32).rstrip(b'\x00').decode()
-            team = u8.read(stream)
-            self.players[mac] = Player(username, team)
-
-        return
-
-    def pull(self, stream: Stream) -> None:
-        handler = self.jt.get(u8.read(stream))
-
-        if handler is not None:
-            handler.__call__(stream)
+        return ok(None)

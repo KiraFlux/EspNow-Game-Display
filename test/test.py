@@ -16,7 +16,7 @@ class GameProtocol(Protocol):
     def __init__(self, stream: Stream, local_code: PrimitiveSerializer[int], remote_code: PrimitiveSerializer[int]) -> None:
         super().__init__(stream, local_code, remote_code)
 
-        self.set_field_size = self.addSender("setFieldSize", client_move).unwrap()
+        self.set_field_size = self.addSender(client_move, "setFieldSize").unwrap()
 
 
 class DeviceProtocol(Protocol):
@@ -24,7 +24,7 @@ class DeviceProtocol(Protocol):
     def __init__(self, stream: Stream, local_code: PrimitiveSerializer[int], remote_code: PrimitiveSerializer[int]) -> None:
         super().__init__(stream, local_code, remote_code)
 
-        self.addReceiver("onFieldSize", client_move, lambda args: ok(print(args)))
+        self.addReceiver(client_move, lambda args: ok(print(args)), "onFieldSize")
 
 
 game = GameProtocol(_game_stream, u8, u8)
