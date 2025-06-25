@@ -7,11 +7,12 @@ from serial import Serial as SerialPort
 from rs.result import Result
 from rs.result import err
 from rs.result import ok
-from serialcmd.abc.stream import Stream
+from serialcmd.abc.stream import InputStream
+from serialcmd.abc.stream import OutputStream
 
 
 @dataclass
-class SerialStream(Stream):
+class SerialStream(InputStream, OutputStream):
     """Потом ввода-вывода по последовательному порту"""
 
     def __init__(self, port: str, baud: int) -> None:

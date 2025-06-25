@@ -1,6 +1,5 @@
-from dataclasses import dataclass
-from dataclasses import field
 from typing import Callable
+from typing import Final
 from typing import Iterable
 
 from rs.result import Result
@@ -11,26 +10,31 @@ from serialcmd.abc.stream import Stream
 from serialcmd.core.instruction import Instruction
 from serialcmd.impl.serializer.primitive import PrimitiveSerializer
 
+type OnReceiveFunction[T] = Callable[[T], Result[None, str]]
+"""Вид обработчика приёма"""
 
-@dataclass(kw_only=True, frozen=True)
+
 class Protocol:
     """Протокол P2P общения по потоку"""
 
-    type OnReceiveFunction[T] = Callable[[T], Result[None, str]]
-    """Вид обработчика приёма"""
+    def __init__(
+            self,
+            stream: Stream,
+            local_code: PrimitiveSerializer[int],
+            remote_code: PrimitiveSerializer[int]
+    ) -> None:
+        self._stream: Final = stream
+        """Поток общения"""
 
-    _stream: Stream
-    """Поток общения"""
+        self._local_instruction_code: Final = local_code
+        """Ширина локального кода инструкции (Локально: приём)"""
+        self._remote_instruction_code: Final = remote_code
+        """Ширина удаленного кода инструкции (Локально: отправка)"""
 
-    _local_instruction_code: PrimitiveSerializer[int]
-    """Ширина локального кода инструкции (Локально: приём)"""
-    _remote_instruction_code: PrimitiveSerializer[int]
-    """Ширина удаленного кода инструкции (Локально: отправка)"""
-
-    _receive_handlers: dict[bytes, tuple[Instruction, OnReceiveFunction]] = field(init=False, default_factory=dict)
-    """Обработчики на приём"""
-    _send_handlers: dict[bytes, Instruction] = field(init=False, default_factory=dict)
-    """Обработчики на передачу"""
+        self._receive_handlers: Final = dict[bytes, tuple[Instruction, OnReceiveFunction]]()
+        """Обработчики на приём"""
+        self._send_handlers: Final = dict[bytes, Instruction]()
+        """Обработчики на передачу"""
 
     def getReceivers(self) -> Iterable:
         """Получить вид на обработчиков приёма"""
@@ -40,7 +44,7 @@ class Protocol:
         """Получить вид на обработчиков отправки"""
         return self._send_handlers.values()
 
-    def registerReceiver[T: Serializable](
+    def addReceiver[T: Serializable](
             self,
             name: str,
             signature: Serializer[T],
@@ -59,7 +63,7 @@ class Protocol:
             .map_err(lambda e: f"Protocol register receiver error: {e}")
         )
 
-    def registerSender[T: Serializable](
+    def addSender[T: Serializable](
             self,
             name: str,
             signature: Serializer[T]

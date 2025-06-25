@@ -9,7 +9,8 @@ from rs.result import Result
 from rs.result import err
 from rs.result import ok
 from serialcmd.abc.serializer import Serializer
-from serialcmd.abc.stream import Stream
+from serialcmd.abc.stream import InputStream
+from serialcmd.abc.stream import OutputStream
 
 
 class _Format:
@@ -71,14 +72,14 @@ class PrimitiveSerializer[T](Serializer[T]):
     def __repr__(self) -> str:
         return f"{_Format.matchPrefix(self._struct.format.strip("<>"))}{self.getSize() * 8}"
 
-    def read(self, stream: Stream) -> Result[T, str]:
+    def read(self, stream: InputStream) -> Result[T, str]:
         return (
             stream.read(self.getSize())
             .and_then(lambda data: self.unpack(data))
             .map_err(lambda e: f"Read error: {e}")
         )
 
-    def write(self, stream: Stream, value: T) -> Result[None, str]:
+    def write(self, stream: OutputStream, value: T) -> Result[None, str]:
         return (
             self.pack(value)
             .and_then(lambda data: stream.write(data))

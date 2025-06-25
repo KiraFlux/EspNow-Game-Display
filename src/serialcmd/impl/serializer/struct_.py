@@ -6,7 +6,8 @@ from rs.result import err
 from rs.result import ok
 from serialcmd.abc.serializer import Serializable
 from serialcmd.abc.serializer import Serializer
-from serialcmd.abc.stream import Stream
+from serialcmd.abc.stream import InputStream
+from serialcmd.abc.stream import OutputStream
 
 
 @dataclass(frozen=True)
@@ -19,7 +20,7 @@ class StructSerializer[T: Sequence[Serializable]](Serializer[T]):
     def __repr__(self) -> str:
         return f"{{{', '.join(map(str, self._fields))}}}"
 
-    def read(self, stream: Stream) -> Result[list, str]:
+    def read(self, stream: InputStream) -> Result[list, str]:
         values = list()
 
         for i, field in enumerate(self._fields):
@@ -32,7 +33,7 @@ class StructSerializer[T: Sequence[Serializable]](Serializer[T]):
 
         return ok(values)
 
-    def write(self, stream: Stream, value: list) -> Result[None, str]:
+    def write(self, stream: OutputStream, value: list) -> Result[None, str]:
         if len(value) != len(self._fields):
             return err(f"Value/fields count mismatch: {len(value)} vs {len(self._fields)}")
 
