@@ -1,20 +1,17 @@
 import tkinter as tk
-from queue import Empty
-from queue import Queue
 from tkinter import scrolledtext
 from tkinter import ttk
+from typing import Final
 
 from color import get_team_color
 from color import get_text_color
-from game.core.listener import GameListener
+from game.core.player import GameInfo
 
 
 class TkApp(tk.Tk):
-    def __init__(self, listener: GameListener, log_queue: Queue):
+    def __init__(self, game: GameInfo):
         super().__init__()
-        self.logs = log_queue
-
-        self.listener = listener
+        self.game: Final = game
         self.title("Game Monitor")
         self.geometry("1280x720")
         self._setup_ui()
@@ -89,7 +86,7 @@ class TkApp(tk.Tk):
         for item in self.player_tree.get_children():
             self.player_tree.delete(item)
 
-        for mac, player in self.listener.players.items():
+        for mac, player in self.game.players.items():
             mac_str = mac.hex(':')
             item = self.player_tree.insert("", "end", values=(mac_str, player.username, player.team))
 
@@ -114,7 +111,7 @@ class TkApp(tk.Tk):
                 x2 = x1 + cell_size
                 y2 = y1 + cell_size
 
-                team = self.listener.board.get((x, y), 0)
+                team = self.game.field_state.get((x, y), 0)
                 color = get_team_color(team)
 
                 self.canvas.create_rectangle(
@@ -136,13 +133,9 @@ class TkApp(tk.Tk):
     def _update_logs(self):
         self.log_area.config(state="normal")
 
-        while not self.logs.empty():
-            try:
-                log_msg = self.logs.get_nowait()
-                self.log_area.insert(tk.END, log_msg + "\n")
-
-            except Empty:
-                break
+        while len(self.game.logs) > 0:
+            log_msg = self.game.logs.pop(0)
+            self.log_area.insert(tk.END, log_msg + "\n")
 
         self.log_area.config(state="disabled")
         self.log_area.yview(tk.END)

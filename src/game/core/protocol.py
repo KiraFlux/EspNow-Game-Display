@@ -1,9 +1,11 @@
 """
 Protocol
 """
-
+from typing import Final
 from typing import Sequence
 
+from game.core.player import GameInfo
+from game.core.player import Player
 from rs.result import ok
 from serialcmd.abc.stream import Stream
 from serialcmd.core.protocol import Protocol
@@ -19,8 +21,10 @@ from serialcmd.impl.serializer.vector import VectorSerializer
 class GameProtocolV1(Protocol):
     """Протокол хоста игры (Версия хоста 1)"""
 
-    def __init__(self, stream: Stream) -> None:
+    def __init__(self, stream: Stream, game: GameInfo) -> None:
         super().__init__(stream, u8, u8)
+
+        self.game: Final = game
 
         mac_serializer = ByteArraySerializer(6)
 
@@ -42,23 +46,25 @@ class GameProtocolV1(Protocol):
         self.addReceiver(VectorSerializer(player_serializer, u16), self.onPlayerListUpdated, "onPlayerList")
 
     def onMacMessage(self, mac: bytes):
-        print(f"mac: {mac.hex('-')}")
-
+        self.game.players[mac] = Player("GAME-HOST", 2056)
         return ok(None)
 
     def onLogMessage(self, message: str):
-        print(f"log: {message}")
-
+        self.game.logs.append(message)
         return ok(None)
 
     def onBoardUpdate(self, field: Sequence[tuple[int, int, int]]):
+        self.game.field_state.clear()
+
         for x, y, team in field:
-            print(f"{x, y}: {team}")
+            self.game.field_state[(x, y)] = team
 
         return ok(None)
 
     def onPlayerListUpdated(self, players: Sequence[tuple]):
+        self.game.players.clear()
+
         for mac, username, team in players:
-            print(f"{mac=} {username=} {team=}")
+            self.game.players[mac] = Player(username, team)
 
         return ok(None)
