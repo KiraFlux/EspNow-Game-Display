@@ -4,7 +4,7 @@ from typing import Iterable
 import serial.tools.list_ports
 from serial import Serial as SerialPort
 
-from serialcmd.streams.abc import Stream
+from serialcmd.abc.stream import Stream
 
 
 @dataclass
