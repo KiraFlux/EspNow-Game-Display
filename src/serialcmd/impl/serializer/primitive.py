@@ -2,7 +2,6 @@ import struct
 from itertools import chain
 # noinspection PyPep8Naming
 from struct import error as StructError
-from typing import Callable
 from typing import Final
 from typing import Iterable
 
@@ -10,6 +9,7 @@ from rs.result import Result
 from rs.result import err
 from rs.result import ok
 from serialcmd.abc.serializer import Serializer
+from serialcmd.abc.stream import Stream
 
 
 class _Format:
@@ -62,36 +62,50 @@ class _Format:
         raise ValueError(fmt)
 
 
-class PrimitiveSerializer[T: (int, float)](Serializer[T]):
-    """Примитивные типы"""
+class PrimitiveSerializer[T](Serializer[T]):
+    """Сериализатор примитивных типов с фиксированным размером"""
 
-    type Value = T
-
-    def __init__(self, _format: str) -> None:
+    def __init__(self, _format: str):
         self._struct = struct.Struct(f"<{_format}")
-
-    def getSize(self) -> int:
-        return self._struct.size
-
-    def unpack(self, buffer: bytes) -> Result[T, str]:
-        return self._structResultWrapper(buffer, lambda _b: self._struct.unpack(_b)[0])
-
-    def pack(self, value: T) -> Result[bytes, str]:
-        return self._structResultWrapper(value, self._struct.pack)
 
     def __repr__(self) -> str:
         return f"{_Format.matchPrefix(self._struct.format.strip("<>"))}{self.getSize() * 8}"
 
-    @staticmethod
-    def _structResultWrapper[F, T](_from: F, from_to_func: Callable[[F], T]) -> Result[T, str]:
+    def read(self, stream: Stream) -> Result[T, str]:
+        return (
+            stream.read(self.getSize())
+            .and_then(lambda data: self.unpack(data))
+            .map_err(lambda e: f"Read error: {e}")
+        )
+
+    def write(self, stream: Stream, value: T) -> Result[None, str]:
+        return (
+            self.pack(value)
+            .and_then(lambda data: stream.write(data))
+            .map_err(lambda e: f"Write error: {e}")
+        )
+
+    def unpack(self, data: bytes) -> Result[T, str]:
+        """Распаковать данные"""
+
         try:
-            _to = from_to_func(_from)
+            return ok(self._struct.unpack(data)[0])
 
         except StructError as e:
-            return err(f"Primitive error: {e} ({_from})")
+            return err(f"Unpack error: {e}")
 
-        else:
-            return ok(_to)
+    def pack(self, value: T) -> Result[bytes, str]:
+        """Упаковать данные"""
+
+        try:
+            return ok(self._struct.pack(value))
+
+        except StructError as exception:
+            return err(f"Pack error: {exception}")
+
+    def getSize(self) -> int:
+        """Узнать размер примитива"""
+        return self._struct.size
 
 
 u8 = PrimitiveSerializer[int | bool](_Format.U8)

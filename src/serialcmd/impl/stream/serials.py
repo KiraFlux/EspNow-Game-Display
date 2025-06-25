@@ -1,27 +1,39 @@
 from dataclasses import dataclass
-from typing import Iterable
+from typing import Sequence
 
 import serial.tools.list_ports
 from serial import Serial as SerialPort
 
+from rs.result import Result
+from rs.result import err
+from rs.result import ok
 from serialcmd.abc.stream import Stream
 
 
 @dataclass
-class Serial(Stream):
-    """Стрим по последовательному порту"""
+class SerialStream(Stream):
+    """Потом ввода-вывода по последовательному порту"""
 
     def __init__(self, port: str, baud: int) -> None:
         self._serial_port = SerialPort(port=port, baudrate=baud, timeout=None)
 
-    def read(self, size: int = 1) -> bytes:
-        return self._serial_port.read(size)
+    def read(self, size: int) -> Result[bytes, str]:
+        try:
+            return ok(self._serial_port.read(size))
 
-    def write(self, data: bytes) -> None:
-        self._serial_port.write(data)
+        except Exception as e:
+            return err(f"SerialStream read error: {e}")
+
+    def write(self, data: bytes) -> Result[None, str]:
+        # noinspection PyBroadException
+        try:
+            ok(self._serial_port.write(data))
+
+        except Exception as e:
+            return err(f"SerialStream write error: {e}")
 
     @staticmethod
-    def getPorts(keywords: Iterable[str] = ("Arduino", "CH340", "USB-SERIAL")) -> list[str]:
+    def getPorts(keywords: Sequence[str] = ("Arduino", "CH340", "USB-SERIAL")) -> list[str]:
         """
         Находит порты, содержащие указанные ключевые слова в описании устройства.
         @param keywords: Список ключевых слов для поиска (по умолчанию ищет Arduino).

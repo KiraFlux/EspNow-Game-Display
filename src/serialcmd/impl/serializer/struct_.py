@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from typing import Sequence
 
 from rs.result import Result
@@ -5,48 +6,40 @@ from rs.result import err
 from rs.result import ok
 from serialcmd.abc.serializer import Serializable
 from serialcmd.abc.serializer import Serializer
+from serialcmd.abc.stream import Stream
 
 
+@dataclass(frozen=True)
 class StructSerializer[T: Sequence[Serializable]](Serializer[T]):
     """Объединение нескольких Serializer"""
 
-    def __init__(self, fields: Sequence[Serializer]) -> None:
-        self._fields = fields
-        self._size = sum(f.getSize() for f in self._fields)
+    _fields: Sequence[Serializer]
+    """Сериализаторы полей структуры"""
 
     def __repr__(self) -> str:
         return f"{{{', '.join(map(str, self._fields))}}}"
 
-    def unpack(self, buffer: bytes) -> Result[T, str]:
-        ret = list()
-        offset: int = 0
+    def read(self, stream: Stream) -> Result[list, str]:
+        values = list()
 
-        for field in self._fields:
-            unpack = field.unpack(buffer[offset:offset + field.getSize()])
+        for i, field in enumerate(self._fields):
+            value = field.read(stream)
 
-            if unpack.is_err():
-                return unpack.map_err(lambda e: f"Field@{offset}: {field} unpack error: {e}")
+            if value.is_err():
+                return err(f"Field {i} error: {value.err().unwrap()}")
 
-            offset += field.getSize()
+            values.append(value.unwrap())
 
-        return ok(ret)
+        return ok(values)
 
-    def pack(self, value: T) -> Result[bytes, str]:
-        if (got := len(value)) != (expected := len(self._fields)):
-            return err(f"Expected: {expected} ({self}), got {got} ({value}")
+    def write(self, stream: Stream, value: list) -> Result[None, str]:
+        if len(value) != len(self._fields):
+            return err(f"Value/fields count mismatch: {len(value)} vs {len(self._fields)}")
 
-        packed_fields = list()
+        for i, (field, item) in enumerate(zip(self._fields, value)):
+            result = field.write(stream, item)
 
-        for index, (field, field_value) in enumerate(zip(self._fields, value)):
-            pack = field.pack(field_value)
-            field: Serializer
+            if result.is_err():
+                return err(f"Field {i} write error: {result.unwrap()}")
 
-            if pack.is_err():
-                return pack.map_err(lambda e: f"Field@{index}: {field} pack error: {e}")
-
-            packed_fields.append(pack.unwrap())
-
-        return ok(b"".join(packed_fields))
-
-    def getSize(self) -> int:
-        return self._size
+        return ok(None)

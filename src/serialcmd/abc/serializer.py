@@ -3,6 +3,7 @@ from abc import abstractmethod
 from typing import Sequence
 
 from rs.result import Result
+from serialcmd.abc.stream import Stream
 
 type _serializable = int | float
 type _serializable = Sequence[_serializable] | _serializable
@@ -15,13 +16,9 @@ class Serializer[T: Serializable](ABC):
     """Serializer - упаковка, распаковка данных"""
 
     @abstractmethod
-    def pack(self, value: T) -> Result[bytes, str]:
-        """Упаковать значение в соответсвующее байтовое представление"""
+    def read(self, stream: Stream) -> Result[T, str]:
+        """Считать значение из потока"""
 
     @abstractmethod
-    def unpack(self, buffer: bytes) -> Result[T, str]:
-        """Получить значение из соответствующего байтового представления"""
-
-    @abstractmethod
-    def getSize(self) -> int:
-        """Получить размер данных в байтах"""
+    def write(self, stream: Stream, value: T) -> Result[None, str]:
+        """Записать значение в поток"""

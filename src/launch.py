@@ -3,11 +3,11 @@ from threading import Thread
 
 from game.app import TkApp
 from game.core.protocol import GameProtocol
-from serialcmd.impl.stream.serials import Serial
+from serialcmd.impl.stream.serials import SerialStream
 
 
 def _listener_task(listener: GameProtocol):
-    serial = Serial("COM19", 115200)
+    serial = SerialStream("COM19", 115200)
 
     while True:
         listener.pull(serial)
