@@ -1,10 +1,10 @@
 from threading import Thread
 
-from game.core.protocol import GameProtocol
+from game.core.protocol import GameProtocolV1
 from serialcmd.impl.stream.serials import SerialStream
 
 
-def _listener_task(listener: GameProtocol):
+def _listener_task(listener: GameProtocolV1):
     print('Senders')
     print('\n'.join(map(str, listener.getSenders())))
     print('Receivers')
@@ -22,7 +22,7 @@ def _main():
 
     serial = SerialStream("COM8", 115200)
 
-    listener = GameProtocol(serial)
+    listener = GameProtocolV1(serial)
 
     task = Thread(target=_listener_task, args=(listener,), daemon=True)
     task.start()

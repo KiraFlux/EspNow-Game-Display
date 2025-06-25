@@ -16,7 +16,9 @@ from serialcmd.impl.serializer.struct_ import StructSerializer
 from serialcmd.impl.serializer.vector import VectorSerializer
 
 
-class GameProtocol(Protocol):
+class GameProtocolV1(Protocol):
+    """Протокол хоста игры (Версия хоста 1)"""
+
     def __init__(self, stream: Stream) -> None:
         super().__init__(stream, u8, u8)
 
