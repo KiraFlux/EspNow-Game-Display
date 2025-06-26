@@ -1,7 +1,7 @@
 from threading import Thread
 
 from game.core.player import GameInfo
-from game.core.protocol import GameProtocolV2
+from game.core.protocol import GameProtocol
 from serialcmd.core.protocol import Protocol
 from serialcmd.impl.stream.serials import SerialStream
 
@@ -22,9 +22,9 @@ def _listener_task(listener: Protocol):
 def _main():
     game = GameInfo()
 
-    serial = SerialStream("COM8", 115200)
+    serial = SerialStream("COM19", 115200)
 
-    listener = GameProtocolV2(serial, game)
+    listener = GameProtocol(serial, game)
 
     task = Thread(target=_listener_task, args=(listener,), daemon=True)
     task.start()

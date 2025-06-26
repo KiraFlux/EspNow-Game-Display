@@ -45,14 +45,14 @@ class Protocol:
         """Получить все обработчики на приём"""
         return (i for i, j in self._receive_handlers.values())
 
-    def addReceiver[T: Serializable](self, signature: Serializer[T], handler: OnReceiveFunction[T], name: str = None) -> None:
+    def addReceiver[T: Serializable](self, /, result: Serializer[T], handler: OnReceiveFunction[T], name: str = None) -> None:
         """Зарегистрировать обработчик входящих сообщений"""
         index = len(self._receive_handlers)
         code = self._local_instruction_code.pack(index).unwrap()
-        instruction = Instruction(code, signature, name)
+        instruction = Instruction(code, result, name)
         self._receive_handlers[code] = (instruction, handler)
 
-    def addSender[T: Serializable](self, signature: Serializer[T], name: str = None) -> Instruction[T]:
+    def addSender[T: Serializable](self, /, signature: Serializer[T], name: str = None) -> Instruction[T]:
         """Зарегистрировать исходящую инструкцию"""
         index = len(self._send_handlers)
         code = self._remote_instruction_code.pack(index).unwrap()
