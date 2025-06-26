@@ -18,7 +18,7 @@ class StructSerializer[T: Sequence[Serializable]](Serializer[T]):
     """Сериализаторы полей структуры"""
 
     def __repr__(self) -> str:
-        return f"{{{', '.join(map(str, self._fields))}}}"
+        return f"{{ {', '.join(map(str, self._fields))} }}"
 
     def read(self, stream: InputStream) -> Result[list, str]:
         values = list()

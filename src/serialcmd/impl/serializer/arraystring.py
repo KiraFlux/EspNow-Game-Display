@@ -39,3 +39,6 @@ class ArrayStringSerializer(Serializer[str]):
 
         except Exception as exception:
             return err(f"{self.read.__name__} error: {exception}")
+    
+    def __repr__(self) -> str:
+        return f"[{self._byte_array_serializer.length}]str"

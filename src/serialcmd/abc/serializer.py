@@ -6,7 +6,7 @@ from rs.result import Result
 from serialcmd.abc.stream import InputStream
 from serialcmd.abc.stream import OutputStream
 
-type _serializable = int | float
+type _serializable = int | float | str
 type _serializable = Sequence[_serializable] | _serializable
 type _serializable = Sequence[_serializable] | _serializable
 

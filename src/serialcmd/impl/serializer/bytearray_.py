@@ -31,3 +31,6 @@ class ByteArraySerializer(Serializer[bytes]):
             stream.read(self.length)
             .map_err(lambda e: f"{self.read.__name__} error: {e}")
         )
+
+    def __repr__(self) -> str:
+        return f"[{self.length}]bytes"

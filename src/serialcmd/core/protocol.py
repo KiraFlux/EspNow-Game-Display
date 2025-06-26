@@ -1,9 +1,11 @@
+from typing import Any
 from typing import Callable
 from typing import Final
 from typing import Iterable
 
 from rs.result import Result
 from rs.result import err
+from rs.result import ok
 from serialcmd.abc.serializer import Serializable
 from serialcmd.abc.serializer import Serializer
 from serialcmd.abc.stream import Stream
@@ -28,6 +30,12 @@ class Protocol:
         self._remote_instruction_code: Final = remote_code
         self._receive_handlers: Final = dict[bytes, tuple[Instruction, OnReceiveFunction]]()
         self._send_handlers: Final = dict[bytes, Instruction]()
+
+    @staticmethod
+    def mock(value: Any) -> Result[None, str]:
+        """Заглушка для обработчика приёма"""
+        print(f"mock: {value=}")
+        return ok(None)
 
     def getSenders(self) -> Iterable:
         """Получить все обработчики на отправку"""

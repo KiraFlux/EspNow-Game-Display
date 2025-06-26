@@ -1,12 +1,12 @@
 from threading import Thread
 
-from game.app import TkApp
 from game.core.player import GameInfo
-from game.core.protocol import GameProtocolV1
+from game.core.protocol import GameProtocolV2
+from serialcmd.core.protocol import Protocol
 from serialcmd.impl.stream.serials import SerialStream
 
 
-def _listener_task(listener: GameProtocolV1):
+def _listener_task(listener: Protocol):
     print('Senders')
     print('\n'.join(map(str, listener.getSenders())))
     print('Receivers')
@@ -20,18 +20,17 @@ def _listener_task(listener: GameProtocolV1):
 
 
 def _main():
-
     game = GameInfo()
 
     serial = SerialStream("COM8", 115200)
 
-    listener = GameProtocolV1(serial, game)
+    listener = GameProtocolV2(serial, game)
 
     task = Thread(target=_listener_task, args=(listener,), daemon=True)
     task.start()
 
-    tk_app = TkApp(game)
-    tk_app.mainloop()
+    # tk_app = TkApp(game)
+    # tk_app.mainloop()
 
     task.join()
 

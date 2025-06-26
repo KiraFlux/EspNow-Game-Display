@@ -30,4 +30,4 @@ class Instruction[T: Serializable]:
 
     def __repr__(self) -> str:
         name = self.name or "anonymous"
-        return f"{name}@{self.code.hex()}({self.signature})"
+        return f"{name}@{self.code.hex()}( {self.signature} )"
