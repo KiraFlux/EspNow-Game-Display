@@ -5,11 +5,11 @@ from typing import Final
 
 from color import get_team_color
 from color import get_text_color
-from game.core.player import GameInfo
+from game.core.environment import Environment
 
 
 class TkApp(tk.Tk):
-    def __init__(self, game: GameInfo):
+    def __init__(self, game: Environment):
         super().__init__()
         self.game: Final = game
         self.title("Game Monitor")
@@ -111,7 +111,7 @@ class TkApp(tk.Tk):
                 x2 = x1 + cell_size
                 y2 = y1 + cell_size
 
-                team = self.game.field_state.get((x, y), 0)
+                team = self.game.board_state.get((x, y), 0)
                 color = get_team_color(team)
 
                 self.canvas.create_rectangle(

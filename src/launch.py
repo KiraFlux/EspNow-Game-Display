@@ -1,33 +1,39 @@
 from threading import Thread
 
-from game.core.player import GameInfo
+from game.core.environment import Environment
+from game.core.log import Logger
 from game.core.protocol import GameProtocol
 from serialcmd.impl.stream.serials import SerialStream
 
 
 def _listener_task(protocol: GameProtocol):
+    root = Logger.inst()
+
+    task = root.sub("task")
+
     protocol.request_mac(None)
 
     while True:
         result = protocol.pull()
 
         if result.is_err():
-            print(f"task pull: {result.err().unwrap()}")
+            task.write(result.err().unwrap())
 
-        if protocol.game.logs:
-            print(protocol.game.logs.pop(0))
+        if root.available():
+            print(root.read())
+
 
 def _main():
-    game = GameInfo()
+    environment = Environment()
 
     serial = SerialStream("COM8", 115200)
 
-    listener = GameProtocol(serial, game)
+    listener = GameProtocol(serial, environment)
 
     task = Thread(target=_listener_task, args=(listener,), daemon=True)
     task.start()
 
-    # tk_app = TkApp(game)
+    # tk_app = TkApp(environment)
     # tk_app.mainloop()
 
     task.join()

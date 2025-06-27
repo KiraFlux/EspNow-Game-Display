@@ -1,7 +1,10 @@
 from typing import Callable
 from typing import Final
 
-from game.core.player import GameInfo
+from game.core.entities import Mac
+from game.core.entities import Vector2D
+from game.core.environment import Environment
+from game.core.log import Logger
 from rs.result import Result
 from rs.result import ok
 from serialcmd.abc.stream import Stream
@@ -15,6 +18,8 @@ from serialcmd.impl.serializer.struct_ import StructSerializer
 from serialcmd.impl.serializer.void import VoidSerializer
 from serialcmd.impl.stream.byte import ByteBufferInputStream
 from serialcmd.impl.stream.byte import ByteBufferOutputStream
+
+type Ins[T] = Callable[[T], Result[None, str]]
 
 
 class GameProtocol(Protocol):
@@ -35,11 +40,13 @@ class GameProtocol(Protocol):
     player_message = ArrayStringSerializer(32)
     player_move = ArraySerializer(u8, 2)
 
-    def __init__(self, stream: Stream, game: GameInfo) -> None:
-        type Ins[T] = Callable[[T], Result[None, str]]
-
+    def __init__(self, stream: Stream, env: Environment) -> None:
         super().__init__(stream, u8, u8)
-        self.game: Final = game
+
+        self._log = Logger.inst().sub("protocol")
+        self._esp_log = self._log.sub("esp")
+
+        self.env: Final = env
 
         self.request_mac: Ins[None] = self.addSender(VoidSerializer())
         self.send_espnow_packet: Ins[tuple[bytes, bytes]] = self.addSender(self.espnow_packet)
@@ -49,43 +56,53 @@ class GameProtocol(Protocol):
         self.addReceiver(self.espnow_packet, self._onEspnowPacket, "read_espnow_packet")
         self.addReceiver(self.espnow_delivery_status, self._onEspnowDeliveryStatus, "read_delivery_status")
 
-    def _onMac(self, mac: bytes):
-        self.game.host_mac = mac
-        return ok(None)
+    def _onMac(self, raw_mac: bytes):
+        mac = Mac(raw_mac)
+
+        self.env.host_mac = mac
+
+        return ok(self._log.write(f"got host mac: {mac}"))
 
     def _onLog(self, message: str):
-        return ok(self.game.log(f"esp: {message}"))
+        return ok(self._esp_log.write(message))
 
     def _onEspnowDeliveryStatus(self, packet: tuple[bytes, int]):
-        mac, status = packet
-        self.mock(status)
-        return ok(None)
+        raw_mac, status = packet
+
+        mac = Mac(raw_mac)
+        status_str = "Ok" if status == 0 else "Fail"
+
+        return ok(self._esp_log.write(f"sending to {mac} : {status_str}"))
 
     def _onEspnowPacket(self, packet: tuple[bytes, bytes]):
-        mac, data = packet
+        raw_mac, data = packet
         size = len(data)
+
+        mac = Mac(raw_mac)
 
         stream = ByteBufferInputStream(data)
 
         if size == 32:
             return (
                 self.player_message.read(stream)
-                .and_then(lambda message: self._sendEspnowServerMessage(mac, self.game.onPlayerMessage(mac, message)))
+                .and_then(lambda message: self._sendEspnowServerMessage(mac, self.env.onPlayerMessage(mac, message)))
                 .map_err(lambda e: f"player message err: {e}")
             )
 
         if size == 2:
             return (
                 self.player_move.read(stream)
-                .and_then(lambda move: self._sendEspnowServerMessage(mac, self.game.onPlayerMove(mac, move)))
+                .and_then(lambda move: self._sendEspnowServerMessage(mac, self.env.onPlayerMove(mac, Vector2D(*move))))
                 .map_err(lambda e: f"player move err: {e}")
             )
 
-        return self.send_espnow_packet(f"Invalid client ({mac.hex('-')}) package size: ({size})")
+        return self._sendEspnowServerMessage(mac, f"Клиент {mac} отправил непредвиденный пакет: ({size} Байт)")
 
-    def _sendEspnowServerMessage(self, mac: bytes, message: str):
+    def _sendEspnowServerMessage(self, mac: Mac, message: str):
+        self._log.write(f"send to {mac} : '{message}'")
+
         stream = ByteBufferOutputStream()
         return (
             self.log_message.write(stream, message)
-            .and_then(lambda _: self.send_espnow_packet((mac, stream.buffer)))
+            .and_then(lambda _: self.send_espnow_packet((mac.value, stream.buffer)))
         )
