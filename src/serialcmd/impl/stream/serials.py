@@ -25,9 +25,9 @@ class SerialStream(Stream):
             return err(f"SerialStream read error: {e}")
 
     def write(self, data: bytes) -> Result[None, str]:
-        # noinspection PyBroadException
         try:
-            ok(self._serial_port.write(data))
+            self._serial_port.write(data)
+            return ok(None)
 
         except Exception as e:
             return err(f"SerialStream write error: {e}")

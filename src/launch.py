@@ -2,27 +2,25 @@ from threading import Thread
 
 from game.core.player import GameInfo
 from game.core.protocol import GameProtocol
-from serialcmd.core.protocol import Protocol
 from serialcmd.impl.stream.serials import SerialStream
 
 
-def _listener_task(listener: Protocol):
-    print('Senders')
-    print('\n'.join(map(str, listener.getSenders())))
-    print('Receivers')
-    print('\n'.join(map(str, listener.getReceivers())))
+def _listener_task(protocol: GameProtocol):
+    protocol.request_mac(None)
 
     while True:
-        result = listener.pull()
+        result = protocol.pull()
 
         if result.is_err():
             print(f"task pull: {result.err().unwrap()}")
 
+        if protocol.game.logs:
+            print(protocol.game.logs.pop(0))
 
 def _main():
     game = GameInfo()
 
-    serial = SerialStream("COM19", 115200)
+    serial = SerialStream("COM8", 115200)
 
     listener = GameProtocol(serial, game)
 

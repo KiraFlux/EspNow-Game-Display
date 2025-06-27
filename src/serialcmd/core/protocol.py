@@ -52,13 +52,17 @@ class Protocol:
         instruction = Instruction(code, result, name)
         self._receive_handlers[code] = (instruction, handler)
 
-    def addSender[T: Serializable](self, /, signature: Serializer[T], name: str = None) -> Instruction[T]:
+    def addSender[T: Serializable](self, /, signature: Serializer[T], name: str = None) -> Callable[[T], Result[None, str]]:
         """Зарегистрировать исходящую инструкцию"""
         index = len(self._send_handlers)
         code = self._remote_instruction_code.pack(index).unwrap()
         instruction = Instruction(code, signature, name)
         self._send_handlers[code] = instruction
-        return instruction
+
+        def _wrapper(value: T):
+            return instruction.send(self._stream, value)
+
+        return _wrapper
 
     def pull(self) -> Result[None, str]:
         """Обработать входящее сообщение"""

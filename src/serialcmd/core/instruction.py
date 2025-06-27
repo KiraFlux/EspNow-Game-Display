@@ -16,11 +16,11 @@ class Instruction[T: Serializable]:
     signature: Serializer[T]
     name: Optional[str]
 
-    def send(self, stream: OutputStream, args: T) -> Result[None, str]:
+    def send(self, stream: OutputStream, value: T) -> Result[None, str]:
         """Отправить инструкцию с аргументами в поток"""
         return (
             stream.write(self.code)
-            .and_then(lambda _: self.signature.write(stream, args))
+            .and_then(lambda _: self.signature.write(stream, value))
             .map_err(lambda e: f"{self.name} send error: {e}")
         )
 

@@ -21,9 +21,6 @@ class ByteVectorSerializer(Serializer[bytes]):
         if len_result.is_err():
             return len_result.map_err(lambda e: f"{self.write} (len) err: {e}")
 
-        if len_result.unwrap() != len(value):
-            return err(f"Invalid len: {len_result.unwrap()} vs {len(value)}")
-
         return (
             stream.write(value)
             .map_err(lambda e: f"{self.write} err: {e}")
