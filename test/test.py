@@ -4,9 +4,9 @@ from serialcmd.core.protocol import Protocol
 from serialcmd.impl.serializer.primitive import PrimitiveSerializer
 from serialcmd.impl.serializer.primitive import u8
 from serialcmd.impl.serializer.struct_ import StructSerializer
-from serialcmd.impl.stream.mock import MockStream
+from serialcmd.impl.stream.mock import VirtualStream
 
-_game_stream, _device_stream = MockStream.create_pair()
+_game_stream, _device_stream = VirtualStream.create_pair()
 
 client_move = StructSerializer((u8, u8))
 

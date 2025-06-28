@@ -1,14 +1,14 @@
 from threading import Thread
 
-from game.ui.app import App
 from game.core.environment import Environment
 from game.core.log import Logger
 from game.core.protocol import GameProtocol
+from game.ui.app import App
 from serialcmd.impl.stream.serials import SerialStream
 
 
-def _listener_task(protocol: GameProtocol):
-    task = Logger.inst().sub("task")
+def _protocol_task(protocol: GameProtocol):
+    log = Logger.inst().sub("task")
 
     protocol.request_mac(None)
 
@@ -16,23 +16,24 @@ def _listener_task(protocol: GameProtocol):
         result = protocol.pull()
 
         if result.is_err():
-            task.write(result.err().unwrap())
+            log.write(result.err().unwrap())
+
+
+def _launch_protocol(env: Environment):
+    stream = SerialStream("COM8", 115200)
+    protocol = GameProtocol(stream, env)
+
+    task = Thread(target=_protocol_task, args=(protocol,), daemon=True)
+    task.start()
 
 
 def _main():
     environment = Environment()
 
-    serial = SerialStream("COM8", 115200)
+    # _launch_protocol(environment)
 
-    listener = GameProtocol(serial, environment)
-
-    task = Thread(target=_listener_task, args=(listener,), daemon=True)
-    task.start()
-
-    tk_app = App(environment)
-    tk_app.mainloop()
-
-    task.join()
+    app = App(environment)
+    app.mainloop()
 
 
 if __name__ == "__main__":
