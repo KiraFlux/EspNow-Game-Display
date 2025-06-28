@@ -1,6 +1,6 @@
 from threading import Thread
 
-from game.app import TkApp
+from game.ui.app import App
 from game.core.environment import Environment
 from game.core.log import Logger
 from game.core.protocol import GameProtocol
@@ -29,7 +29,7 @@ def _main():
     task = Thread(target=_listener_task, args=(listener,), daemon=True)
     task.start()
 
-    tk_app = TkApp(environment)
+    tk_app = App(environment)
     tk_app.mainloop()
 
     task.join()
