@@ -5,11 +5,11 @@ from tkinter import Event
 from tkinter import Misc
 from typing import Optional
 
-from color import get_team_color
-from color import get_text_color
 from game.core.entities import Board
 from game.core.entities import Cell
 from game.core.entities import Vector2D
+from game.ui.color import get_team_color
+from game.ui.color import white
 from game.ui.font import FontFactory
 from game.ui.theme import Theme
 
@@ -61,7 +61,7 @@ class GameBoardView(Canvas):
         if cell is None:
             return Theme.current().background
 
-        return get_team_color(cell.owner.team)
+        return get_team_color(cell.owner.team).hex()
 
     def _drawCell(self, cell: Optional[Cell], cell_size: int, offset: Vector2D[int], origin: Vector2D[int]):
         color = self._getCellColor(cell)
@@ -84,6 +84,6 @@ class GameBoardView(Canvas):
         self.create_text(
             text_pos.x, text_pos.y,
             text=str(cell.owner.team),
-            fill=get_text_color(color),
+            fill=white.hex(),
             font=FontFactory.heading()
         )

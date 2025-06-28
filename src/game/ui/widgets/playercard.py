@@ -38,7 +38,7 @@ class PlayerCard(ttk.Frame):
         self.team_label = ttk.Label(
             info_frame,
             style="Accent.TLabel",
-            anchor="e"
+            anchor="e",
         )
         self.team_label.pack(side=RIGHT, padx=(5, 0))
 

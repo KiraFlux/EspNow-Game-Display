@@ -32,6 +32,14 @@ def _main():
 
     # _launch_protocol(environment)
 
+    from game.core.entities import Mac
+
+    for i in range(30):
+        mac = Mac(bytes((0, 0, 0, 0, 0, i)))
+        from game.core.entities import Vector2D
+        environment.onPlayerMessage(mac, f"User-{i}")
+        environment.onPlayerMove(mac, Vector2D(i % environment.board.size.x, i // environment.board.size.x))
+
     app = App(environment)
     app.mainloop()
 
