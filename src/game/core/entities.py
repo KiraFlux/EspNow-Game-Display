@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
 from dataclasses import field
 from enum import StrEnum
@@ -32,6 +34,18 @@ class Vector2D[T]:
     def new(cls, x: T, y: T):
         """Кешированное создание экземпляра"""
         return cls(x, y)
+
+    def __add__(self, other: Vector2D[T]):
+        return Vector2D(self.x + other.x, self.y + other.y)
+
+    def __sub__(self, other: Vector2D[T]):
+        return Vector2D(self.x - other.x, self.y - other.y)
+
+    def __mul__(self, other: T):
+        return Vector2D(self.x * other, self.y * other)
+
+    def __truediv__(self, other: T):
+        return Vector2D(self.x / other, self.y / other)
 
 
 @dataclass

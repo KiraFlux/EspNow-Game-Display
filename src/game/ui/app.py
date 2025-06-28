@@ -96,6 +96,6 @@ class App(Tk):
             str(mac): player for mac, player in self.env.players.items()
         })
 
-        self.board_view.update_board(self.env.board)
+        self.board_view.update_board()
         self.log_view.update_logs()
         self.after(self._update_interval_ms, self._update_ui)
