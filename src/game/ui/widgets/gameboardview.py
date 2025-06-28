@@ -59,7 +59,7 @@ class GameBoardView(Canvas):
 
     def _getCellColor(self, cell: Optional[Cell]):
         if cell is None:
-            return get_team_color(0)
+            return Theme.current().background
 
         return get_team_color(cell.owner.team)
 
@@ -73,7 +73,7 @@ class GameBoardView(Canvas):
             a.x, a.y, b.x, b.y,
             fill=color,
             outline=Theme.current().border,
-            width=2,
+            width=1,
         )
 
         text_pos = (a + b) / 2

@@ -22,7 +22,6 @@ def adjust_color(color: str, amount: int) -> str:
 
 def get_team_color(team: int) -> str:
     colors = {
-        0: "#CCCCCC",
         1: "#FF6B6B",
         2: "#4ECDC4",
         3: "#45B7D1",
@@ -44,4 +43,5 @@ def get_team_color(team: int) -> str:
         19: "#FEE440",
         20: "#9B2226",
     }
-    return colors.get(team, "#CCCCCC")
+
+    return colors.get(team)
