@@ -18,7 +18,7 @@ class GameBoardView(Canvas):
     def __init__(self, master: Misc, board: Board) -> None:
         super().__init__(
             master,
-            bg=Theme.secondary_background,
+            bg=Theme.current().secondary_background,
             highlightthickness=0
         )
         self._board = board
@@ -68,7 +68,7 @@ class GameBoardView(Canvas):
                 self.create_rectangle(
                     x1, y1, x2, y2,
                     fill=color,
-                    outline=Theme.border,
+                    outline=Theme.current().border,
                     width=1
                 )
 

@@ -46,7 +46,7 @@ class PlayerListView(ttk.Frame):
         self.canvas = Canvas(
             container,
             yscrollcommand=self.scrollbar.set,
-            bg=Theme.secondary_background,
+            bg=Theme.current().secondary_background,
             highlightthickness=0
         )
         self.canvas.pack(side=LEFT, fill=BOTH, expand=True)

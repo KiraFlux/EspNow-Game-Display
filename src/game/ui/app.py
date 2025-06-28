@@ -33,26 +33,26 @@ class App(Tk):
         style = ttk.Style()
 
         # Базовая конфигурация
-        style.configure(".", background=Theme.background, foreground=Theme.foreground)
-        style.configure("TFrame", background=Theme.background)
-        style.configure("TLabel", background=Theme.background, foreground=Theme.foreground)
-        style.configure("TLabelframe", background=Theme.background, relief="flat")
-        style.configure("TLabelframe.Label", background=Theme.background, foreground=Theme.accent)
-        style.configure("TScrollbar", background=Theme.border)
+        style.configure(".", background=Theme.current().background, foreground=Theme.current().foreground)
+        style.configure("TFrame", background=Theme.current().background)
+        style.configure("TLabel", background=Theme.current().background, foreground=Theme.current().foreground)
+        style.configure("TLabelframe", background=Theme.current().background, relief="flat")
+        style.configure("TLabelframe.Label", background=Theme.current().background, foreground=Theme.current().accent)
+        style.configure("TScrollbar", background=Theme.current().border)
 
         # Стиль для PanedWindow
-        style.configure("TPanedWindow", background=Theme.border)
+        style.configure("TPanedWindow", background=Theme.current().border)
 
         # Кастомные стили
-        style.configure("Secondary.TFrame", background=Theme.secondary_background)
-        style.configure("Card.TFrame", background=Theme.card_background, relief="ridge")
-        style.configure("Heading.TLabel", font=FontFactory.heading(), foreground=Theme.muted_text)
+        style.configure("Secondary.TFrame", background=Theme.current().secondary_background)
+        style.configure("Card.TFrame", background=Theme.current().card_background, relief="ridge")
+        style.configure("Heading.TLabel", font=FontFactory.heading(), foreground=Theme.current().muted_text)
         style.configure("Normal.TLabel", font=FontFactory.body())
-        style.configure("Muted.TLabel", font=FontFactory.small(), foreground=Theme.muted_text)
-        style.configure("Accent.TLabel", font=FontFactory.body(), foreground=Theme.accent)
+        style.configure("Muted.TLabel", font=FontFactory.small(), foreground=Theme.current().muted_text)
+        style.configure("Accent.TLabel", font=FontFactory.body(), foreground=Theme.current().accent)
 
         # Настройка фона окна
-        self.configure(bg=Theme.background)
+        self.configure(bg=Theme.current().background)
 
     def _setup_ui(self) -> None:
         """Инициализация пользовательского интерфейса"""

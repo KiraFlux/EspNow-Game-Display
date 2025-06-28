@@ -20,9 +20,9 @@ class LogView(scrolledtext.ScrolledText):
             master,
             wrap=WORD,
             state="disabled",
-            bg=Theme.secondary_background,
-            fg=Theme.foreground,
-            insertbackground=Theme.foreground,
+            bg=Theme.current().secondary_background,
+            fg=Theme.current().foreground,
+            insertbackground=Theme.current().foreground,
             font=FontFactory.mono(),
             padx=10,
             pady=10
