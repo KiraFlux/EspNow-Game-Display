@@ -3,7 +3,7 @@ from tkinter import HORIZONTAL
 from tkinter import Misc
 from tkinter import ttk
 
-from game.core.entities import Vector2D
+from lina.vector import Vector2D
 
 
 class ResizablePanedWindow(ttk.PanedWindow):

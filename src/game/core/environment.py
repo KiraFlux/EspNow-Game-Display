@@ -8,8 +8,8 @@ from typing import Optional
 from game.core.entities import Board
 from game.core.entities import Mac
 from game.core.entities import Player
-from game.core.entities import Vector2D
 from game.core.log import Logger
+from lina.vector import Vector2D
 
 
 class Environment:

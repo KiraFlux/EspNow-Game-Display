@@ -7,11 +7,11 @@ from typing import Optional
 
 from game.core.entities import Board
 from game.core.entities import Cell
-from game.core.entities import Vector2D
 from game.ui.color import get_team_color
 from game.ui.color import white
 from game.ui.font import FontFactory
 from game.ui.theme import Theme
+from lina.vector import Vector2D
 
 
 class GameBoardView(Canvas):

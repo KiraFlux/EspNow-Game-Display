@@ -2,7 +2,6 @@ from typing import Callable
 from typing import Final
 
 from game.core.entities import Mac
-from game.core.entities import Vector2D
 from game.core.environment import Environment
 from game.core.log import Logger
 from rs.result import Result
