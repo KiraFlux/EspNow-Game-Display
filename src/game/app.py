@@ -2,18 +2,26 @@ import tkinter as tk
 from tkinter import scrolledtext
 from tkinter import ttk
 from typing import Final
+from typing import Optional
 
 from color import get_team_color
 from color import get_text_color
+from game.core.entities import Cell
+from game.core.entities import Vector2D
 from game.core.environment import Environment
+from game.core.log import Logger
 
 
 class TkApp(tk.Tk):
-    def __init__(self, game: Environment):
+    def __init__(self, env: Environment):
         super().__init__()
-        self.game: Final = game
+        self._log = Logger.inst().sub("app")
+
+        self.env: Final = env
+
         self.title("Game Monitor")
         self.geometry("1280x720")
+
         self._setup_ui()
         self._start_updates()
         self._setup_menu()
@@ -78,7 +86,8 @@ class TkApp(tk.Tk):
         self.after(100, self._update_ui)
 
     def _update_players(self):
-        expanded_items = []
+        expanded_items = list()
+
         for item in self.player_tree.get_children():
             if self.player_tree.item(item, "open"):
                 expanded_items.append(item)
@@ -86,8 +95,10 @@ class TkApp(tk.Tk):
         for item in self.player_tree.get_children():
             self.player_tree.delete(item)
 
-        for mac, player in self.game.players.items():
-            mac_str = mac.hex(':')
+        for mac, player in self.env.players.items():
+
+            mac_str = mac.__str__()
+
             item = self.player_tree.insert("", "end", values=(mac_str, player.username, player.team))
 
             if mac_str in expanded_items:
@@ -99,19 +110,26 @@ class TkApp(tk.Tk):
         width = self.canvas.winfo_width()
         height = self.canvas.winfo_height()
 
-        cell_size = min(width // 16, height // 16)
+        cx = self.env.board.size.x
+        cy = self.env.board.size.y
 
-        offset_x = (width - cell_size * 16) // 2
-        offset_y = (height - cell_size * 16) // 2
+        cell_size = min(width // cx, height // cy)
 
-        for x in range(16):
-            for y in range(16):
+        offset_x = (width - cell_size * cx) // 2
+        offset_y = (height - cell_size * cy) // 2
+
+        for x in range(cx):
+            for y in range(cy):
+
                 x1 = offset_x + x * cell_size
                 y1 = offset_y + y * cell_size
                 x2 = x1 + cell_size
                 y2 = y1 + cell_size
 
-                team = self.game.board_state.get((x, y), 0)
+                cell: Optional[Cell] = self.env.board.getState().get(Vector2D(x, y), None)
+
+                team = 0 if cell is None else cell.owner.team
+
                 color = get_team_color(team)
 
                 self.canvas.create_rectangle(
@@ -133,9 +151,8 @@ class TkApp(tk.Tk):
     def _update_logs(self):
         self.log_area.config(state="normal")
 
-        while len(self.game.logs) > 0:
-            log_msg = self.game.logs.pop(0)
-            self.log_area.insert(tk.END, log_msg + "\n")
+        while self._log.available():
+            self.log_area.insert(tk.END, self._log.read() + "\n")
 
         self.log_area.config(state="disabled")
         self.log_area.yview(tk.END)

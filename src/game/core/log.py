@@ -9,11 +9,14 @@ class Logger:
 
     _inst: ClassVar[Optional[Logger]] = None
     _messages: ClassVar = list[str]()
+
     _key = "root"
+    _max_key_length: ClassVar = len(_key)
 
     def write(self, message: str) -> None:
         """Записать сообщение в лог"""
-        self._messages.append(f"[{self._key}]: {message}")
+        key = f"[{self._key}]"
+        self._messages.append(f"{key:{self._max_key_length}}: {message}")
 
     def sub(self, key: str) -> Logger:
         """Создать дочерний лог"""
@@ -38,6 +41,10 @@ class Logger:
         """Прочесть и удалить"""
         return cls._messages.pop(0)
 
+    @classmethod
+    def _updateKeyLength(cls, key: str) -> None:
+        cls._max_key_length = max(len(key) + 2, cls._max_key_length)
+
 
 class SubLogger(Logger):
     """Дочерний лог"""
@@ -45,3 +52,5 @@ class SubLogger(Logger):
     def __init__(self, parent: Logger, key: str) -> None:
         self._parent = parent
         self._key: str = f"{parent._key}::{key}"
+
+        self._updateKeyLength(self._key)

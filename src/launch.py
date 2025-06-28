@@ -1,5 +1,6 @@
 from threading import Thread
 
+from game.app import TkApp
 from game.core.environment import Environment
 from game.core.log import Logger
 from game.core.protocol import GameProtocol
@@ -7,9 +8,7 @@ from serialcmd.impl.stream.serials import SerialStream
 
 
 def _listener_task(protocol: GameProtocol):
-    root = Logger.inst()
-
-    task = root.sub("task")
+    task = Logger.inst().sub("task")
 
     protocol.request_mac(None)
 
@@ -18,9 +17,6 @@ def _listener_task(protocol: GameProtocol):
 
         if result.is_err():
             task.write(result.err().unwrap())
-
-        if root.available():
-            print(root.read())
 
 
 def _main():
@@ -33,8 +29,8 @@ def _main():
     task = Thread(target=_listener_task, args=(listener,), daemon=True)
     task.start()
 
-    # tk_app = TkApp(environment)
-    # tk_app.mainloop()
+    tk_app = TkApp(environment)
+    tk_app.mainloop()
 
     task.join()
 
