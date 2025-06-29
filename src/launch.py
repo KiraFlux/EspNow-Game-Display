@@ -36,7 +36,7 @@ def _main():
 
     for i in range(30):
         mac = Mac(bytes((0, 0, 0, 0, 0, i)))
-        from lina.vector import Vector2D
+        from game.misc.vector import Vector2D
         environment.onPlayerMessage(mac, f"User-{i}")
         environment.onPlayerMove(mac, Vector2D(i % environment.board.size.x, i // environment.board.size.x))
 

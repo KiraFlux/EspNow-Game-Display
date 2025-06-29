@@ -7,13 +7,12 @@ from typing import Optional
 
 from game.core.entities import Board
 from game.core.entities import Cell
-from game.ui.color import Color
-from game.ui.color import black
-from game.ui.color import get_team_color
-from game.ui.color import white
+from game.misc.color import Color
+from game.misc.color import Palette
+from game.misc.util import get_team_color
+from game.misc.vector import Vector2D
 from game.ui.font import FontFactory
 from game.ui.theme import Theme
-from lina.vector import Vector2D
 
 
 class GameBoardView(Canvas):
@@ -83,7 +82,7 @@ class GameBoardView(Canvas):
         if cell is None:
             return
 
-        text_color = white if cell_color.brightness() < 0.9 else black
+        text_color = Palette.white if cell_color.brightness() < 0.9 else Palette.black
 
         self.create_text(
             text_pos.x, text_pos.y,

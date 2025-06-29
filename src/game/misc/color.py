@@ -1,8 +1,4 @@
-from abc import ABC
-from abc import abstractmethod
 from dataclasses import dataclass
-from functools import cache
-from math import sin
 from typing import ClassVar
 from typing import Final
 from typing import Self
@@ -127,84 +123,10 @@ class Color:
         return self.withBright(0.8, 0.9)
 
 
-white: Final = Color.fromHex("#ffffff")
-black: Final = Color.fromHex("#000000")
+class Palette:
+    """Палитра цветов"""
 
-
-class ValueGenerator[T](ABC):
-    """Генератор последовательности значений на основании входа"""
-
-    @abstractmethod
-    def calc(self, x: int) -> T:
-        """Рассчитать значение"""
-
-
-@dataclass(frozen=True, kw_only=True)
-class PhasedAmplitudeGenerator(ValueGenerator[float]):
-    """Фазовый амплитудный генератор значений"""
-
-    scale: float
-    """Масштаб значения"""
-    base: float
-    """Базовое значение"""
-    amplitude: float
-    """Амплитуда значения"""
-
-    def calc(self, x: int) -> float:
-        return self.base + self.amplitude * sin(x * self.scale)
-
-
-@dataclass(frozen=True, kw_only=True)
-class LoopStepGenerator(ValueGenerator[float]):
-    """Закольцованный шагающий генератор"""
-
-    start: float
-    """Начальное значение"""
-    step: float
-    """Шаг"""
-    loop: float
-    """Модуль"""
-
-    def calc(self, x: int) -> float:
-        return (self.start + x * self.step) % self.loop
-
-
-@dataclass(frozen=True, kw_only=True)
-class ColorGenerator(ValueGenerator[Color]):
-    """Генератор цвета"""
-
-    hue: ValueGenerator[float]
-    saturation: ValueGenerator[float]
-    light: ValueGenerator[float]
-
-    def calc(self, x: int) -> Color:
-        return Color.fromHSL(
-            self.hue.calc(x),
-            self.saturation.calc(x),
-            self.light.calc(x)
-        )
-
-
-_team_color_gen = ColorGenerator(
-    hue=LoopStepGenerator(
-        start=15,
-        step=200,
-        loop=360,
-    ),
-    saturation=PhasedAmplitudeGenerator(
-        scale=1.618,
-        base=0.6,
-        amplitude=0.2
-    ),
-    light=PhasedAmplitudeGenerator(
-        scale=0.618,
-        base=0.7,
-        amplitude=0.2
-    )
-)
-
-
-@cache
-def get_team_color(team: int) -> Color:
-    """Генерация уникального цвета для команды"""
-    return _team_color_gen.calc(team)
+    white: Final = Color.fromHex("#ffffff")
+    """Белый"""
+    black: Final = Color.fromHex("#000000")
+    """Черный"""

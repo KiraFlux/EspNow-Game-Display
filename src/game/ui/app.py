@@ -9,10 +9,10 @@ from typing import Final
 from game.core.environment import Environment
 from game.ui.font import FontFactory
 from game.ui.theme import Theme
-from game.ui.widgets.gameboardview import GameBoardView
-from game.ui.widgets.logview import LogView
-from game.ui.widgets.playerlistview import PlayerListView
 from game.ui.widgets.resizablepanedwindow import ResizablePanedWindow
+from game.ui.widgets.view.gameboard import GameBoardView
+from game.ui.widgets.view.log import LogView
+from game.ui.widgets.view.playerlist import PlayerListView
 
 
 class App(Tk):
@@ -22,6 +22,7 @@ class App(Tk):
     def __init__(self, env: Environment) -> None:
         super().__init__()
         self.env: Final = env
+
         self.title("Game Monitor")
         self.geometry("1280x720")
         self._configure_styles()
@@ -65,19 +66,19 @@ class App(Tk):
         main_pane.add(upper_pane)
 
         # Игровое поле
-        game_frame = ttk.LabelFrame(upper_pane, text="ИГРОВОЕ ПОЛЕ")
+        game_frame = ttk.LabelFrame(upper_pane, text="Игровое поле")
         self.board_view = GameBoardView(game_frame, self.env.board)
         self.board_view.pack(fill=BOTH, expand=True, padx=5, pady=5)
         upper_pane.add(game_frame)
 
         # Список игроков
-        player_frame = ttk.LabelFrame(upper_pane, text="ИГРОКИ")
+        player_frame = ttk.LabelFrame(upper_pane, text="Игроки")
         self.player_view = PlayerListView(player_frame)
         self.player_view.pack(fill=BOTH, expand=True, padx=5, pady=5)
         upper_pane.add(player_frame)
 
         # Логи игры
-        log_frame = ttk.LabelFrame(main_pane, text="ЖУРНАЛ СОБЫТИЙ")
+        log_frame = ttk.LabelFrame(main_pane, text="Журнал")
         self.log_view = LogView(log_frame)
         self.log_view.pack(fill=BOTH, expand=True, padx=5, pady=5)
         main_pane.add(log_frame)

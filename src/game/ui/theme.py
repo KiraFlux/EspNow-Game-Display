@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from game.ui.color import Color
+from game.misc.color import Color
 
 
 @dataclass(frozen=True, kw_only=True)
