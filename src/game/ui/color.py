@@ -102,6 +102,22 @@ class Color:
         """Вычислить нормализованную яркость"""
         return self._luma_r * self.red + self._luma_g * self.green + self._luma_b * self.blue
 
+    def withBright(self, k: float) -> Self:
+        """Изменить яркость"""
+        return Color(
+            self.red * k,
+            self.green * k,
+            self.blue * k,
+        )
+
+    def brighter(self) -> Self:
+        """Ярче"""
+        return self.withBright(1.2)
+
+    def darker(self) -> Self:
+        """Тусклее"""
+        return self.withBright(0.8)
+
 
 white: Final = Color.fromHex("#ffffff")
 black: Final = Color.fromHex("#000000")
