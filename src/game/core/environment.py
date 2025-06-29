@@ -9,7 +9,7 @@ from game.core.entities import Board
 from game.core.entities import Mac
 from game.core.entities import Player
 from misc.log import Logger
-from misc.vector import Vector2D
+from lina.vector import Vector2D
 
 
 class Environment:

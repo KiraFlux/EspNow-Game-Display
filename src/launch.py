@@ -1,10 +1,10 @@
 from threading import Thread
 
+from bytelang.impl.stream.serials import SerialStream
 from game.core.environment import Environment
 from game.core.protocol import GameProtocol
-from game.ui.gameapp import GameApp
+from game_ui.impl.app.gameapp import GameApp
 from misc.log import Logger
-from serialcmd.impl.stream.serials import SerialStream
 
 
 def _protocol_task(protocol: GameProtocol):
@@ -36,7 +36,7 @@ def _main():
 
     for i in range(8):
         mac = Mac(bytes((0, 0, 0, 0, 0, i)))
-        from misc.vector import Vector2D
+        from lina.vector import Vector2D
         environment.onPlayerMessage(mac, f"User-{i}")
         environment.onPlayerMove(mac, Vector2D(i % environment.board.size.x, i // environment.board.size.x))
 

@@ -1,10 +1,10 @@
 from rs.result import ok
-from serialcmd.abc.stream import Stream
-from serialcmd.core.protocol import Protocol
-from serialcmd.impl.serializer.primitive import PrimitiveSerializer
-from serialcmd.impl.serializer.primitive import u8
-from serialcmd.impl.serializer.struct_ import StructSerializer
-from serialcmd.impl.stream.mock import VirtualStream
+from bytelang.abc.stream import Stream
+from bytelang.core import Protocol
+from bytelang.impl.serializer import PrimitiveSerializer
+from bytelang.impl.serializer import u8
+from bytelang.impl.serializer import StructSerializer
+from bytelang.impl import VirtualStream
 
 _game_stream, _device_stream = VirtualStream.create_pair()
 
