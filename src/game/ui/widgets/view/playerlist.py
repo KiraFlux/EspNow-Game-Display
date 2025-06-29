@@ -11,7 +11,7 @@ from tkinter import Y
 from tkinter import ttk
 
 from game.core.entities import Player
-from game.ui.theme import Theme
+from ui.core.theme import Theme
 from game.ui.widgets.playercard import PlayerCard
 
 

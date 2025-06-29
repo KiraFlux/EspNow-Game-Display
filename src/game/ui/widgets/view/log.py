@@ -4,9 +4,9 @@ from tkinter import WORD
 from tkinter import scrolledtext
 from typing import ClassVar
 
-from game.core.log import Logger
-from game.ui.font import FontFactory
-from game.ui.theme import Theme
+from misc.log import Logger
+from ui.core.font import FontFactory
+from ui.core.theme import Theme
 
 
 class LogView(scrolledtext.ScrolledText):

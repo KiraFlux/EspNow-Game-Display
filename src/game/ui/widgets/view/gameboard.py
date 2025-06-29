@@ -7,12 +7,12 @@ from typing import Optional
 
 from game.core.entities import Board
 from game.core.entities import Cell
-from game.misc.color import Color
-from game.misc.color import Palette
-from game.misc.util import get_team_color
-from game.misc.vector import Vector2D
-from game.ui.font import FontFactory
-from game.ui.theme import Theme
+from misc.color import Color
+from misc.color import Palette
+from game.util import get_team_color
+from misc.vector import Vector2D
+from ui.core.font import FontFactory
+from ui.core.theme import Theme
 
 
 class GameBoardView(Canvas):

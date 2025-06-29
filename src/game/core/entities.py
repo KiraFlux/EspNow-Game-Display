@@ -7,7 +7,7 @@ from enum import auto
 from typing import Mapping
 from typing import MutableMapping
 
-from game.misc.vector import Vector2D
+from misc.vector import Vector2D
 
 
 @dataclass(frozen=True)

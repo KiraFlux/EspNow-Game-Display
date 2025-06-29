@@ -3,7 +3,7 @@ from typing import Final
 
 from game.core.entities import Mac
 from game.core.environment import Environment
-from game.core.log import Logger
+from misc.log import Logger
 from rs.result import Result
 from rs.result import ok
 from serialcmd.abc.stream import Stream

@@ -3,7 +3,7 @@ from functools import cache
 from game.impl.valuegen.color import ColorGenerator
 from game.impl.valuegen.loopstep import LoopStepGenerator
 from game.impl.valuegen.phasedamplitude import PhasedAmplitudeGenerator
-from game.misc.color import Color
+from misc.color import Color
 
 _team_color_gen = ColorGenerator(
     hue=LoopStepGenerator(
