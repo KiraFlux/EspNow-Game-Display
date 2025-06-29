@@ -22,7 +22,7 @@ class GameBoardView(Canvas):
     def __init__(self, master: Misc, board: Board) -> None:
         super().__init__(
             master,
-            bg=Theme.current().secondary_background,
+            bg=Theme.current().secondary_background.toHex(),
             highlightthickness=0
         )
         self._board = board
@@ -61,7 +61,7 @@ class GameBoardView(Canvas):
 
     def _getCellColor(self, cell: Optional[Cell]) -> Color:
         if cell is None:
-            return Color.fromHex(Theme.current().background)
+            return Theme.current().background
 
         return get_team_color(cell.owner.team)
 
@@ -74,7 +74,7 @@ class GameBoardView(Canvas):
         self.create_rectangle(
             a.x, a.y, b.x, b.y,
             fill=cell_color.toHex(),
-            outline=Theme.current().border,
+            outline=Theme.current().border.toHex(),
             width=1,
         )
 
