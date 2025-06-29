@@ -15,21 +15,21 @@ class Color:
     _rgb_888_max: ClassVar = 255
     """Максимальное значение канала в формате RGB888"""
 
-    _luma_r: ClassVar = 0.2126 / _rgb_888_max
-    _luma_g: ClassVar = 0.7152 / _rgb_888_max
-    _luma_b: ClassVar = 0.0722 / _rgb_888_max
+    _luma_r: ClassVar = 0.2126
+    _luma_g: ClassVar = 0.7152
+    _luma_b: ClassVar = 0.0722
 
-    r: float
+    red: float
     """Компонента красного [0;1]"""
-    g: float
+    green: float
     """Компонента зеленого [0;1]"""
-    b: float
+    blue: float
     """Компонента синего [0;1]"""
 
     def __post_init__(self) -> None:
-        assert 0.0 <= self.r <= 1.0
-        assert 0.0 <= self.g <= 1.0
-        assert 0.0 <= self.b <= 1.0
+        assert 0.0 <= self.red <= 1.0
+        assert 0.0 <= self.green <= 1.0
+        assert 0.0 <= self.blue <= 1.0
 
     # from
 
@@ -86,9 +86,9 @@ class Color:
     def toRGB888(self) -> tuple[int, int, int]:
         """Преобразовать в формат RGB888"""
         return (
-            int(self.r * self._rgb_888_max),
-            int(self.g * self._rgb_888_max),
-            int(self.b * self._rgb_888_max)
+            int(self.red * self._rgb_888_max),
+            int(self.green * self._rgb_888_max),
+            int(self.blue * self._rgb_888_max)
         )
 
     def toHex(self) -> str:
@@ -100,7 +100,7 @@ class Color:
 
     def brightness(self) -> float:
         """Вычислить нормализованную яркость"""
-        return self._luma_r * self.r + self._luma_g * self.g + self._luma_b * self.b
+        return self._luma_r * self.red + self._luma_g * self.green + self._luma_b * self.blue
 
 
 white: Final = Color.fromHex("#ffffff")

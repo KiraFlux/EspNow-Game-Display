@@ -7,6 +7,8 @@ from typing import Optional
 
 from game.core.entities import Board
 from game.core.entities import Cell
+from game.ui.color import Color
+from game.ui.color import black
 from game.ui.color import get_team_color
 from game.ui.color import white
 from game.ui.font import FontFactory
@@ -57,21 +59,21 @@ class GameBoardView(Canvas):
 
                 self._drawCell(cell, cell_size, offset, pos)
 
-    def _getCellColor(self, cell: Optional[Cell]):
+    def _getCellColor(self, cell: Optional[Cell]) -> Color:
         if cell is None:
-            return Theme.current().background
+            return Color.fromHex(Theme.current().background)
 
-        return get_team_color(cell.owner.team).toHex()
+        return get_team_color(cell.owner.team)
 
     def _drawCell(self, cell: Optional[Cell], cell_size: int, offset: Vector2D[int], origin: Vector2D[int]):
-        color = self._getCellColor(cell)
+        cell_color = self._getCellColor(cell)
 
         a = origin * cell_size + offset
         b = a + Vector2D(cell_size, cell_size)
 
         self.create_rectangle(
             a.x, a.y, b.x, b.y,
-            fill=color,
+            fill=cell_color.toHex(),
             outline=Theme.current().border,
             width=1,
         )
@@ -81,9 +83,11 @@ class GameBoardView(Canvas):
         if cell is None:
             return
 
+        text_color = white if cell_color.brightness() < 0.9 else black
+
         self.create_text(
             text_pos.x, text_pos.y,
             text=str(cell.owner.team),
-            fill=white.toHex(),
+            fill=text_color.toHex(),
             font=FontFactory.heading()
         )
