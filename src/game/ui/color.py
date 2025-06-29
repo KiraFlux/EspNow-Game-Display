@@ -2,8 +2,6 @@ from abc import ABC
 from abc import abstractmethod
 from dataclasses import dataclass
 from functools import cache
-from math import degrees
-from math import pi
 from math import sin
 from typing import ClassVar
 from typing import Final
@@ -59,7 +57,7 @@ class Color:
     @classmethod
     def fromHSL(cls, hue: float, saturation: float, lightness: float) -> Self:
         """Создать из формата HSL
-        :param hue: от 0 до 2*pi
+        :param hue: от 0 до 360
         :param saturation: [0;1]
         :param lightness:  [0;1]
         :return:
@@ -69,26 +67,18 @@ class Color:
         x = c * (1 - abs((hue / 60) % 2 - 1))
         m = lightness - c / 2
 
-        hue = degrees(hue)
+        index = int(hue // 60) % 6
 
-        if 0 <= hue < 60:
-            r, g, b = c, x, 0
+        table = (
+            (c, x, 0),
+            (x, c, 0),
+            (0, c, x),
+            (0, x, c),
+            (x, 0, c),
+            (c, 0, x),
+        )
 
-        elif 60 <= hue < 120:
-            r, g, b = x, c, 0
-
-        elif 120 <= hue < 180:
-            r, g, b = 0, c, x
-
-        elif 180 <= hue < 240:
-            r, g, b = 0, x, c
-
-        elif 240 <= hue < 300:
-            r, g, b = x, 0, c
-
-        else:
-            r, g, b = c, 0, x
-
+        r, g, b = table[index]
         return cls(r + m, g + m, b + m)
 
     # to
@@ -173,9 +163,9 @@ class ColorGenerator(ValueGenerator[Color]):
 
 _team_color_gen = ColorGenerator(
     hue=LoopStepGenerator(
-        start=2.38,
-        step=3.88,
-        loop=2 * pi,
+        start=15,
+        step=200,
+        loop=360,
     ),
     saturation=PhasedAmplitudeGenerator(
         scale=1.618,
