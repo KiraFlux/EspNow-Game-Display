@@ -34,7 +34,7 @@ def _main():
 
     from game.core.entities import Mac
 
-    for i in range(10):
+    for i in range(30):
         mac = Mac(bytes((0, 0, 0, 0, 0, i)))
         from lina.vector import Vector2D
         environment.onPlayerMessage(mac, f"User-{i}")

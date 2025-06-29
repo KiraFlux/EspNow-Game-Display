@@ -1,8 +1,10 @@
+from abc import ABC
+from abc import abstractmethod
 from dataclasses import dataclass
 from functools import cache
+from math import degrees
 from math import pi
 from math import sin
-from math import sqrt
 from typing import ClassVar
 from typing import Final
 from typing import Self
@@ -57,7 +59,7 @@ class Color:
     @classmethod
     def fromHSL(cls, hue: float, saturation: float, lightness: float) -> Self:
         """Создать из формата HSL
-        :param hue: от 0 до 360
+        :param hue: от 0 до 2*pi
         :param saturation: [0;1]
         :param lightness:  [0;1]
         :return:
@@ -66,6 +68,8 @@ class Color:
         c = (1 - abs(2 * lightness - 1)) * saturation
         x = c * (1 - abs((hue / 60) % 2 - 1))
         m = lightness - c / 2
+
+        hue = degrees(hue)
 
         if 0 <= hue < 60:
             r, g, b = c, x, 0
@@ -112,32 +116,81 @@ class Color:
 white: Final = Color.fromHex("#ffffff")
 black: Final = Color.fromHex("#000000")
 
-# Константы для генерации цветов
-GOLDEN_RATIO = (1 + sqrt(5)) / 2
-HUE_START = 15  # Начальный оттенок (теплый оранжевый)
-HUE_STEP = 360 / GOLDEN_RATIO  # Шаг оттенка (~222.5°)
-SAT_AMPLITUDE = 0.15  # Размах насыщенности
-SAT_BASE = 0.6  # Базовая насыщенность
-LIGHT_AMPLITUDE = 0.1  # Размах яркости
-LIGHT_BASE = 0.8  # Базовая яркость
+
+class ValueGenerator[T](ABC):
+    """Генератор последовательности значений на основании входа"""
+
+    @abstractmethod
+    def calc(self, x: int) -> T:
+        """Рассчитать значение"""
+
+
+@dataclass(frozen=True, kw_only=True)
+class PhasedAmplitudeGenerator(ValueGenerator[float]):
+    """Фазовый амплитудный генератор значений"""
+
+    scale: float
+    """Масштаб значения"""
+    base: float
+    """Базовое значение"""
+    amplitude: float
+    """Амплитуда значения"""
+
+    def calc(self, x: int) -> float:
+        return self.base + self.amplitude * sin(x * self.scale)
+
+
+@dataclass(frozen=True, kw_only=True)
+class LoopStepGenerator(ValueGenerator[float]):
+    """Закольцованный шагающий генератор"""
+
+    start: float
+    """Начальное значение"""
+    step: float
+    """Шаг"""
+    loop: float
+    """Модуль"""
+
+    def calc(self, x: int) -> float:
+        return (self.start + x * self.step) % self.loop
+
+
+@dataclass(frozen=True, kw_only=True)
+class ColorGenerator(ValueGenerator[Color]):
+    """Генератор цвета"""
+
+    hue: ValueGenerator[float]
+    saturation: ValueGenerator[float]
+    light: ValueGenerator[float]
+
+    def calc(self, x: int) -> Color:
+        return Color.fromHSL(
+            self.hue.calc(x),
+            self.saturation.calc(x),
+            self.light.calc(x)
+        )
+
+
+_team_color_gen = ColorGenerator(
+    hue=LoopStepGenerator(
+        start=2.38,
+        step=3.88,
+        loop=2 * pi,
+    ),
+    saturation=PhasedAmplitudeGenerator(
+        scale=1.618,
+        base=0.6,
+        amplitude=0.2
+    ),
+    light=PhasedAmplitudeGenerator(
+        scale=0.618,
+        base=0.7,
+        amplitude=0.2
+    )
+)
 
 
 @cache
 def get_team_color(team: int) -> Color:
     """Генерация уникального цвета для команды"""
-    # Основной оттенок (золотое сечение)
-    hue = (HUE_START + (team - 1) * HUE_STEP) % 360
-
-    # Вариации насыщенности и яркости с разными фазами
-    sat_phase = (team * 0.618) % (2 * pi)
-    light_phase = (team * 1.618) % (2 * pi)
-
-    # Синусоидальные колебания параметров
-    saturation = SAT_BASE + SAT_AMPLITUDE * sin(sat_phase)
-    lightness = LIGHT_BASE + LIGHT_AMPLITUDE * sin(light_phase)
-
-    # Ограничение диапазонов
-    saturation = max(0.5, min(0.7, saturation))
-    lightness = max(0.75, min(0.85, lightness))
-
-    return Color.fromHSL(hue, saturation, lightness)
+    return _team_color_gen.calc(team)

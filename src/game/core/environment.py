@@ -15,7 +15,7 @@ from lina.vector import Vector2D
 class Environment:
     """Сведения об игре"""
 
-    _board_default_size: ClassVar = Vector2D(12, 8)
+    _board_default_size: ClassVar = Vector2D(6, 6)
     _player_move_default_cooldown_secs: ClassVar = 10.0
 
     def __init__(self):
