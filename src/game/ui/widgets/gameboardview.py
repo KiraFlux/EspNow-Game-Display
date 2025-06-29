@@ -61,7 +61,7 @@ class GameBoardView(Canvas):
         if cell is None:
             return Theme.current().background
 
-        return get_team_color(cell.owner.team).hex()
+        return get_team_color(cell.owner.team).toHex()
 
     def _drawCell(self, cell: Optional[Cell], cell_size: int, offset: Vector2D[int], origin: Vector2D[int]):
         color = self._getCellColor(cell)
@@ -84,6 +84,6 @@ class GameBoardView(Canvas):
         self.create_text(
             text_pos.x, text_pos.y,
             text=str(cell.owner.team),
-            fill=white.hex(),
+            fill=white.toHex(),
             font=FontFactory.heading()
         )
