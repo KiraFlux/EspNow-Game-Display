@@ -34,6 +34,14 @@ class Color:
     # from
 
     @classmethod
+    def gray(cls, grayness: float) -> Self:
+        """
+        Создать серый
+        :param grayness Значение серого [0;1]
+        """
+        return cls(grayness, grayness, grayness)
+
+    @classmethod
     def fromHex(cls, _hex: str) -> Self:
         """Создать цвет на основе HEX строки"""
         assert len(_hex) == 7
@@ -102,21 +110,21 @@ class Color:
         """Вычислить нормализованную яркость"""
         return self._luma_r * self.red + self._luma_g * self.green + self._luma_b * self.blue
 
-    def withBright(self, k: float) -> Self:
+    def withBright(self, k: float, p: float) -> Self:
         """Изменить яркость"""
         return Color(
-            self.red * k,
-            self.green * k,
-            self.blue * k,
+            self.red ** p * k,
+            self.green ** p * k,
+            self.blue ** p * k,
         )
 
     def brighter(self) -> Self:
         """Ярче"""
-        return self.withBright(1.2)
+        return self.withBright(1.6, 2)
 
     def darker(self) -> Self:
         """Тусклее"""
-        return self.withBright(0.8)
+        return self.withBright(0.8, 0.9)
 
 
 white: Final = Color.fromHex("#ffffff")

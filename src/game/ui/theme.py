@@ -9,11 +9,6 @@ from game.ui.color import Color
 class Theme:
     """Тема интерфейса"""
 
-    @classmethod
-    def current(cls) -> Theme:
-        """Получить текущую тему"""
-        return _dark
-
     background: Color
     foreground: Color
     secondary_background: Color
@@ -22,13 +17,33 @@ class Theme:
     card_background: Color
     muted_text: Color
 
+    @classmethod
+    def current(cls) -> Theme:
+        """Получить текущую тему"""
+        return _dark
 
-_dark = Theme(
-    background=Color.fromHex("#0A0A12"),
-    foreground=Color.fromHex("#F0F0FF"),
-    secondary_background=Color.fromHex("#181824"),
-    accent=Color.fromHex("#FF6A00"),
-    border=Color.fromHex("#334466"),
-    card_background=Color.fromHex("#1A1A2A"),
-    muted_text=Color.fromHex("#99AABB"),
-)
+    @classmethod
+    def dark(cls) -> Theme:
+        """Создать тёмную тему"""
+        orange = Color.fromHex("#FF6A00")
+        blue = Color.fromHex("#334466")
+
+        background = Color.gray(0.1)
+        secondary_background = background.brighter()
+        card_background = secondary_background.brighter()
+
+        foreground = Color.gray(0.9)
+        muted_text = foreground.darker()
+
+        return cls(
+            background=background,
+            foreground=foreground,
+            secondary_background=secondary_background,
+            accent=orange,
+            border=blue,
+            card_background=card_background,
+            muted_text=muted_text,
+        )
+
+
+_dark = Theme.dark()

@@ -82,10 +82,6 @@ class App(Tk):
         self.log_view.pack(fill=BOTH, expand=True, padx=5, pady=5)
         main_pane.add(log_frame)
 
-        # Начальные позиции разделителей
-        upper_pane.sashpos(0, self.winfo_width() * 2 // 3)
-        main_pane.sashpos(0, self.winfo_height() * 3 // 4)
-
     def _start_updates(self) -> None:
         """Запустить цикл обновления интерфейса"""
         self.after(self._update_interval_ms, self._update_ui)
