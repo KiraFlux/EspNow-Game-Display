@@ -11,8 +11,8 @@ from game.util import get_team_color
 from lina.vector import Vector2D
 from misc.color import Color
 from misc.color import Palette
-from ui.core.font import FontFactory
-from ui.core.theme import Theme
+from tk_ui.core.font import FontFactory
+from tk_ui.core.theme import Theme
 
 
 class GameBoardView(Canvas):

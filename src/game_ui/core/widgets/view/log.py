@@ -5,8 +5,8 @@ from tkinter import scrolledtext
 from typing import ClassVar
 
 from misc.log import Logger
-from ui.core.font import FontFactory
-from ui.core.theme import Theme
+from tk_ui.core.font import FontFactory
+from tk_ui.core.theme import Theme
 
 
 class LogView(scrolledtext.ScrolledText):

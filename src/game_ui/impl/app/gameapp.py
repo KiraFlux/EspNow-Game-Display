@@ -5,11 +5,11 @@ from tkinter import ttk
 from typing import Final
 
 from game.core.environment import Environment
-from ui.core.widgets.resizablepanedwindow import ResizablePanedWindow
+from tk_ui.core.widgets.resizablepanedwindow import ResizablePanedWindow
 from game_ui.core.widgets.view.gameboard import GameBoardView
 from game_ui.core.widgets.view.log import LogView
 from game_ui.core.widgets.view.playerlist import PlayerListView
-from ui.abc.app import App
+from tk_ui.abc.app import App
 
 
 class GameApp(App):

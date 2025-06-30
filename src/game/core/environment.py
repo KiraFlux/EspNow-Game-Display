@@ -8,15 +8,15 @@ from typing import Optional
 from game.core.entities import Board
 from game.core.entities import Mac
 from game.core.entities import Player
-from misc.log import Logger
 from lina.vector import Vector2D
+from misc.log import Logger
 
 
 class Environment:
     """Сведения об игре"""
 
-    _board_default_size: ClassVar = Vector2D(6, 6)
-    _player_move_default_cooldown_secs: ClassVar = 10.0
+    _board_default_size: ClassVar = Vector2D(12, 8)
+    _player_move_default_cooldown_secs: ClassVar = 5.0
 
     def __init__(self):
         self._log = Logger.inst().sub("env")
@@ -76,7 +76,7 @@ class Environment:
         return f"{player}: Ход {move} выполнен: {result}"
 
     def _registerPlayer(self, username: str) -> Player:
-        p = Player(username=username, team=self._calcPlayerTeam(), last_send_secs=0)
+        p = Player(username=username, team=self._calcPlayerTeam())
 
         self._log.write(f"registered: {p}")
 

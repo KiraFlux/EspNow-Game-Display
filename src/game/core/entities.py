@@ -6,6 +6,7 @@ from enum import StrEnum
 from enum import auto
 from typing import Mapping
 from typing import MutableMapping
+from typing import Optional
 
 from lina.vector import Vector2D
 
@@ -28,8 +29,13 @@ class Player:
     """Сведения об игроке"""
 
     username: str
+    """Отображаемое имя"""
     team: int
-    last_send_secs: float
+    """Команда игрока"""
+    score: int = 0
+    """Счёт"""
+    last_send_secs: float = 0
+    """Время последней отправки"""
 
     def __str__(self) -> str:
         return f"Игрок '{self.username}' (команда: {self.team})"
@@ -40,6 +46,10 @@ class Cell:
     """Ячейка игрового поля"""
 
     owner: Player
+
+    def isFriendly(self, other: Cell) -> bool:
+        """Другая клетка является дружественной?"""
+        return self.owner.team == other.owner.team
 
 
 @dataclass
@@ -69,6 +79,34 @@ class Board:
     def makeMove(self, player: Player, pos: Pos) -> MakeMoveResult:
         """Совершить ход"""
 
-        self._state[pos] = Cell(player)
+        if not (0 <= pos.x < self.size.x) or not (0 <= pos.y < self.size.y):
+            return Board.MakeMoveResult.OutOfBounds
+
+        cell: Optional[Cell] = self._state.get(pos)
+
+        if cell is not None:
+            return Board.MakeMoveResult.CellNotEmpty
+
+        self._state[pos] = cell = Cell(player)
+        player.score += self._calcScore(cell, pos)
 
         return Board.MakeMoveResult.Ok
+
+    def _calcScore(self, cell: Cell, pos: Pos) -> int:
+        dy = Vector2D.new(0, 1)
+        dx = Vector2D.new(1, 0)
+
+        up = self._state.get(pos + dy)
+        down = self._state.get(pos - dy)
+        left = self._state.get(pos + dx)
+        right = self._state.get(pos + dx)
+
+        neighbours = (up, down, left, right)
+
+        if all(i is None for i in neighbours):
+            return 0
+
+        return sum(
+            (1 if cell.isFriendly(i) else -1)
+            for i in neighbours
+        )

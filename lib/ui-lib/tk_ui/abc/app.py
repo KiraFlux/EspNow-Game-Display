@@ -4,8 +4,8 @@ from tkinter import Tk
 from tkinter import ttk
 from typing import ClassVar
 
-from ui.core.font import FontFactory
-from ui.core.theme import Theme
+from tk_ui.core.font import FontFactory
+from tk_ui.core.theme import Theme
 
 
 class App(Tk, ABC):

@@ -11,8 +11,8 @@ from tkinter import Y
 from tkinter import ttk
 
 from game.core.entities import Player
-from ui.core.theme import Theme
 from game_ui.core.widgets.playercard import PlayerCard
+from tk_ui.core.theme import Theme
 
 
 class PlayerListView(ttk.Frame):
@@ -95,4 +95,4 @@ class PlayerListView(ttk.Frame):
                 card.pack(fill=X, pady=4, padx=2)
                 self.player_cards[mac] = card
 
-            self.player_cards[mac].update_player(mac, player.username, player.team)
+            self.player_cards[mac].update_player(mac, player)

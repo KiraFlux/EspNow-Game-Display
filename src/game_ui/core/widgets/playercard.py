@@ -6,6 +6,9 @@ from tkinter import RIGHT
 from tkinter import X
 from tkinter import ttk
 
+from game.core.entities import Mac
+from game.core.entities import Player
+
 
 class PlayerCard(ttk.Frame):
     """Карточка для отображения информации об игроке"""
@@ -42,8 +45,8 @@ class PlayerCard(ttk.Frame):
         )
         self.team_label.pack(side=RIGHT, padx=(5, 0))
 
-    def update_player(self, mac: str, username: str, team: int) -> None:
+    def update_player(self, mac: Mac, player: Player) -> None:
         """Обновить данные игрока"""
         self.mac_label.config(text=f"MAC: {mac}")
-        self.username_label.config(text=username)
-        self.team_label.config(text=f"Команда: {team}")
+        self.username_label.config(text=f"{player.username} ({player.score})")
+        self.team_label.config(text=f"Команда: {player.team}")
