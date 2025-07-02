@@ -9,8 +9,8 @@ from game.core.entities import Board
 from game.core.entities import Cell
 from game.util import get_team_color
 from lina.vector import Vector2D
-from misc.color import Color
-from misc.color import Palette
+from rs.color import Color
+from rs.color import Palette
 from tk_ui.core.font import FontFactory
 from tk_ui.core.theme import Theme
 

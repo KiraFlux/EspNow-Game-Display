@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 from game.abc.valuegen import ValueGenerator
-from misc.color import Color
+from rs.color import Color
 
 
 @dataclass(frozen=True, kw_only=True)

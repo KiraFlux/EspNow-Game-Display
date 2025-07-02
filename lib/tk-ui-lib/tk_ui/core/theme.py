@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from misc.color import Color
+from rs.color import Color
 
 
 @dataclass(frozen=True, kw_only=True)

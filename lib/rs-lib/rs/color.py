@@ -104,6 +104,15 @@ class Color:
             int(self.blue * self._rgba_8888_max)
         )
 
+    def toRGBA8888(self) -> tuple[int, int, int, int]:
+        """Преобразовать в формат RGBA8888"""
+        return (
+            int(self.red * self._rgba_8888_max),
+            int(self.green * self._rgba_8888_max),
+            int(self.blue * self._rgba_8888_max),
+            int(self.alpha * self._rgba_8888_max)
+        )
+
     def toHex(self) -> str:
         """Преобразовать в HEX представление"""
         r, g, b = self.toRGB888()
