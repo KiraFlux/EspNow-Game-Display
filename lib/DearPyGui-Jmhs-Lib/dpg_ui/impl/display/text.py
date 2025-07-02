@@ -22,7 +22,7 @@ class DisplayText(Colored, DpgValuedWidget[str]):
     def _setColorImpl(self, color: Color) -> None:
         self.configure(color=color.toRGBA8888())
 
-    def render(self, parent: Widget) -> None:
+    def register(self, parent: Widget) -> None:
         self._tag = dpg.add_text(
             self._value_default,
             parent=parent.tag(),

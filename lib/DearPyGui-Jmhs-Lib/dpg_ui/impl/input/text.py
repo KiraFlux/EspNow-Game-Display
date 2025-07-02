@@ -19,7 +19,7 @@ class InputText(DpgValuedWidget[str]):
 
     _on_enter: bool = False
 
-    def render(self, parent: Widget) -> None:
+    def register(self, parent: Widget) -> None:
         self._tag = dpg.add_input_text(
             label=self._label,
             default_value=self._value_default,

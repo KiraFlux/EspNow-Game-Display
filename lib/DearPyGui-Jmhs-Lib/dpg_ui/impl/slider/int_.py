@@ -15,7 +15,7 @@ class IntSlider(DpgRangedValuedWidget[int]):
 
     _on_change: Callable[[int], None] = None
 
-    def render(self, parent: Widget) -> None:
+    def register(self, parent: Widget) -> None:
         self._tag = dpg.add_slider_int(
             parent=parent.tag(),
             label=self._label,

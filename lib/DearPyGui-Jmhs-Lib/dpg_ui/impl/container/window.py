@@ -27,17 +27,20 @@ class Window(DpgWidget, Container):
 
     _items: MutableSequence[Widget] = field(init=False, default_factory=list)
 
-    def render(self, parent: Widget) -> None:
+    def register(self, parent: Widget) -> None:
         self._tag = dpg.add_window(
             label=self._label,
             menubar=self._menubar,
             autosize=self._auto_size,
-
         )
 
         for item in self._items:
-            item.render(self)
+            item.register(self)
 
     def add(self, item: Widget) -> Self:
         self._items.append(item)
+
+        if self.isRegistered():
+            pass
+
         return self

@@ -20,7 +20,7 @@ class Button(DpgWidget):
     _small: bool = False
     """Меньший размер кнопки"""
 
-    def render(self, parent: Widget) -> None:
+    def register(self, parent: Widget) -> None:
         self._tag = dpg.add_button(
             label=self._label,
             parent=parent.tag(),
