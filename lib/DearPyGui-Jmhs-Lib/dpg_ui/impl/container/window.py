@@ -1,19 +1,15 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from dataclasses import field
-from typing import MutableSequence
-from typing import Self
 
 import dearpygui.dearpygui as dpg
 
-from dpg_ui.abc.container import Container
 from dpg_ui.abc.widget import Widget
-from dpg_ui.core.dpg.item import DpgWidget
+from dpg_ui.core.dpg.container import DpgContainer
 
 
 @dataclass
-class Window(DpgWidget, Container):
+class Window(DpgContainer):
     """Окно"""
 
     _label: str
@@ -25,8 +21,6 @@ class Window(DpgWidget, Container):
     _auto_size: bool = True
     """Размер окна автоматически подстраивается под виджеты"""
 
-    _items: MutableSequence[Widget] = field(init=False, default_factory=list)
-
     def register(self, parent: Widget) -> None:
         self._tag = dpg.add_window(
             label=self._label,
@@ -34,13 +28,4 @@ class Window(DpgWidget, Container):
             autosize=self._auto_size,
         )
 
-        for item in self._items:
-            item.register(self)
-
-    def add(self, item: Widget) -> Self:
-        self._items.append(item)
-
-        if self.isRegistered():
-            pass
-
-        return self
+        self._registerItems()
