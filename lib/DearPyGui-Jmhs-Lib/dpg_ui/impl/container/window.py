@@ -22,10 +22,8 @@ class Window(DpgContainer):
     """Размер окна автоматически подстраивается под виджеты"""
 
     def register(self, parent: Widget) -> None:
-        self._tag = dpg.add_window(
+        self._onRegister(dpg.add_window(
             label=self._label,
             menubar=self._menubar,
             autosize=self._auto_size,
-        )
-
-        self._registerItems()
+        ))

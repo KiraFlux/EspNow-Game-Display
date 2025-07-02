@@ -18,7 +18,7 @@ class FloatSlider(DpgIntervaledValuedWidget[float]):
     _display_after_comma: int = 2
 
     def register(self, parent: Widget) -> None:
-        self._tag = dpg.add_slider_float(
+        self._onRegister(dpg.add_slider_float(
             parent=parent.tag(),
             label=self._label,
             default_value=self._value_default,
@@ -26,4 +26,4 @@ class FloatSlider(DpgIntervaledValuedWidget[float]):
             format=f"%.{self._display_after_comma}f",
             max_value=self._interval_max,
             min_value=self._interval_min,
-        )
+        ))

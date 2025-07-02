@@ -23,9 +23,9 @@ class DisplayText(Colored, DpgValuedWidget[str]):
         self.configure(color=color.toRGBA8888())
 
     def register(self, parent: Widget) -> None:
-        self._tag = dpg.add_text(
+        self._onRegister(dpg.add_text(
             self._value_default,
             parent=parent.tag(),
             color=self._color.toRGBA8888(),
             bullet=self._bullet,
-        )
+        ))

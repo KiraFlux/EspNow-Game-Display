@@ -6,6 +6,7 @@ from typing import Self
 
 from dpg_ui.abc.container import Container
 from dpg_ui.abc.widget import Widget
+from dpg_ui.core.dpg.item import DpgTag
 from dpg_ui.core.dpg.item import DpgWidget
 
 
@@ -23,6 +24,7 @@ class DpgContainer(DpgWidget, Container, ABC):
 
         return self
 
-    def _registerItems(self) -> None:
+    def _onRegister(self, tag: DpgTag) -> None:
+        super()._onRegister(tag)
         for item in self._items:
             item.register(self)

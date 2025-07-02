@@ -20,10 +20,10 @@ class InputText(DpgValuedWidget[str]):
     _on_enter: bool = False
 
     def register(self, parent: Widget) -> None:
-        self._tag = dpg.add_input_text(
+        self._onRegister(dpg.add_input_text(
             label=self._label,
             default_value=self._value_default,
             parent=parent.tag(),
             callback=None if self._on_change is None else (lambda _: self._on_change(self.getValue())),
             on_enter=self._on_enter
-        )
+        ))

@@ -17,12 +17,18 @@ DpgTag = int | str
 class DpgWidget(Widget[DpgTag], ABC):
     """Виджет системы DPG"""
 
-    _tag: Optional[DpgTag] = field(init=False, default=None)
+    __tag: Optional[DpgTag] = field(init=False, default=None)
     """Тег"""
+
+    def _onRegister(self, tag: DpgTag) -> None:
+        if self.__tag is not None:
+            raise ValueError(f"re registering not allowed: {tag} (exist: {self.tag()}")
+
+        self.__tag = tag
 
     @final
     def tag(self) -> DpgTag:
-        return self._tag
+        return self.__tag
 
     @final
     def configure(self, **kwargs) -> None:
