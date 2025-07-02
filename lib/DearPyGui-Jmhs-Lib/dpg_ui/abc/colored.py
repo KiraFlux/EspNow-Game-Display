@@ -7,7 +7,7 @@ from rs.color import Color
 from rs.color import Palette
 
 
-@dataclass
+@dataclass(kw_only=True)
 class Colored(ABC):
     """Содержит цвет"""
 

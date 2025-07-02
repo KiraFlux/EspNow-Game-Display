@@ -7,14 +7,13 @@ from dataclasses import dataclass
 from dearpygui import dearpygui as dpg
 
 from dpg_ui.abc.colored import Colored
-from dpg_ui.abc.valued import Valued
 from dpg_ui.abc.widget import Widget
-from dpg_ui.core.dpg.item import DpgWidget
+from dpg_ui.core.dpg.valued import DpgValuedWidget
 from rs.color import Color
 
 
 @dataclass
-class Text(Colored, Valued[str], DpgWidget):
+class DisplayText(Colored, DpgValuedWidget[str]):
     """Текст"""
 
     _bullet: bool = False
@@ -23,15 +22,9 @@ class Text(Colored, Valued[str], DpgWidget):
     def _setColorImpl(self, color: Color) -> None:
         self.configure(color=color.toRGBA8888())
 
-    def getValue(self) -> str:
-        return dpg.get_value(self.tag())
-
-    def setValue(self, value: str) -> None:
-        dpg.set_value(self.tag(), value)
-
     def render(self, parent: Widget) -> None:
         self._tag = dpg.add_text(
-            self._default_value,
+            self._value_default,
             parent=parent.tag(),
             color=self._color.toRGBA8888(),
             bullet=self._bullet,

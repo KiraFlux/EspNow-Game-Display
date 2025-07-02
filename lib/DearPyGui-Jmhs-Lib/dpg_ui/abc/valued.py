@@ -5,11 +5,11 @@ from abc import abstractmethod
 from dataclasses import dataclass
 
 
-@dataclass
+@dataclass(kw_only=True)
 class Valued[T](ABC):
     """Содержит значение"""
 
-    _default_value: T
+    _value_default: T = None
     """Значение по умолчанию"""
 
     @abstractmethod
