@@ -1,0 +1,1 @@
+DpgTag = int | str

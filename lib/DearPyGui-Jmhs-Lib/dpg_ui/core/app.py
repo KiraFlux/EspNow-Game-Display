@@ -4,6 +4,7 @@ from typing import final
 
 from dearpygui import dearpygui as dpg
 
+from dpg_ui.core.dpg.font import DpgFont
 from dpg_ui.impl.container.window import Window
 
 
@@ -21,6 +22,9 @@ class App:
         y = (1080 - height) // 2
 
         dpg.create_context()
+
+        DpgFont.load()
+
         dpg.create_viewport(
             title=title,
             width=width,

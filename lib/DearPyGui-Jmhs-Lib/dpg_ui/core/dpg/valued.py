@@ -5,7 +5,7 @@ from typing import final
 from dearpygui import dearpygui as dpg
 
 from dpg_ui.abc.valued import Valued
-from dpg_ui.core.dpg.item import DpgWidget
+from dpg_ui.core.dpg.widget import DpgWidget
 
 
 @dataclass

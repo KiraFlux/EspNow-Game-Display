@@ -30,5 +30,5 @@ class Tab(DpgContainer):
         self._onRegister(dpg.add_tab(
             parent=parent.tag(),
             label=self._label,
-            closable=self._closable
+            closable=self._closable,
         ))

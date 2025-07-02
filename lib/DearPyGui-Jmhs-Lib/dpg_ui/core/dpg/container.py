@@ -6,8 +6,8 @@ from typing import Self
 
 from dpg_ui.abc.container import Container
 from dpg_ui.abc.widget import Widget
-from dpg_ui.core.dpg.item import DpgTag
-from dpg_ui.core.dpg.item import DpgWidget
+from dpg_ui.core.dpg.tag import DpgTag
+from dpg_ui.core.dpg.widget import DpgWidget
 
 
 @dataclass

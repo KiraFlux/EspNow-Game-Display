@@ -2,10 +2,13 @@ from __future__ import annotations
 
 from abc import ABC
 from abc import abstractmethod
-from typing import final
+from typing import Self
+
+from dpg_ui.abc.font import Font
+from dpg_ui.abc.item import Item
 
 
-class Widget[T](ABC):
+class Widget[T](Item[T], ABC):
     """Виджет"""
 
     @abstractmethod
@@ -13,10 +16,5 @@ class Widget[T](ABC):
         """Зарегистрировать элемент"""
 
     @abstractmethod
-    def tag(self) -> T:
-        """Получить тег виджета"""
-
-    @final
-    def isRegistered(self) -> bool:
-        """Виджет уже зарегистрирован"""
-        return self.tag() is not None
+    def setFont(self, font: Font) -> Self:
+        """Установить шрифт"""
