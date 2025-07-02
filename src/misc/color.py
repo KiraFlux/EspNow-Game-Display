@@ -8,7 +8,7 @@ from typing import Self
 class Color:
     """Цвет"""
 
-    _rgb_888_max: ClassVar = 255
+    _rgba_8888_max: ClassVar = 255
     """Максимальное значение канала в формате RGB888"""
 
     _luma_r: ClassVar = 0.2126
@@ -21,11 +21,14 @@ class Color:
     """Компонента зеленого [0;1]"""
     blue: float
     """Компонента синего [0;1]"""
+    alpha: float
+    """Компонента прозрачности [0;1]"""
 
     def __post_init__(self) -> None:
         assert 0.0 <= self.red <= 1.0
         assert 0.0 <= self.green <= 1.0
         assert 0.0 <= self.blue <= 1.0
+        assert 0.0 <= self.alpha <= 1.0
 
     # from
 
@@ -35,7 +38,7 @@ class Color:
         Создать серый
         :param grayness Значение серого [0;1]
         """
-        return cls(grayness, grayness, grayness)
+        return cls(grayness, grayness, grayness, 1.0)
 
     @classmethod
     def fromHex(cls, _hex: str) -> Self:
@@ -52,10 +55,16 @@ class Color:
     @classmethod
     def fromRGB888(cls, r: int, g: int, b: int) -> Self:
         """Создать из формата RGB888"""
+        return cls.fromRGBA8888(r, g, b, cls._rgba_8888_max)
+
+    @classmethod
+    def fromRGBA8888(cls, r: int, g: int, b: int, a: int) -> Self:
+        """Создать из формата RGBA888"""
         return cls(
-            r / cls._rgb_888_max,
-            g / cls._rgb_888_max,
-            b / cls._rgb_888_max,
+            r / cls._rgba_8888_max,
+            g / cls._rgba_8888_max,
+            b / cls._rgba_8888_max,
+            a / cls._rgba_8888_max,
         )
 
     @classmethod
@@ -90,9 +99,9 @@ class Color:
     def toRGB888(self) -> tuple[int, int, int]:
         """Преобразовать в формат RGB888"""
         return (
-            int(self.red * self._rgb_888_max),
-            int(self.green * self._rgb_888_max),
-            int(self.blue * self._rgb_888_max)
+            int(self.red * self._rgba_8888_max),
+            int(self.green * self._rgba_8888_max),
+            int(self.blue * self._rgba_8888_max)
         )
 
     def toHex(self) -> str:
@@ -105,22 +114,6 @@ class Color:
     def brightness(self) -> float:
         """Вычислить нормализованную яркость"""
         return self._luma_r * self.red + self._luma_g * self.green + self._luma_b * self.blue
-
-    def withBright(self, k: float, p: float) -> Self:
-        """Изменить яркость"""
-        return Color(
-            self.red ** p * k,
-            self.green ** p * k,
-            self.blue ** p * k,
-        )
-
-    def brighter(self) -> Self:
-        """Ярче"""
-        return self.withBright(1.6, 2)
-
-    def darker(self) -> Self:
-        """Тусклее"""
-        return self.withBright(0.8, 0.9)
 
 
 class Palette:
