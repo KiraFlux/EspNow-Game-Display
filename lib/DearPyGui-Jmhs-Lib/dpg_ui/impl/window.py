@@ -5,7 +5,7 @@ from dataclasses import field
 from typing import MutableSequence
 from typing import Self
 
-from dearpygui import dearpygui as dpg
+import dearpygui.dearpygui as dpg
 
 from dpg_ui.abc.container import Container
 from dpg_ui.abc.widget import Widget

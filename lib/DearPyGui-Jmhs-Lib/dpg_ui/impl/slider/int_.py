@@ -10,20 +10,17 @@ from dpg_ui.core.dpg.ranged import DpgRangedValuedWidget
 
 
 @dataclass
-class FloatSlider(DpgRangedValuedWidget[float]):
+class IntSlider(DpgRangedValuedWidget[int]):
     _label: str
 
-    _on_change: Callable[[float], None] = None
-
-    _display_after_comma: int = 2
+    _on_change: Callable[[int], None] = None
 
     def render(self, parent: Widget) -> None:
-        self._tag = dpg.add_slider_float(
+        self._tag = dpg.add_slider_int(
             parent=parent.tag(),
             label=self._label,
             default_value=self._value_default,
             callback=None if self._on_change is None else lambda _: self._on_change(self.getValue()),
-            format=f"%.{self._display_after_comma}f",
             max_value=self._range_max,
-            min_value=self._range_min,
+            min_value=self._range_min
         )
