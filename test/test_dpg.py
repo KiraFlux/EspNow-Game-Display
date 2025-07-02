@@ -3,6 +3,7 @@ from __future__ import annotations
 from dpg_ui.core.app import App
 from dpg_ui.impl.button import Button
 from dpg_ui.impl.container.box import HBox
+from dpg_ui.impl.container.detail import Detail
 from dpg_ui.impl.container.tab import Tab
 from dpg_ui.impl.container.tab import TabBar
 from dpg_ui.impl.container.window import Window
@@ -22,21 +23,25 @@ tab_bar = (
     )
     .add(
         Tab("2")
-        .add(InputText("string", print))
-        .add(FloatSlider("float", _value_default=0.123, _interval_max=10, _interval_min=-10))
+        .add(
+            Detail("wowow")
+            .add(InputText("string", print))
+            .add(FloatSlider("float", _value_default=0.123, _interval_max=10, _interval_min=-10))
+        )
     )
 )
 
 __w = (
     Window("Text window")
-    .add(
-        HBox()
-        .add(tab_bar)
-        .add(DisplayText(_value_default="text"))
-    )
+    .add(tab_bar)
+
     .add(
         Window("SHoo", _auto_size=False)
-        .add(Button("lol"))
+        .add(
+            HBox()
+            .add(Button("lol"))
+            .add(DisplayText(_value_default="text"))
+        )
     )
 )
 
