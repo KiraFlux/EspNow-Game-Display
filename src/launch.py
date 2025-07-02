@@ -3,7 +3,7 @@ from threading import Thread
 from bytelang.impl.stream.serials import SerialStream
 from game.core.environment import Environment
 from game.core.protocol import GameProtocol
-from game_ui.impl.app.gameapp import GameApp
+from tk_game_ui.impl.app.gameapp import GameApp
 from misc.log import Logger
 
 
