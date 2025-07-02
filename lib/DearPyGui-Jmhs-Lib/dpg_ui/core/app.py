@@ -1,18 +1,19 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from typing import final
 
 from dearpygui import dearpygui as dpg
 
 from dpg_ui.impl.container.window import Window
 
 
-@dataclass(frozen=True)
 class App:
     """Приложение Dear Py Gui"""
 
-    window: Window
+    def __init__(self, window: Window):
+        self.window = window
 
+    @final
     def run(self, title: str, width: int, height: int) -> None:
         """Запуск"""
 

@@ -12,7 +12,7 @@ from tk_game_ui.core.widgets.view.playerlist import PlayerListView
 from tk_ui.abc.app import App
 
 
-class GameApp(App):
+class TkGameApp(App):
     """Главное окно приложения"""
 
     def __init__(self, env: Environment) -> None:

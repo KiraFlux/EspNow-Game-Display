@@ -1,9 +1,9 @@
 from threading import Thread
 
 from bytelang.impl.stream.serials import SerialStream
+from dpg_game_ui.app import GameApp
 from game.core.environment import Environment
 from game.core.protocol import GameProtocol
-from tk_game_ui.impl.app.gameapp import GameApp
 from misc.log import Logger
 
 
@@ -40,10 +40,7 @@ def _main():
         environment.onPlayerMessage(mac, f"User-{i}")
         environment.onPlayerMove(mac, Vector2D(i % environment.board.size.x, i // environment.board.size.x))
 
-    app = GameApp(environment)
-    app.setSize(1280, 720)
-    app.title("Игра")
-    app.mainloop()
+    GameApp(environment).run("title", 1280, 720)
 
 
 if __name__ == "__main__":
