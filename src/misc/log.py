@@ -1,48 +1,87 @@
 from __future__ import annotations
 
-from sys import stdout
+from typing import Callable
 from typing import ClassVar
+from typing import Iterable
+from typing import MutableMapping
+from typing import MutableSequence
 from typing import Optional
-from typing import TextIO
+from typing import Sequence
 
 
 class Logger:
     """Иерархический лог"""
 
     _inst: ClassVar[Optional[Logger]] = None
-    out: TextIO = stdout
+    _logs: ClassVar[MutableMapping[str, MutableSequence[tuple[int, str]]]] = dict()
+    _writes: ClassVar = 0
 
-    _key = "root"
-    _max_key_length: ClassVar = len(_key)
+    on_write: ClassVar[Optional[Callable[[], None]]] = None
+    on_create: ClassVar[Optional[Callable[[str], None]]] = None
+
+    def __init__(self, key: str) -> None:
+        super().__init__()
+        self._key = key
+
+        if self.on_create is not None:
+            self.on_create(key)
+
+        self.write("created")
 
     def write(self, message: str) -> None:
         """Записать сообщение в лог"""
-        key = f"[{self._key}]"
-        self.out.write(f"{key:{self._max_key_length}}: {message}\n")
+
+        out = self._logs.get(self._key)
+
+        if out is None:
+            out = self._logs[self._key] = list()
+
+        out.append((
+            self._writes,
+            message
+        ))
+
+        self.__class__._writes += 1
+
+        if self.on_write is not None:
+            self.on_write()
 
     def sub(self, key: str) -> Logger:
         """Создать дочерний лог"""
-        return SubLogger(self, key)
+        return Logger(f"{self._key}::{key}")
 
     @classmethod
     def inst(cls) -> Logger:
         """Возвращает экземпляр родительского лога"""
 
         if cls._inst is None:
-            cls._inst = Logger()
+            cls._inst = Logger("root")
 
         return cls._inst
 
     @classmethod
-    def _updateKeyLength(cls, key: str) -> None:
-        cls._max_key_length = max(len(key) + 2, cls._max_key_length)
+    def getKeys(cls) -> Sequence[str]:
+        """Получить все доступные ключи журнала"""
+        return tuple(cls._logs.keys())
 
+    @classmethod
+    def getByFilter(cls, keys: Sequence[str]) -> Iterable[str]:
+        """Получить логи"""
+        if len(keys) == 0:
+            return ()
 
-class SubLogger(Logger):
-    """Дочерний лог"""
+        entries = (
+            (index, key, msg)
+            for key in keys
+            if key in cls._logs
+            for index, msg in cls._logs[key]
+        )
 
-    def __init__(self, parent: Logger, key: str) -> None:
-        self._parent = parent
-        self._key: str = f"{parent._key}::{key}"
+        padding = max(map(len, keys)) + 2
 
-        self._updateKeyLength(self._key)
+        sorted_entries = sorted(entries, key=lambda x: x[0])
+
+        return (
+            f"{f"[{key}]":{padding}} {msg}"
+            for _, key, msg in sorted_entries
+        )

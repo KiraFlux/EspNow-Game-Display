@@ -1,23 +1,11 @@
-from io import StringIO
-from typing import Callable
-from typing import Final
-
 from dpg_ui.core.custom import CustomWidget
+from dpg_ui.impl.checkbox import CheckBox
+from dpg_ui.impl.container.box import HBox
+from dpg_ui.impl.container.box import VBox
 from dpg_ui.impl.container.window import ChildWindow
 from dpg_ui.impl.text import Text
 from game.res import Assets
 from misc.log import Logger
-
-
-class TextIOEchoAdapter(StringIO):
-
-    def __init__(self, on_write: Callable[[str], None]) -> None:
-        super().__init__()
-        self.on_write: Final = on_write
-
-    def write(self, __s):
-        self.on_write(__s)
-        return super().write(__s)
 
 
 class LogView(CustomWidget):
@@ -25,11 +13,62 @@ class LogView(CustomWidget):
 
     def __init__(self) -> None:
         self._text = Text().withFont(Assets.log_font)
-        super().__init__(ChildWindow().add(self._text))
 
-        self._messages = list[str]()
-        Logger.out = TextIOEchoAdapter(self._addMessage)
+        self._filters_container = VBox()
 
-    def _addMessage(self, message: str) -> None:
-        self._messages.append(message)
-        self._text.setValue('\n'.join(self._messages))
+        self._active_filters = set[str]()
+
+        base = (
+            ChildWindow(
+                background=True
+            )
+            .add(
+                HBox()
+                .add(
+                    VBox()
+                    .add(Text(_value_default="Фильтры").withFont(Assets.label_font))
+                    .add(
+                        ChildWindow(
+                            width=300,
+                            resizable_x=True,
+                        )
+                        .add(
+                            self._filters_container
+                        )
+                    )
+                )
+                .add(
+                    ChildWindow()
+                    .add(self._text)
+                )
+            )
+        )
+
+        super().__init__(base)
+
+        Logger.on_write = self._onMessage
+        Logger.on_create = self._createLogWidget
+
+        for key in Logger.getKeys():
+            self._createLogWidget(key)
+
+    def _createLogWidget(self, key: str) -> None:
+        self._filters_container.add(
+            CheckBox(
+                key,
+                on_change=lambda state: self._onKeyWidget(key, state),
+                _value_default=False,
+            )
+        )
+
+    def _onKeyWidget(self, key: str, value: bool) -> None:
+        if value:
+            self._active_filters.add(key)
+
+        else:
+            self._active_filters.remove(key)
+
+        self._onMessage()
+
+    def _onMessage(self) -> None:
+        self._text.setValue('\n'.join(Logger.getByFilter(tuple(self._active_filters))))

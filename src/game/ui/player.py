@@ -6,6 +6,7 @@ from dpg_ui.impl.container.window import ChildWindow
 from dpg_ui.impl.text import Text
 from game.core.entities.player import Player
 from game.core.entities.player import PlayerRegistry
+from game.res import Assets
 from misc.observer import Observer
 from rs.color import Color
 
@@ -17,7 +18,7 @@ class PlayerCard(CustomWidget, Observer[Player]):
         player.addObserver(self)
         self.username = TextInput("Игрок", player.rename, default=player.username)
         self.team = IntInput(label="Команда", _interval_min=0, _value_default=player.team)
-        self.mac = Text(_value_default=f"MAC: {player.mac}", _color=Color.gray(0.7))
+        self.mac = Text(_value_default=f"MAC: {player.mac}", _color=Color.gray(0.75))
         self.score = IntDisplay(_value_default=player.score, label="Счёт")
 
         base = (
@@ -53,7 +54,7 @@ class PlayerList(CustomWidget, Observer[Player]):
                 resizable_x=True,
                 background=True
             )
-            .add(Text(_value_default="ИГРОКИ"))
+            .add(Text(_value_default="ИГРОКИ").withFont(Assets.label_font))
             .add(self.player_list)
         )
 
