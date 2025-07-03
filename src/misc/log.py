@@ -67,8 +67,16 @@ class Logger:
     @classmethod
     def getByFilter(cls, keys: Sequence[str]) -> Iterable[str]:
         """Получить логи"""
+
         if len(keys) == 0:
             return ()
+
+        def _get_message_deco_strategy() -> Callable[[str, str], str]:
+            if len(keys) == 1:
+                return lambda _, m: m
+
+            padding = max(map(len, keys)) + 2
+            return lambda __k, __m: f"{f"[{__k}]":{padding}} {__m}"
 
         entries = (
             (index, key, msg)
@@ -77,11 +85,11 @@ class Logger:
             for index, msg in cls._logs[key]
         )
 
-        padding = max(map(len, keys)) + 2
+        message_decorator = _get_message_deco_strategy()
 
         sorted_entries = sorted(entries, key=lambda x: x[0])
 
         return (
-            f"{f"[{key}]":{padding}} {msg}"
-            for _, key, msg in sorted_entries
+            message_decorator(key, message)
+            for _, key, message in sorted_entries
         )
