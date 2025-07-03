@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
 from dataclasses import field
 from pathlib import Path
@@ -30,6 +32,15 @@ class DpgFont(Font[DpgTag]):
 
     def __post_init__(self) -> None:
         self._fonts.append(self)
+
+    @final
+    def sub(self, *, size: int) -> DpgFont:
+        """Создать подтип шрифта"""
+        return DpgFont(
+            self._source,
+            size,
+            self._smooth
+        )
 
     @classmethod
     def load(cls) -> None:

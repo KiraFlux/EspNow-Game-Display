@@ -8,6 +8,9 @@ from typing import Optional
 from game.core.entities import Board
 from game.core.entities import Mac
 from game.core.entities import PlayerRegistry
+from game.impl.valuegen.color import ColorGenerator
+from game.impl.valuegen.loopstep import LoopStepGenerator
+from game.impl.valuegen.phasedamplitude import PhasedAmplitudeGenerator
 from lina.vector import Vector2D
 from misc.log import Logger
 
@@ -22,16 +25,30 @@ class Environment:
         self._log = Logger.inst().sub("env")
 
         self.host_mac: Optional[Mac] = None
-        """Адрес узла хоста"""
 
         self.player_registry: Final = PlayerRegistry(self._log)
-        """Реестр игроков"""
 
         self.board: Final = Board(self._board_default_size)
-        """Игровое поле"""
 
         self.player_move_cooldown_secs = self._player_move_default_cooldown_secs
-        """Тайм-аут отправки ходов"""
+
+        self.team_color_generator: Final = ColorGenerator(
+            hue=LoopStepGenerator(
+                start=15,
+                step=200,
+                loop=360,
+            ),
+            saturation=PhasedAmplitudeGenerator(
+                scale=1.618,
+                base=0.6,
+                amplitude=0.2
+            ),
+            light=PhasedAmplitudeGenerator(
+                scale=0.618,
+                base=0.7,
+                amplitude=0.2
+            )
+        )
 
     def onPlayerMessage(self, mac: Mac, message: str) -> str:
         """Обработчик сообщения от игрока"""

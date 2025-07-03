@@ -5,6 +5,7 @@ from typing import Final
 from dpg_ui.core.custom import CustomWidget
 from dpg_ui.impl.container.window import ChildWindow
 from dpg_ui.impl.text import Text
+from game.res import Assets
 from misc.log import Logger
 
 
@@ -23,7 +24,7 @@ class LogView(CustomWidget):
     """Лог"""
 
     def __init__(self) -> None:
-        self._text = Text()
+        self._text = Text().withFont(Assets.log_font)
         super().__init__(ChildWindow().add(self._text))
 
         self._messages = list[str]()
