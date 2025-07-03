@@ -4,7 +4,6 @@ from game.core.entities.board import Board
 from game.core.entities.player import Player
 from lina.vector import Vector2D
 from misc.log import Logger
-from misc.observer import InlineObserver
 
 
 class BoardView(CustomWidget):
@@ -13,8 +12,8 @@ class BoardView(CustomWidget):
     def __init__(self, board: Board) -> None:
         self._log = Logger.inst().sub("game-board-view")
 
-        board.size_subject.addObserver(InlineObserver(self._onBoardResized))
-        board.move_subject.addObserver(InlineObserver(lambda args: self._onPlayerMove(*args)))
+        board.size_subject.addObserver(self._onBoardResized)
+        board.move_subject.addObserver(lambda args: self._onPlayerMove(*args))
 
         base = ChildWindow()
         super().__init__(base)

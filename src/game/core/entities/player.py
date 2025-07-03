@@ -80,6 +80,12 @@ class PlayerRegistry(Subject[Player]):
 
         return p
 
+    def unregister(self, mac: Mac) -> None:
+        """Удалить пользователя"""
+        p = self._players.pop(mac)
+
+        self._log.write(f"unregistered: {p}")
+
     def getPlayers(self) -> Mapping[Mac, Player]:
         """Получить игроков"""
         return self._players
