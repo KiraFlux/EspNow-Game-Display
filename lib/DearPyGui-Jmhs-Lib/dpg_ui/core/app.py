@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from threading import Thread
+from typing import Sequence
 from typing import final
 
 from dearpygui import dearpygui as dpg
@@ -15,7 +17,7 @@ class App:
         self.window = window
 
     @final
-    def run(self, title: str, width: int, height: int) -> None:
+    def run(self, title: str, width: int, height: int, *, user_tasks: Sequence[Thread] = ()) -> None:
         """Запуск"""
 
         x = (1920 - width) // 2
@@ -39,6 +41,10 @@ class App:
         dpg.set_primary_window(self.window.tag(), True)
 
         dpg.setup_dearpygui()
+
+        for task in user_tasks:
+            task.start()
+
         dpg.show_viewport()
         dpg.start_dearpygui()
         dpg.destroy_context()

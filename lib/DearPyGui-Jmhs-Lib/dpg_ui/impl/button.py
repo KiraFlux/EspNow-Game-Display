@@ -4,7 +4,7 @@ from typing import Callable
 from dearpygui import dearpygui as dpg
 
 from dpg_ui.abc.widget import Widget
-from dpg_ui.core.dpg.item import DpgWidget
+from dpg_ui.core.dpg.widget import DpgWidget
 
 
 @dataclass
@@ -21,9 +21,9 @@ class Button(DpgWidget):
     """Меньший размер кнопки"""
 
     def register(self, parent: Widget) -> None:
-        self._tag = dpg.add_button(
+        self._onRegister(dpg.add_button(
             label=self._label,
             parent=parent.tag(),
             small=self._small,
             callback=None if self._on_click is None else (lambda _: self._on_click())
-        )
+        ))

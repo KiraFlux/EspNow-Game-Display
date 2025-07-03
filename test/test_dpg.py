@@ -8,7 +8,7 @@ from dpg_ui.impl.container.tab import Tab
 from dpg_ui.impl.container.tab import TabBar
 from dpg_ui.impl.container.window import Window
 from dpg_ui.impl.text import Text
-from dpg_ui.impl.boxes.text import _TextBox
+from dpg_ui.impl.boxes_.text import _TextBox
 from dpg_ui.impl.slider.float_ import FloatSlider
 
 tab_bar = (

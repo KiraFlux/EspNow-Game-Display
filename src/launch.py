@@ -1,4 +1,5 @@
 from threading import Thread
+from typing import Callable
 
 from bytelang.impl.stream.serials import SerialStream
 from dpg_game_ui.app import GameApp
@@ -7,6 +8,10 @@ from game.core.environment import Environment
 from game.core.protocol import GameProtocol
 from lina.vector import Vector2D
 from misc.log import Logger
+
+
+def _start_task[T](f: Callable[[T], None], arg: T) -> Thread:
+    return Thread(target=f, args=(arg,), daemon=True)
 
 
 def _protocol_task(protocol: GameProtocol):
@@ -21,12 +26,24 @@ def _protocol_task(protocol: GameProtocol):
             log.write(result.err().unwrap())
 
 
-def _launch_protocol(env: Environment):
+def _create_protocol_task(env: Environment) -> Thread:
     stream = SerialStream("COM8", 115200)
     protocol = GameProtocol(stream, env)
 
-    task = Thread(target=_protocol_task, args=(protocol,), daemon=True)
-    task.start()
+    return _start_task(_protocol_task, protocol)
+
+
+def _agents_task(env: Environment):
+    for i in range(30):
+        mac = Mac(bytes((0, 0, 0, 0, 0, i)))
+        env.onPlayerMessage(mac, f"User-{i}")
+        env.onPlayerMove(mac, Vector2D(i % env.board.size.x, i // env.board.size.x))
+
+    return
+
+
+def _create_agents_task(env: Environment):
+    return _start_task(_agents_task, env)
 
 
 def _main():
@@ -34,12 +51,9 @@ def _main():
 
     # _launch_protocol(environment)
 
-    for i in range(8):
-        mac = Mac(bytes((0, 0, 0, 0, 0, i)))
-        environment.onPlayerMessage(mac, f"User-{i}")
-        environment.onPlayerMove(mac, Vector2D(i % environment.board.size.x, i // environment.board.size.x))
-
-    GameApp(environment).run("Game", 1280, 720)
+    GameApp(environment).run("Game", 1280, 720, user_tasks=(
+        _create_agents_task(environment),
+    ))
 
 
 if __name__ == "__main__":

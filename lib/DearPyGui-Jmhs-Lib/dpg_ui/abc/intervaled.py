@@ -1,6 +1,7 @@
 from abc import ABC
 from abc import abstractmethod
 from dataclasses import dataclass
+from typing import Optional
 from typing import final
 
 
@@ -11,10 +12,10 @@ class Intervaled[T](ABC):
     type Interval = tuple[T, T]
     """Диапазон значений"""
 
-    _interval_max: T
+    _interval_max: Optional[T] = None
     """Максимальное допустимое значение"""
 
-    _interval_min: T
+    _interval_min: Optional[T] = None
     """Минимальное допустимое значение"""
 
     @abstractmethod
@@ -26,12 +27,12 @@ class Intervaled[T](ABC):
         """При изменении максимального значения"""
 
     @final
-    def getIntervalMax(self) -> T:
+    def getIntervalMax(self) -> Optional[T]:
         """Получить максимальное допустимое значение"""
         return self._interval_max
 
     @final
-    def getIntervalMin(self) -> T:
+    def getIntervalMin(self) -> Optional[T]:
         """Получить минимальное допустимое значение"""
         return self._interval_min
 

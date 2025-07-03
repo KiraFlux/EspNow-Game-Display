@@ -7,7 +7,7 @@ from typing import Optional
 
 from game.core.entities import Board
 from game.core.entities import Mac
-from game.core.entities import Player
+from game.core.entities import PlayerRegistry
 from lina.vector import Vector2D
 from misc.log import Logger
 
@@ -23,10 +23,13 @@ class Environment:
 
         self.host_mac: Optional[Mac] = None
         """Адрес узла хоста"""
-        self.players: Final = dict[Mac, Player]()
-        """Игроки"""
+
+        self.player_registry: Final = PlayerRegistry(self._log)
+        """Реестр игроков"""
+
         self.board: Final = Board(self._board_default_size)
         """Игровое поле"""
+
         self.player_move_cooldown_secs = self._player_move_default_cooldown_secs
         """Тайм-аут отправки ходов"""
 
@@ -34,17 +37,16 @@ class Environment:
         """Обработчик сообщения от игрока"""
         self._log.write(f"got player message from {mac} : '{message}'")
 
-        player = self.players.get(mac)
+        player = self.player_registry.getPlayers().get(mac)
 
         if player is None:
-            player = self.players[mac] = self._registerPlayer(message)
-
-            self._log.write(f"register: {player}")
+            self.player_registry.register(mac, message)
             return f"{mac} Зарегистрирован как '{player}'"
 
         else:
             old_name = player.username
-            player.username = message
+
+            player.rename(message)
 
             self._log.write(f"rename: {player}")
             return f"{mac} переименован: ({old_name} -> {player.username})"
@@ -53,7 +55,7 @@ class Environment:
         """Обработчик хода игрока"""
         self._log.write(f"Получен ход от {mac}: '{move}'")
 
-        player = self.players.get(mac)
+        player = self.player_registry.getPlayers().get(mac)
 
         if player is None:
             self._log.write(f"Ход {move} от {mac} отклонён (незарегистрированный клиент)")
@@ -74,13 +76,3 @@ class Environment:
 
         self._log.write(f"{mac} ход {move}: {result}")
         return f"{player}: Ход {move} выполнен: {result}"
-
-    def _registerPlayer(self, username: str) -> Player:
-        p = Player(username=username, team=self._calcPlayerTeam())
-
-        self._log.write(f"registered: {p}")
-
-        return p
-
-    def _calcPlayerTeam(self):
-        return len(self.players) + 1

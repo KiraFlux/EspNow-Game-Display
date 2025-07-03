@@ -1,11 +1,6 @@
 from typing import Callable
 from typing import Final
 
-from game.core.entities import Mac
-from game.core.environment import Environment
-from misc.log import Logger
-from rs.result import Result
-from rs.result import ok
 from bytelang.abc.stream import Stream
 from bytelang.core.protocol import Protocol
 from bytelang.impl.serializer.array_ import ArraySerializer
@@ -16,6 +11,13 @@ from bytelang.impl.serializer.primitive import u8
 from bytelang.impl.serializer.struct_ import StructSerializer
 from bytelang.impl.serializer.void import VoidSerializer
 from bytelang.impl.stream.byte import ByteBufferInputStream
+from bytelang.impl.stream.byte import ByteBufferOutputStream
+from game.core.entities import Mac
+from game.core.environment import Environment
+from lina.vector import Vector2D
+from misc.log import Logger
+from rs.result import Result
+from rs.result import ok
 
 type Ins[T] = Callable[[T], Result[None, str]]
 

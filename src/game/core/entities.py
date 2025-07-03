@@ -9,6 +9,8 @@ from typing import MutableMapping
 from typing import Optional
 
 from lina.vector import Vector2D
+from misc.log import Logger
+from misc.observer import Subject
 
 
 @dataclass(frozen=True)
@@ -28,6 +30,8 @@ class Mac:
 class Player:
     """Сведения об игроке"""
 
+    mac: Mac
+    """MAC адрес"""
     username: str
     """Отображаемое имя"""
     team: int
@@ -37,8 +41,44 @@ class Player:
     last_send_secs: float = 0
     """Время последней отправки"""
 
+    def rename(self, new_username: str) -> None:
+        """Переименовать игрока"""
+        self.username = new_username
+
     def __str__(self) -> str:
         return f"Игрок '{self.username}' (команда: {self.team})"
+
+
+class PlayerRegistry(Subject[Player]):
+    """Список игроков"""
+
+    def __init__(self, log: Logger) -> None:
+        super().__init__()
+        self._log = log.sub("player-registry")
+        self._players = dict[Mac, Player]()
+
+    def register(self, mac: Mac, username: str) -> Player:
+        """Зарегистрировать игрока"""
+
+        p = Player(
+            mac=mac,
+            username=username,
+            team=self._calcPlayerTeam(),
+        )
+
+        self._players[mac] = p
+        self._log.write(f"registered: {p}")
+
+        self.notifyObservers(p)
+
+        return p
+
+    def getPlayers(self) -> Mapping[Mac, Player]:
+        """Получить игроков"""
+        return self._players
+
+    def _calcPlayerTeam(self):
+        return len(self._players) + 1
 
 
 @dataclass(frozen=True)
@@ -109,4 +149,5 @@ class Board:
         return sum(
             (1 if cell.isFriendly(i) else -1)
             for i in neighbours
+            if i is not None
         )

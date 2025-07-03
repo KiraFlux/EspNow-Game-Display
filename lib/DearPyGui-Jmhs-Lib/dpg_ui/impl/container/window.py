@@ -34,11 +34,14 @@ class ChildWindow(DpgContainer):
     """Дочернее очно"""
 
     # Основные параметры
-    width: int = 0
-    height: int = 0
+    width: int = None
+    height: int = None
 
     resizable_x: bool = False
     resizable_y: bool = False
+
+    auto_size_x: bool = False
+    auto_size_y: bool = False
 
     # Внешний вид
     border: bool = True
@@ -60,10 +63,16 @@ class ChildWindow(DpgContainer):
             resizable_y=self.resizable_y,
             no_scrollbar=not self.scrollable_y,
             horizontal_scrollbar=self.scrollable_x,
+            autosize_x=self.auto_size_x,
+            autosize_y=self.auto_size_y
         ))
 
-        if self.width > 0:
+        if self.width is not None:
             self.configure(width=self.width)
+        elif self.auto_size_x:
+            self.configure(width=-1)
 
-        if self.height > 0:
+        if self.height is not None:
             self.configure(height=self.height)
+        elif self.auto_size_y:
+            self.configure(height=-1)
