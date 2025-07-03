@@ -14,8 +14,14 @@ class DpgValuedWidget[T](DpgWidget, Valued[T], ABC):
 
     @final
     def getValue(self) -> T:
-        return dpg.get_value(self.tag())
+        if self.isRegistered():
+            return dpg.get_value(self.tag())
+
+        return self._value_default
 
     @final
     def setValue(self, value: T) -> None:
-        dpg.set_value(self.tag(), value)
+        if self.isRegistered():
+            dpg.set_value(self.tag(), value)
+        else:
+            self._value_default = value

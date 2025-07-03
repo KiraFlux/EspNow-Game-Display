@@ -38,12 +38,12 @@ class App:
         # noinspection PyTypeChecker
         self.window.register(None)
 
+        for task in user_tasks:
+            task.start()
+
         dpg.set_primary_window(self.window.tag(), True)
 
         dpg.setup_dearpygui()
-
-        for task in user_tasks:
-            task.start()
 
         dpg.show_viewport()
         dpg.start_dearpygui()

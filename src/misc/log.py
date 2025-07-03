@@ -20,11 +20,9 @@ class Logger:
     on_create: ClassVar = Subject()
 
     def __init__(self, key: str) -> None:
-        super().__init__()
         self._key = key
 
-        if self.on_create is not None:
-            self.on_create.notifyObservers(key)
+        self.on_create.notifyObservers(key)
 
         self.write("created")
 
@@ -43,8 +41,7 @@ class Logger:
 
         self.__class__._writes += 1
 
-        if self.on_write is not None:
-            self.on_write.notifyObservers(None)
+        self.on_write.notifyObservers(None)
 
     @classmethod
     def getKeys(cls) -> Sequence[str]:

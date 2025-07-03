@@ -15,7 +15,7 @@ from lina.vector import Vector2D
 from misc.log import Logger
 
 
-def _start_task[T](f: Callable[[T], None], arg: T) -> Thread:
+def _create_task[T](f: Callable[[T], None], arg: T) -> Thread:
     return Thread(target=f, args=(arg,), daemon=True)
 
 
@@ -35,7 +35,7 @@ def _create_protocol_task(env: Environment) -> Thread:
     stream = SerialStream("COM8", 115200)
     protocol = GameProtocol(stream, env)
 
-    return _start_task(_protocol_task, protocol)
+    return _create_task(_protocol_task, protocol)
 
 
 def _agents_task(env: Environment):
@@ -53,7 +53,7 @@ def _agents_task(env: Environment):
 
 
 def _create_agents_task(env: Environment):
-    return _start_task(_agents_task, env)
+    return _create_task(_agents_task, env)
 
 
 def _main():
@@ -82,12 +82,11 @@ def _main():
         )
     )
 
-    environment = Environment(rules)
+    env = Environment(rules)
 
-    # _launch_protocol(environment)
-
-    GameApp(environment).run("Game", 1280, 720, user_tasks=(
-        _create_agents_task(environment),
+    GameApp(env).run("Game", 1280, 720, user_tasks=(
+        _create_agents_task(env),
+        # _create_protocol_task(env)
     ))
 
 
