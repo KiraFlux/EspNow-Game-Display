@@ -5,9 +5,9 @@ from typing import ClassVar
 from typing import Final
 from typing import Optional
 
-from game.core.entities import Board
-from game.core.entities import Mac
-from game.core.entities import PlayerRegistry
+from game.core.entities.board import Board
+from game.core.entities.mac import Mac
+from game.core.entities.player import PlayerRegistry
 from game.impl.valuegen.color import ColorGenerator
 from game.impl.valuegen.loopstep import LoopStepGenerator
 from game.impl.valuegen.phasedamplitude import PhasedAmplitudeGenerator

@@ -12,7 +12,7 @@ from bytelang.impl.serializer.struct_ import StructSerializer
 from bytelang.impl.serializer.void import VoidSerializer
 from bytelang.impl.stream.byte import ByteBufferInputStream
 from bytelang.impl.stream.byte import ByteBufferOutputStream
-from game.core.entities import Mac
+from game.core.entities.mac import Mac
 from game.core.environment import Environment
 from lina.vector import Vector2D
 from misc.log import Logger

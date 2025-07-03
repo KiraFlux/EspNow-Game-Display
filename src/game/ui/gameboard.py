@@ -1,6 +1,6 @@
 from dpg_ui.core.custom import CustomWidget
 from dpg_ui.impl.container.window import ChildWindow
-from game.core.entities import Board
+from game.core.entities.board import Board
 
 
 class GameBoardView(CustomWidget):

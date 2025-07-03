@@ -3,7 +3,7 @@ from typing import Callable
 
 from bytelang.impl.stream.serials import SerialStream
 from game.ui.app import GameApp
-from game.core.entities import Mac
+from game.core.entities.mac import Mac
 from game.core.environment import Environment
 from game.core.protocol import GameProtocol
 from misc.log import Logger

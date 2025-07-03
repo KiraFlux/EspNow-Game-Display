@@ -8,10 +8,10 @@ from dpg_ui.impl.container.window import Window
 from dpg_ui.impl.text import Text
 from game.core.environment import Environment
 from game.res import Assets
+from game.ui.controlpanel import ControlPanel
 from game.ui.gameboard import GameBoardView
 from game.ui.logview import LogView
 from game.ui.player import PlayerList
-from game.ui.settings import SettingsPanel
 from rs.color import Color
 
 
@@ -32,7 +32,7 @@ class GameApp(App):
                     .add(
                         HBox()
                         .add(TextDisplay("Хост", default="00-11-22-33-44-55", width=300).withFont(Assets.label_font))
-                        .add(Text(_value_default="Sigma 3000 GAME", _color=Color.fromHex('#ffaa88')).withFont(Assets.title_font))
+                        .add(Text(_value_default="GAME", _color=Color.fromHex('#aaff88')).withFont(Assets.title_font))
                     )
 
                     .add(
@@ -48,13 +48,13 @@ class GameApp(App):
         )
 
         settings_tab = (
-            Tab("Настройки")
-            .add(SettingsPanel(env))
+            Tab("Панель управления")
+            .add(ControlPanel(env))
         )
 
         self.window.add(
             TabBar()
             .add(game_tab)
-            .add(logs_tab)
             .add(settings_tab)
+            .add(logs_tab)
         )
