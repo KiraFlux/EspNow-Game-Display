@@ -10,6 +10,7 @@ from game.core.entities.player import PlayerRegistry
 from game.core.entities.rules import GameRules
 from lina.vector import Vector2D
 from misc.log import Logger
+from misc.observer import Subject
 
 
 class Environment:
@@ -20,11 +21,22 @@ class Environment:
 
         self.rules: Final = rules
 
-        self.host_mac: Optional[Mac] = None
+        self._host_mac: Optional[Mac] = None
+        self.host_mac_subject: Final[Subject[Mac]] = Subject()
 
         self.player_registry: Final = PlayerRegistry()
 
         self.board: Final = Board(Vector2D(12, 8), self.rules.score)
+
+    @property
+    def host_mac(self) -> Mac:
+        """MAC адрес хоста"""
+        return self._host_mac
+
+    @host_mac.setter
+    def host_mac(self, mac: Mac) -> None:
+        self._host_mac = mac
+        self.host_mac_subject.notifyObservers(self._host_mac)
 
     def onPlayerMessage(self, mac: Mac, message: str) -> str:
         """Обработчик сообщения от игрока"""
