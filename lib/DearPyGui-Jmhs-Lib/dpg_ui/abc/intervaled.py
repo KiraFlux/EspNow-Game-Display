@@ -12,10 +12,10 @@ class Intervaled[T](ABC):
     type Interval = tuple[T, T]
     """Диапазон значений"""
 
-    _interval_max: Optional[T] = None
+    _interval_max: Optional[T]
     """Максимальное допустимое значение"""
 
-    _interval_min: Optional[T] = None
+    _interval_min: Optional[T]
     """Минимальное допустимое значение"""
 
     @abstractmethod

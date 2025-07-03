@@ -9,7 +9,7 @@ from dataclasses import dataclass
 class Valued[T](ABC):
     """Содержит значение"""
 
-    _value_default: T = None
+    _value_default: T
     """Значение по умолчанию"""
 
     @abstractmethod

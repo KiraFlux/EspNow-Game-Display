@@ -3,10 +3,12 @@ from __future__ import annotations
 from dataclasses import dataclass
 from enum import StrEnum
 from enum import auto
+from typing import Final
 from typing import Mapping
 from typing import Optional
 
 from game.core.entities.player import Player
+from game.core.entities.rules import ScoreRules
 from lina.vector import Vector2D
 from misc.observer import Subject
 
@@ -28,9 +30,12 @@ type Pos = Vector2D[int]
 class Board:
     """Сведения об игровом поле"""
 
-    def __init__(self, size: Pos) -> None:
+    def __init__(self, size: Pos, score_rules: ScoreRules) -> None:
+        self._score_rules: Final = score_rules
+
         self._size = size
         self._state = dict[Pos, Cell]()
+
         self.size_subject: Subject[Pos] = Subject()
         self.move_subject: Subject[tuple[Player, Pos]] = Subject()
 
@@ -75,21 +80,24 @@ class Board:
         return Board.MakeMoveResult.Ok
 
     def _calcScore(self, cell: Cell, pos: Pos) -> int:
-        dy = Vector2D.new(0, 1)
-        dx = Vector2D.new(1, 0)
+        dy = Vector2D(0, 1)
+        dx = Vector2D(1, 0)
 
-        up = self._state.get(pos + dy)
-        down = self._state.get(pos - dy)
-        left = self._state.get(pos + dx)
-        right = self._state.get(pos + dx)
+        lookup = (
+            (pos + dx),
+            (pos - dx),
+            (pos + dy),
+            (pos - dy),
+        )
 
-        neighbours = (up, down, left, right)
-
-        if all(i is None for i in neighbours):
-            return 0
+        neighbours = map(self._state.get, lookup)
 
         return sum(
-            (1 if cell.isFriendly(i) else -1)
+            (
+                self._score_rules.friend_cell
+                if cell.isFriendly(i) else
+                self._score_rules.enemy_cell
+            )
             for i in neighbours
             if i is not None
         )

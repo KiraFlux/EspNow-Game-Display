@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from functools import cache
 
 
 @dataclass(frozen=True)
@@ -10,12 +9,6 @@ class Vector2D[T]:
 
     x: T
     y: T
-
-    @classmethod
-    @cache
-    def new(cls, x: T, y: T):
-        """Кешированное создание экземпляра"""
-        return cls(x, y)
 
     def __add__(self, other: Vector2D[T]):
         return Vector2D(self.x + other.x, self.y + other.y)

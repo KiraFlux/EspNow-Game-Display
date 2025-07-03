@@ -20,7 +20,7 @@ class BoardView(CustomWidget):
         super().__init__(base)
 
     def _onBoardResized(self, new_size: Vector2D[int]) -> None:
-        self._log.write(f"board resized: {new_size}")
+        self._log.write(f"Доска перестроена: {new_size}")
 
     def _onPlayerMove(self, player: Player, position: Vector2D[int]):
-        self._log.write(f"player moved: {player} {position}")
+        self._log.write(f"Отображен ход игрока '{player}' на позиции {position}")

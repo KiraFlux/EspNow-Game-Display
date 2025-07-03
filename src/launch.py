@@ -3,8 +3,13 @@ from typing import Callable
 
 from bytelang.impl.stream.serials import SerialStream
 from game.core.entities.mac import Mac
+from game.core.entities.rules import GameRules
+from game.core.entities.rules import ScoreRules
 from game.core.environment import Environment
 from game.core.protocol import GameProtocol
+from game.impl.valuegen.color import ColorGenerator
+from game.impl.valuegen.loopstep import LoopStepGenerator
+from game.impl.valuegen.phasedamplitude import PhasedAmplitudeGenerator
 from game.ui.app import GameApp
 from lina.vector import Vector2D
 from misc.log import Logger
@@ -52,7 +57,32 @@ def _create_agents_task(env: Environment):
 
 
 def _main():
-    environment = Environment()
+    rules = GameRules(
+        score=ScoreRules(
+            friend_cell=25,
+            enemy_cell=-50
+        ),
+        player_move_cooldown_secs=2.0,
+        team_color_generator=ColorGenerator(
+            hue=LoopStepGenerator(
+                start=15,
+                step=200,
+                loop=360,
+            ),
+            saturation=PhasedAmplitudeGenerator(
+                scale=1.618,
+                base=0.6,
+                amplitude=0.2
+            ),
+            light=PhasedAmplitudeGenerator(
+                scale=0.618,
+                base=0.7,
+                amplitude=0.2
+            )
+        )
+    )
+
+    environment = Environment(rules)
 
     # _launch_protocol(environment)
 

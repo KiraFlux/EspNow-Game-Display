@@ -14,9 +14,9 @@ class LogView(CustomWidget):
     def __init__(self) -> None:
         self._text = Text().withFont(Assets.log_font)
 
-        self._filters_container = VBox()
+        self._channels = VBox()
 
-        self._active_filters = set[str]()
+        self._active_channels = set[str]()
 
         base = (
             ChildWindow(
@@ -26,14 +26,14 @@ class LogView(CustomWidget):
                 HBox()
                 .add(
                     VBox()
-                    .add(Text("Фильтры").withFont(Assets.label_font))
+                    .add(Text("Каналы").withFont(Assets.label_font))
                     .add(
                         ChildWindow(
                             width=300,
                             resizable_x=True,
                         )
                         .add(
-                            self._filters_container
+                            self._channels
                         )
                     )
                 )
@@ -53,7 +53,7 @@ class LogView(CustomWidget):
             self._createLogWidget(key)
 
     def _createLogWidget(self, key: str) -> None:
-        self._filters_container.add(
+        self._channels.add(
             CheckBox(
                 key,
                 on_change=lambda state: self._onKeyWidget(key, state),
@@ -63,12 +63,12 @@ class LogView(CustomWidget):
 
     def _onKeyWidget(self, key: str, value: bool) -> None:
         if value:
-            self._active_filters.add(key)
+            self._active_channels.add(key)
 
         else:
-            self._active_filters.remove(key)
+            self._active_channels.remove(key)
 
         self._onMessage()
 
     def _onMessage(self) -> None:
-        self._text.setValue('\n'.join(Logger.getByFilter(tuple(self._active_filters))))
+        self._text.setValue('\n'.join(Logger.getByFilter(tuple(self._active_channels))))

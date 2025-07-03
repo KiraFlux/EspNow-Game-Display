@@ -1,16 +1,13 @@
 from __future__ import annotations
 
 import time
-from typing import ClassVar
 from typing import Final
 from typing import Optional
 
 from game.core.entities.board import Board
 from game.core.entities.mac import Mac
 from game.core.entities.player import PlayerRegistry
-from game.impl.valuegen.color import ColorGenerator
-from game.impl.valuegen.loopstep import LoopStepGenerator
-from game.impl.valuegen.phasedamplitude import PhasedAmplitudeGenerator
+from game.core.entities.rules import GameRules
 from lina.vector import Vector2D
 from misc.log import Logger
 
@@ -18,37 +15,16 @@ from misc.log import Logger
 class Environment:
     """Сведения об игре"""
 
-    _board_default_size: ClassVar = Vector2D(12, 8)
-    _player_move_default_cooldown_secs: ClassVar = 5.0
-
-    def __init__(self):
+    def __init__(self, rules: GameRules):
         self._log = Logger.inst().sub("env")
+
+        self.rules: Final = rules
 
         self.host_mac: Optional[Mac] = None
 
         self.player_registry: Final = PlayerRegistry(self._log)
 
-        self.board: Final = Board(self._board_default_size)
-
-        self.player_move_cooldown_secs = self._player_move_default_cooldown_secs
-
-        self.team_color_generator: Final = ColorGenerator(
-            hue=LoopStepGenerator(
-                start=15,
-                step=200,
-                loop=360,
-            ),
-            saturation=PhasedAmplitudeGenerator(
-                scale=1.618,
-                base=0.6,
-                amplitude=0.2
-            ),
-            light=PhasedAmplitudeGenerator(
-                scale=0.618,
-                base=0.7,
-                amplitude=0.2
-            )
-        )
+        self.board: Final = Board(Vector2D(12, 8), self.rules.score)
 
     def onPlayerMessage(self, mac: Mac, message: str) -> str:
         """Обработчик сообщения от игрока"""
@@ -82,8 +58,8 @@ class Environment:
 
         time_since_last_move = now - player.last_send_secs
 
-        if time_since_last_move < self.player_move_cooldown_secs:
-            remaining_secs = self.player_move_cooldown_secs - time_since_last_move
+        if time_since_last_move < self.rules.player_move_cooldown_secs:
+            remaining_secs = self.rules.player_move_cooldown_secs - time_since_last_move
             self._log.write(f"Ход {move} от {mac} отклонён (кулдаун: {remaining_secs:.1f} сек)")
             return f"{player}: Подождите ещё {remaining_secs:.1f} сек"
 

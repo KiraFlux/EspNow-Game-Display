@@ -160,4 +160,6 @@ def IntDisplay(
         step_fast=None,
         _value_default=default,
         label=label,
+        _interval_min=-1000,
+        _interval_max=1000
     )
