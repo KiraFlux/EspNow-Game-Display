@@ -59,9 +59,9 @@ class Player(Subject['Player']):
 class PlayerRegistry(Subject[Player]):
     """Список игроков"""
 
-    def __init__(self, log: Logger) -> None:
+    def __init__(self) -> None:
         super().__init__()
-        self._log = log.sub("player-registry")
+        self._log = Logger("player-registry")
         self._players = dict[Mac, Player]()
 
     def register(self, mac: Mac, username: str) -> Player:

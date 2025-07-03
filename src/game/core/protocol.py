@@ -43,8 +43,8 @@ class GameProtocol(Protocol):
     def __init__(self, stream: Stream, env: Environment) -> None:
         super().__init__(stream, u8, u8)
 
-        self._log = Logger.inst().sub("protocol")
-        self._esp_log = self._log.sub("esp")
+        self._log = Logger("protocol")
+        self._esp_log = Logger("device")
 
         self.env: Final = env
 

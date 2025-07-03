@@ -5,26 +5,26 @@ from typing import ClassVar
 from typing import Iterable
 from typing import MutableMapping
 from typing import MutableSequence
-from typing import Optional
 from typing import Sequence
+
+from misc.observer import Subject
 
 
 class Logger:
     """Иерархический лог"""
 
-    _inst: ClassVar[Optional[Logger]] = None
     _logs: ClassVar[MutableMapping[str, MutableSequence[tuple[int, str]]]] = dict()
     _writes: ClassVar = 0
 
-    on_write: ClassVar[Optional[Callable[[], None]]] = None
-    on_create: ClassVar[Optional[Callable[[str], None]]] = None
+    on_write: ClassVar = Subject()
+    on_create: ClassVar = Subject()
 
     def __init__(self, key: str) -> None:
         super().__init__()
         self._key = key
 
         if self.on_create is not None:
-            self.on_create(key)
+            self.on_create.notifyObservers(key)
 
         self.write("created")
 
@@ -44,20 +44,7 @@ class Logger:
         self.__class__._writes += 1
 
         if self.on_write is not None:
-            self.on_write()
-
-    def sub(self, key: str) -> Logger:
-        """Создать дочерний лог"""
-        return Logger(f"{self._key}::{key}")
-
-    @classmethod
-    def inst(cls) -> Logger:
-        """Возвращает экземпляр родительского лога"""
-
-        if cls._inst is None:
-            cls._inst = Logger("root")
-
-        return cls._inst
+            self.on_write.notifyObservers(None)
 
     @classmethod
     def getKeys(cls) -> Sequence[str]:

@@ -20,7 +20,7 @@ def _start_task[T](f: Callable[[T], None], arg: T) -> Thread:
 
 
 def _protocol_task(protocol: GameProtocol):
-    log = Logger.inst().sub("task")
+    log = Logger("protocol-task")
 
     protocol.request_mac(None)
 

@@ -16,13 +16,13 @@ class Environment:
     """Сведения об игре"""
 
     def __init__(self, rules: GameRules):
-        self._log = Logger.inst().sub("env")
+        self._log = Logger("env")
 
         self.rules: Final = rules
 
         self.host_mac: Optional[Mac] = None
 
-        self.player_registry: Final = PlayerRegistry(self._log)
+        self.player_registry: Final = PlayerRegistry()
 
         self.board: Final = Board(Vector2D(12, 8), self.rules.score)
 

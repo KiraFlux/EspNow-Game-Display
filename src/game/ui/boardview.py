@@ -10,7 +10,7 @@ class BoardView(CustomWidget):
     """Визуализация игрового поля"""
 
     def __init__(self, board: Board) -> None:
-        self._log = Logger.inst().sub("game-board-view")
+        self._log = Logger("game-board-view")
 
         board.size_subject.addObserver(self._onBoardResized)
         board.move_subject.addObserver(lambda args: self._onPlayerMove(*args))

@@ -46,8 +46,8 @@ class LogView(CustomWidget):
 
         super().__init__(base)
 
-        Logger.on_write = self._onMessage
-        Logger.on_create = self._createLogWidget
+        Logger.on_write.addObserver(lambda _: self._onMessage())
+        Logger.on_create.addObserver(self._createLogWidget)
 
         for key in Logger.getKeys():
             self._createLogWidget(key)
