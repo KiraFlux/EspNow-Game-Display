@@ -2,11 +2,10 @@ from threading import Thread
 from typing import Callable
 
 from bytelang.impl.stream.serials import SerialStream
-from dpg_game_ui.app import GameApp
+from game.ui.app import GameApp
 from game.core.entities import Mac
 from game.core.environment import Environment
 from game.core.protocol import GameProtocol
-from lina.vector import Vector2D
 from misc.log import Logger
 
 
@@ -37,7 +36,12 @@ def _agents_task(env: Environment):
     for i in range(30):
         mac = Mac(bytes((0, 0, 0, 0, 0, i)))
         env.onPlayerMessage(mac, f"User-{i}")
-        env.onPlayerMove(mac, Vector2D(i % env.board.size.x, i // env.board.size.x))
+
+        # env.onPlayerMove(mac, Vector2D(i % env.board.size.x, i // env.board.size.x))
+
+    # for i in range(10):
+    #     env.onPlayerMessage(Mac(bytes((0, 0, 0, 0, 0, 0))), f"Cool_Name_{i}")
+    #     sleep(1)
 
     return
 

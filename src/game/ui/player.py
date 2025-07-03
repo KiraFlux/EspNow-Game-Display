@@ -9,10 +9,11 @@ from misc.observer import Observer
 from rs.color import Color
 
 
-class StartupPlayerCard(CustomWidget):
-    """Карточка игрока перед стартом игры"""
+class PlayerCard(CustomWidget, Observer[Player]):
+    """Карточка игрока"""
 
     def __init__(self, player: Player):
+        player.addObserver(self)
         self.username = TextInput("username", player.rename, default=player.username)
         self.team = IntInput(label="Команда", _interval_min=0, _value_default=player.team)
         self.mac = Text(_value_default=f"MAC: {player.mac}", _color=Color.gray(0.7))
@@ -28,6 +29,10 @@ class StartupPlayerCard(CustomWidget):
         )
 
         super().__init__(base)
+
+    def update(self, value: Player) -> None:
+        self.username.setValue(value.username)
+        self.team.setValue(value.team)
 
 
 class PlayerList(CustomWidget, Observer[Player]):
@@ -51,4 +56,4 @@ class PlayerList(CustomWidget, Observer[Player]):
         super().__init__(base)
 
     def update(self, value: Player) -> None:
-        self.player_list.add(StartupPlayerCard(value))
+        self.player_list.add(PlayerCard(value))

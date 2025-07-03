@@ -1,9 +1,6 @@
 from pathlib import Path
 from typing import ClassVar
 
-from dpg_game_ui.gameboard import GameBoardView
-from dpg_game_ui.logview import LogView
-from dpg_game_ui.player import PlayerList
 from dpg_ui.core.app import App
 from dpg_ui.core.dpg.font import DpgFont
 from dpg_ui.impl.boxes import TextDisplay
@@ -14,6 +11,10 @@ from dpg_ui.impl.container.tab import TabBar
 from dpg_ui.impl.container.window import Window
 from dpg_ui.impl.text import Text
 from game.core.environment import Environment
+from game.ui.gameboard import GameBoardView
+from game.ui.logview import LogView
+from game.ui.player import PlayerList
+from game.ui.settings import SettingsPanel
 from rs.color import Color
 
 
@@ -55,8 +56,14 @@ class GameApp(App):
             .add(LogView())
         )
 
+        settings_tab = (
+            Tab("Настройки")
+            .add(SettingsPanel())
+        )
+
         self.window.add(
             TabBar()
             .add(game_tab)
             .add(logs_tab)
+            .add(settings_tab)
         )
