@@ -66,23 +66,35 @@ class DrawList(DpgWidget):
 
 
 @dataclass
-class _Options:
+class _HasBasicColor:
+    color: Color = field(kw_only=True, default=Color.white())
+    """Цвет"""
+
+
+@dataclass
+class _HasBorderThickness:
+    border_thickness: float = field(kw_only=True, default=1.0)
+    """Толщина контура"""
+
+
+@dataclass
+class _CommonFigureOptions:
     fill_color: Color = field(kw_only=True, default=Color.none())
     """Цвет заливки фигуры"""
 
     border_color: Color = field(kw_only=True, default=Color.white())
     """Цвет контура"""
 
-    border_thickness: float = field(kw_only=True, default=1.0)
-    """Толщина контура"""
-
 
 @dataclass
-class Rectangle(DpgFigure, _Options):
+class Rectangle(DpgFigure, _CommonFigureOptions, _HasBorderThickness):
     """Прямоугольник"""
 
-    p1: Vector2D[float]
-    p2: Vector2D[float]
+    min_pos: Vector2D[float]
+    """Меньшая вершина"""
+
+    max_pos: Vector2D[float]
+    """Большая вершина"""
 
     rounding: float = field(kw_only=True, default=0)
     """Скругление в пикселях"""
@@ -96,17 +108,20 @@ class Rectangle(DpgFigure, _Options):
             thickness=self.border_thickness,
 
             rounding=self.rounding,
-            pmin=self.p1.toTuple(),
-            pmax=self.p2.toTuple(),
+            pmin=self.min_pos.toTuple(),
+            pmax=self.max_pos.toTuple(),
         )
 
 
 @dataclass
-class Circle(DpgFigure, _Options):
+class Circle(DpgFigure, _CommonFigureOptions, _HasBorderThickness):
     """Окружность"""
 
     center: Vector2D[float]
+    """Центр"""
+
     radius: float
+    """Радиус"""
 
     def _createTag(self, parent_tag: DpgTag) -> DpgTag:
         return dpg.draw_circle(
@@ -122,14 +137,39 @@ class Circle(DpgFigure, _Options):
 
 
 @dataclass
-class TextFigure(DpgFigure):
+class Line(DpgFigure, _HasBasicColor, _HasBorderThickness):
+    """Линия"""
+
+    p1: Vector2D[float]
+    """Первая вершина"""
+
+    p2: Vector2D[float]
+    """Вторая вершина"""
+
+    def _createTag(self, parent_tag: DpgTag) -> DpgTag:
+        return dpg.draw_line(
+            parent=parent_tag,
+
+            p1=self.p1.toTuple(),
+            p2=self.p2.toTuple(),
+
+            color=self.color.toRGBA8888(),
+            thickness=self.border_thickness
+        )
+
+
+@dataclass
+class TextFigure(DpgFigure, _HasBasicColor):
     """Нарисованный текст"""
 
     pos: Vector2D[float]
+    """Позиция"""
+
     text: str
+    """Текст"""
 
     size: int = field(kw_only=True, default=10)
-    color: Color = field(kw_only=True, default=Color.white())
+    """Размер"""
 
     def _createTag(self, parent_tag: DpgTag) -> DpgTag:
         return dpg.draw_text(
