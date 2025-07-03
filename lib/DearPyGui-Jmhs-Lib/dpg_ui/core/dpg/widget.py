@@ -31,7 +31,7 @@ class DpgWidget(Widget[DpgTag], ABC):
         self.__tag = tag
 
         if self.__font is not None:
-            self.setFont(self.__font)
+            self.withFont(self.__font)
 
     @final
     def tag(self) -> Optional[DpgTag]:
@@ -43,10 +43,30 @@ class DpgWidget(Widget[DpgTag], ABC):
         dpg.configure_item(self.tag(), **kwargs)
 
     @final
-    def setFont(self, font: Font) -> Self:
+    def withFont(self, font: Font) -> Self:
         if self.isRegistered():
             dpg.bind_item_font(self.tag(), font.tag())
         else:
             self.__font = font
 
         return self
+
+    @final
+    def disable(self) -> None:
+        dpg.disable_item(self.tag())
+
+    @final
+    def enable(self) -> None:
+        dpg.enable_item(self.tag())
+
+    @final
+    def delete(self) -> None:
+        dpg.delete_item(self.tag())
+
+    @final
+    def hide(self) -> None:
+        dpg.hide_item(self.tag())
+
+    @final
+    def show(self) -> None:
+        dpg.show_item(self.tag())

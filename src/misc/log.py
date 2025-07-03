@@ -1,14 +1,16 @@
 from __future__ import annotations
 
+from sys import stdout
 from typing import ClassVar
 from typing import Optional
+from typing import TextIO
 
 
 class Logger:
     """Иерархический лог"""
 
     _inst: ClassVar[Optional[Logger]] = None
-    _messages: ClassVar = list[str]()
+    out: TextIO = stdout
 
     _key = "root"
     _max_key_length: ClassVar = len(_key)
@@ -16,7 +18,7 @@ class Logger:
     def write(self, message: str) -> None:
         """Записать сообщение в лог"""
         key = f"[{self._key}]"
-        self._messages.append(f"{key:{self._max_key_length}}: {message}")
+        self.out.write(f"{key:{self._max_key_length}}: {message}\n")
 
     def sub(self, key: str) -> Logger:
         """Создать дочерний лог"""
@@ -30,16 +32,6 @@ class Logger:
             cls._inst = Logger()
 
         return cls._inst
-
-    @classmethod
-    def available(cls) -> bool:
-        """Содержит доступные сообщения"""
-        return bool(cls._messages)
-
-    @classmethod
-    def read(cls) -> str:
-        """Прочесть и удалить"""
-        return cls._messages.pop(0)
 
     @classmethod
     def _updateKeyLength(cls, key: str) -> None:

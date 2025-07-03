@@ -13,7 +13,7 @@ from rs.color import Color
 
 
 @dataclass
-class DisplayText(Colored, DpgValuedWidget[str]):
+class Text(Colored, DpgValuedWidget[str]):
     """Текст"""
 
     _bullet: bool = False

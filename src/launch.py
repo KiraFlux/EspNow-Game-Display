@@ -2,8 +2,10 @@ from threading import Thread
 
 from bytelang.impl.stream.serials import SerialStream
 from dpg_game_ui.app import GameApp
+from game.core.entities import Mac
 from game.core.environment import Environment
 from game.core.protocol import GameProtocol
+from lina.vector import Vector2D
 from misc.log import Logger
 
 
@@ -32,15 +34,12 @@ def _main():
 
     # _launch_protocol(environment)
 
-    from game.core.entities import Mac
-
     for i in range(8):
         mac = Mac(bytes((0, 0, 0, 0, 0, i)))
-        from lina.vector import Vector2D
         environment.onPlayerMessage(mac, f"User-{i}")
         environment.onPlayerMove(mac, Vector2D(i % environment.board.size.x, i // environment.board.size.x))
 
-    GameApp(environment).run("title", 1280, 720)
+    GameApp(environment).run("Game", 1280, 720)
 
 
 if __name__ == "__main__":

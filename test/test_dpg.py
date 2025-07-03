@@ -7,8 +7,8 @@ from dpg_ui.impl.container.detail import Detail
 from dpg_ui.impl.container.tab import Tab
 from dpg_ui.impl.container.tab import TabBar
 from dpg_ui.impl.container.window import Window
-from dpg_ui.impl.display.text import DisplayText
-from dpg_ui.impl.input.text import InputText
+from dpg_ui.impl.text import Text
+from dpg_ui.impl.boxes.text import _TextBox
 from dpg_ui.impl.slider.float_ import FloatSlider
 
 tab_bar = (
@@ -25,7 +25,7 @@ tab_bar = (
         Tab("2")
         .add(
             Detail("wowow")
-            .add(InputText("string", print))
+            .add(_TextBox("string", print))
             .add(FloatSlider("float", _value_default=0.123, _interval_max=10, _interval_min=-10))
         )
     )
@@ -40,7 +40,7 @@ __w = (
         .add(
             HBox()
             .add(Button("lol"))
-            .add(DisplayText(_value_default="text"))
+            .add(Text(_value_default="text"))
         )
     )
 )
