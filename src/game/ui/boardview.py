@@ -1,9 +1,12 @@
 from dpg_ui.core.custom import CustomWidget
+from dpg_ui.core.dpg.draw import DrawList
+from dpg_ui.core.dpg.draw import Rectangle
 from dpg_ui.impl.container.window import ChildWindow
 from game.core.entities.board import Board
 from game.core.entities.player import Player
 from lina.vector import Vector2D
 from misc.log import Logger
+from rs.color import Color
 
 
 class BoardView(CustomWidget):
@@ -15,7 +18,9 @@ class BoardView(CustomWidget):
         board.size_subject.addObserver(self._onBoardResized)
         board.move_subject.addObserver(lambda args: self._onPlayerMove(*args))
 
-        base = ChildWindow()
+        self._canvas = DrawList(800, 800)
+        self._canvas.add(Rectangle(Vector2D(0, 0), Vector2D(300, 300), fill_color=Color.none(), border_color=Color.gray(0.5), rounding=50, border_thickness=10))
+        base = ChildWindow().add(self._canvas)
         super().__init__(base)
 
     def _onBoardResized(self, new_size: Vector2D[int]) -> None:

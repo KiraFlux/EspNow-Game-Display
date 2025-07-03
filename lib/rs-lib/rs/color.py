@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from typing import ClassVar
-from typing import Final
 from typing import Self
 
 
@@ -30,7 +29,22 @@ class Color:
         assert 0.0 <= self.blue <= 1.0
         assert 0.0 <= self.alpha <= 1.0
 
-    # from
+    # factory
+
+    @classmethod
+    def none(cls) -> Self:
+        """Прозрачный"""
+        return cls(0, 0, 0, 0)
+
+    @classmethod
+    def white(cls) -> Self:
+        """Белый"""
+        return cls.fromHex('#ffffff')
+
+    @classmethod
+    def black(cls) -> Self:
+        """Черный"""
+        return cls.fromHex("#000000")
 
     @classmethod
     def gray(cls, grayness: float) -> Self:
@@ -39,6 +53,8 @@ class Color:
         :param grayness Значение серого [0;1]
         """
         return cls(grayness, grayness, grayness, 1.0)
+
+    # from
 
     @classmethod
     def fromHex(cls, _hex: str) -> Self:
@@ -123,12 +139,3 @@ class Color:
     def brightness(self) -> float:
         """Вычислить нормализованную яркость"""
         return self._luma_r * self.red + self._luma_g * self.green + self._luma_b * self.blue
-
-
-class Palette:
-    """Палитра цветов"""
-
-    white: Final = Color.fromHex("#ffffff")
-    """Белый"""
-    black: Final = Color.fromHex("#000000")
-    """Черный"""
