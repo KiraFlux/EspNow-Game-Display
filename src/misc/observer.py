@@ -1,5 +1,7 @@
 from abc import ABC
 from abc import abstractmethod
+from dataclasses import dataclass
+from typing import Callable
 
 
 class Observer[T](ABC):
@@ -10,7 +12,15 @@ class Observer[T](ABC):
         """Обновить состояние"""
 
 
-class Subject[T](ABC):
+@dataclass
+class InlineObserver[T](Observer):
+    callback: Callable[[T], None]
+
+    def update(self, value: T) -> None:
+        self.callback(value)
+
+
+class Subject[T]:
     """Субъект"""
 
     def __init__(self) -> None:

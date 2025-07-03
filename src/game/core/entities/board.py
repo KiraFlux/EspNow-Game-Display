@@ -8,6 +8,7 @@ from typing import Optional
 
 from game.core.entities.player import Player
 from lina.vector import Vector2D
+from misc.observer import Subject
 
 
 @dataclass(frozen=True)
@@ -30,6 +31,8 @@ class Board:
     def __init__(self, size: Pos) -> None:
         self._size = size
         self._state = dict[Pos, Cell]()
+        self.size_subject: Subject[Pos] = Subject()
+        self.move_subject: Subject[tuple[Player, Pos]] = Subject()
 
     @property
     def size(self) -> Pos:
@@ -39,6 +42,7 @@ class Board:
     @size.setter
     def size(self, new_size: Pos) -> None:
         self._size = new_size
+        self.size_subject.notifyObservers(self._size)
 
     def getState(self) -> Mapping[Pos, Cell]:
         """Получить состояние поля"""
@@ -67,6 +71,7 @@ class Board:
         self._state[pos] = cell = Cell(player)
         player.score += self._calcScore(cell, pos)
 
+        self.move_subject.notifyObservers((player, pos))
         return Board.MakeMoveResult.Ok
 
     def _calcScore(self, cell: Cell, pos: Pos) -> int:

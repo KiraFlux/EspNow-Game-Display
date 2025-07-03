@@ -26,7 +26,7 @@ class LogView(CustomWidget):
                 HBox()
                 .add(
                     VBox()
-                    .add(Text(_value_default="Фильтры").withFont(Assets.label_font))
+                    .add(Text("Фильтры").withFont(Assets.label_font))
                     .add(
                         ChildWindow(
                             width=300,

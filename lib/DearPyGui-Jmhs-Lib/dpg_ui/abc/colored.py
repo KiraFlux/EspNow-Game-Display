@@ -4,15 +4,14 @@ from dataclasses import dataclass
 from typing import final
 
 from rs.color import Color
-from rs.color import Palette
 
 
 @dataclass(kw_only=True)
 class Colored(ABC):
     """Содержит цвет"""
 
-    _color: Color = Palette.white
-    """Цвет по умолчанию"""
+    _color: Color
+    """Цвет"""
 
     @abstractmethod
     def _setColorImpl(self, color: Color) -> None:

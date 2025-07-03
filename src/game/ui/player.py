@@ -17,9 +17,9 @@ class PlayerCard(CustomWidget, Observer[Player]):
     def __init__(self, player: Player):
         player.addObserver(self)
         self.username = TextInput("Игрок", player.rename, default=player.username)
-        self.team = IntInput(label="Команда", _interval_min=0, _value_default=player.team)
-        self.mac = Text(_value_default=f"MAC: {player.mac}", _color=Color.gray(0.75))
-        self.score = IntDisplay(_value_default=player.score, label="Счёт")
+        self.team = IntInput("Команда", default=player.team)
+        self.mac = Text(f"MAC: {player.mac}", color=Color.gray(0.75))
+        self.score = IntDisplay("Счёт", player.score)
 
         base = (
             ChildWindow(
@@ -54,7 +54,7 @@ class PlayerList(CustomWidget, Observer[Player]):
                 resizable_x=True,
                 background=True
             )
-            .add(Text(_value_default="ИГРОКИ").withFont(Assets.label_font))
+            .add(Text("Игроки").withFont(Assets.label_font))
             .add(self.player_list)
         )
 

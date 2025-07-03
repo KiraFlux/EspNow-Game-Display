@@ -10,10 +10,11 @@ from dpg_ui.abc.colored import Colored
 from dpg_ui.abc.widget import Widget
 from dpg_ui.core.dpg.valued import DpgValuedWidget
 from rs.color import Color
+from rs.color import Palette
 
 
 @dataclass
-class Text(Colored, DpgValuedWidget[str]):
+class _Text(Colored, DpgValuedWidget[str]):
     """Текст"""
 
     _bullet: bool = False
@@ -29,3 +30,17 @@ class Text(Colored, DpgValuedWidget[str]):
             color=self._color.toRGBA8888(),
             bullet=self._bullet,
         ))
+
+
+def Text(
+        default: str = None,
+        *,
+        color: Color = Palette.white,
+        bullet: bool = False
+):
+    """Текст"""
+    return _Text(
+        _bullet=bullet,
+        _value_default=default,
+        _color=color
+    )
