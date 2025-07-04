@@ -1,19 +1,22 @@
 from __future__ import annotations
 
+from abc import ABC
 from dataclasses import dataclass
 from typing import Callable
 from typing import Optional
+from typing import final
 
 from dearpygui import dearpygui as dpg
 
-from dpg_ui.abc.widget import Widget
-from dpg_ui.core.dpg.intervaled import DpgIntervaledValuedWidget
-from dpg_ui.core.dpg.valued import DpgValuedWidget
+from dpg_ui.core.dpg.item import DpgTag
+from dpg_ui.core.dpg.traits import DpgIntervaled
+from dpg_ui.core.dpg.traits import DpgValued
+from dpg_ui.core.dpg.widget import DpgWidget
 
 
 @dataclass(kw_only=True)
-class _TextBox(DpgValuedWidget[str]):
-    """Окно текста"""
+class _ValueBox[T](DpgWidget, DpgValued[T], ABC):
+    """Окно значения"""
 
     _label: str
     """Наименование"""
@@ -21,40 +24,41 @@ class _TextBox(DpgValuedWidget[str]):
     _readonly: bool
     """Поле только для ввода"""
 
-    _on_change: Optional[Callable[[str], None]] = None
+    _on_change: Optional[Callable[[T], None]]
     """При изменении"""
 
-    _width: int = 0
+    _width: int
     """Ширина"""
 
-    _on_enter: bool = False
+    _on_enter: bool
     """Засчитывать изменение по Enter"""
 
-    def register(self, parent: Widget) -> None:
-        self._onRegister(dpg.add_input_text(
-            parent=parent.tag(),
+
+@final
+@dataclass(kw_only=True)
+class _TextBox(_ValueBox[str]):
+    """Окно текста"""
+
+    def _createTag(self, parent_tag: DpgTag) -> DpgTag:
+        return dpg.add_input_text(
+            parent=parent_tag,
             label=self._label,
             default_value=self._value_default,
             readonly=self._readonly,
-            width=self._width
-        ))
-
-        if self._readonly:
-            return
-
-        self.configure(
+            width=self._width,
             on_enter=self._on_enter,
-        )
-
-        if self._on_change is None:
-            return
-
-        self.configure(
-            callback=lambda _: self._on_change(self.getValue()),
+            callback=None if self._on_change is None else (lambda _: self._on_change(self.getValue()))
         )
 
 
-def TextInput(label: str, on_change: Callable[[str], None], *, on_enter: bool = False, default: str = None, width: int = 0):
+def TextInput(
+        label: str,
+        on_change: Callable[[str], None],
+        *,
+        on_enter: bool = False,
+        default: str = None,
+        width: int = 0
+):
     """Создать окно ввода текста"""
     return _TextBox(
         _label=label,
@@ -66,7 +70,12 @@ def TextInput(label: str, on_change: Callable[[str], None], *, on_enter: bool = 
     )
 
 
-def TextDisplay(label: str, *, default: str = None, width: int = 0):
+def TextDisplay(
+        label: str,
+        *,
+        default: str = None,
+        width: int = 0
+):
     """Создать окно вывода текста"""
     return _TextBox(
         _label=label,
@@ -78,46 +87,31 @@ def TextDisplay(label: str, *, default: str = None, width: int = 0):
     )
 
 
+@final
 @dataclass(kw_only=True)
-class _IntBox(DpgIntervaledValuedWidget[int]):
+class _IntInputBox(_ValueBox[int], DpgIntervaled[int]):
     """Окно целого числа"""
 
-    label: str
+    _step: int
 
-    readonly: bool
+    _step_fast: int
 
-    width: Optional[int]
+    def _createTag(self, parent_tag: DpgTag) -> DpgTag:
+        return dpg.add_input_int(
+            parent=parent_tag,
 
-    on_change: Optional[Callable[[int], None]]
-
-    step: Optional[int]
-    step_fast: Optional[int]
-
-    def register(self, parent: Widget) -> None:
-        self._onRegister(dpg.add_input_int(
-            parent=parent.tag(),
-            label=self.label,
+            label=self._label,
             default_value=self._value_default,
-            readonly=self.readonly,
-        ))
+            readonly=self._readonly,
+            width=self._width,
+            callback=None if self._on_change is None else (lambda _: self._on_change(self.getValue())),
 
-        if self.width:
-            self.configure(width=self.width)
+            max_value=self._interval_max,
+            min_value=self._interval_min,
 
-        if self._interval_min:
-            self.configure(min_value=self._interval_min)
-
-        if self._interval_max:
-            self.configure(max_value=self._interval_max)
-
-        if self.on_change:
-            self.configure(callback=lambda _: self.on_change(self.getValue()))
-
-        if self.step:
-            self.configure(step=self.step)
-
-        if self.step_fast:
-            self.configure(step_fast=self.step_fast)
+            step_fast=self._step_fast,
+            step=self._step,
+        )
 
 
 def IntInput(
@@ -125,23 +119,25 @@ def IntInput(
         on_change: Callable[[int], None] = None,
         default: int = 0,
         *,
-        width: int = None,
-        step: int = None,
-        step_fast: int = None,
-        interval_max: int = None,
-        interval_min: int = None,
+        width: int = 0,
+        step: int = 1,
+        step_fast: int = 1,
+        interval_min: int = 0,
+        interval_max: int = 0,
+        on_enter: bool = False,
 ):
     """Окно ввода целого числа"""
-    return _IntBox(
-        _interval_min=interval_min,
+    return _IntInputBox(
         _interval_max=interval_max,
+        _interval_min=interval_min,
         _value_default=default,
-        label=label,
-        readonly=False,
-        width=width,
-        on_change=on_change,
-        step=step,
-        step_fast=step_fast,
+        _label=label,
+        _readonly=False,
+        _on_change=on_change,
+        _width=width,
+        _on_enter=on_enter,
+        _step=step,
+        _step_fast=step_fast,
     )
 
 
@@ -149,17 +145,18 @@ def IntDisplay(
         label: str,
         default: int = 0,
         *,
-        width: int = None
+        width: int = 0
 ):
     """Окно вывода целого числа"""
-    return _IntBox(
-        readonly=True,
-        width=width,
-        on_change=None,
-        step=None,
-        step_fast=None,
+    return _IntInputBox(
+        _interval_max=0,
+        _interval_min=0,
         _value_default=default,
-        label=label,
-        _interval_min=-1000,
-        _interval_max=1000
+        _label=label,
+        _readonly=True,
+        _on_change=None,
+        _width=width,
+        _on_enter=False,
+        _step=0,
+        _step_fast=0
     )

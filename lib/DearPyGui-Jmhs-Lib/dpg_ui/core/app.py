@@ -7,7 +7,7 @@ from typing import final
 from dearpygui import dearpygui as dpg
 
 from dpg_ui.core.dpg.font import DpgFont
-from dpg_ui.impl.container.window import Window
+from dpg_ui.impl.containers import Window
 
 
 class App:
@@ -35,13 +35,13 @@ class App:
             y_pos=y,
         )
 
-        # noinspection PyTypeChecker
         self.window.register(None)
 
         for task in user_tasks:
             task.start()
 
-        dpg.set_primary_window(self.window.tag(), True)
+        tag = self.window.tag()
+        dpg.set_primary_window(tag, True)
 
         dpg.setup_dearpygui()
 

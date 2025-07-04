@@ -1,8 +1,8 @@
 from dpg_ui.core.custom import CustomWidget
 from dpg_ui.impl.checkbox import CheckBox
-from dpg_ui.impl.container.box import HBox
-from dpg_ui.impl.container.box import VBox
-from dpg_ui.impl.container.window import ChildWindow
+from dpg_ui.impl.containers import HBox
+from dpg_ui.impl.containers import VBox
+from dpg_ui.impl.containers import ChildWindow
 from dpg_ui.impl.text import Text
 from game.res import Assets
 from misc.log import Logger
@@ -56,7 +56,7 @@ class LogView(CustomWidget):
         self._channels.add(
             CheckBox(
                 key,
-                on_change=lambda state: self._onKeyWidget(key, state),
+                _on_change=lambda state: self._onKeyWidget(key, state),
                 _value_default=False,
             )
         )

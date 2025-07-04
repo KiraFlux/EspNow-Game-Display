@@ -1,30 +1,37 @@
 from abc import ABC
+from abc import abstractmethod
 from dataclasses import dataclass
 from dataclasses import field
 from typing import MutableSequence
 from typing import Self
+from typing import final
 
-from dpg_ui.abc.container import Container
-from dpg_ui.abc.widget import Widget
-from dpg_ui.core.dpg.tag import DpgTag
+from dpg_ui.abc.entities import Container
+from dpg_ui.core.dpg.item import DpgTag
 from dpg_ui.core.dpg.widget import DpgWidget
 
 
 @dataclass
-class DpgContainer(DpgWidget, Container, ABC):
+class DpgContainer[T](DpgWidget, Container[T], ABC):
     """Контейнер из DPG"""
 
-    _items: MutableSequence[Widget] = field(init=False, default_factory=list)
+    _items: MutableSequence[T] = field(init=False, default_factory=list)
 
-    def add(self, item: Widget) -> Self:
+    @abstractmethod
+    def _registerItem(self, item: T) -> None:
+        """Регистрация элемента в контейнере"""
+
+    @final
+    def add(self, item: T) -> Self:
         self._items.append(item)
 
         if self.isRegistered():
-            item.register(self)
+            self._registerItem(item)
 
         return self
 
     def _onRegister(self, tag: DpgTag) -> None:
         super()._onRegister(tag)
+
         for item in self._items:
-            item.register(self)
+            self._registerItem(item)

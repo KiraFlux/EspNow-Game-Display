@@ -1,34 +1,28 @@
-"""Компонент интерфейса для цвета"""
-
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import final
 
 from dearpygui import dearpygui as dpg
 
-from dpg_ui.abc.colored import Colored
-from dpg_ui.abc.widget import Widget
-from dpg_ui.core.dpg.valued import DpgValuedWidget
+from dpg_ui.core.dpg.item import DpgTag
+from dpg_ui.core.dpg.traits import DpgColored
+from dpg_ui.core.dpg.traits import DpgValued
+from dpg_ui.core.dpg.widget import DpgWidget
 from rs.color import Color
 
 
+@final
 @dataclass
-class _Text(Colored, DpgValuedWidget[str]):
+class _Text(DpgWidget, DpgValued[str], DpgColored):
     """Текст"""
 
     _bullet: bool = False
     """Отображает маркер перед текстом"""
 
-    def _setColorImpl(self, color: Color) -> None:
-        self.configure(color=color.toRGBA8888())
-
-    def register(self, parent: Widget) -> None:
-        self._onRegister(dpg.add_text(
-            self._value_default,
-            parent=parent.tag(),
-            color=self._color.toRGBA8888(),
-            bullet=self._bullet,
-        ))
+    def _createTag(self, parent_tag: DpgTag) -> DpgTag:
+        tag = dpg.add_text(self._value_default, parent=parent_tag, color=self._color.toRGBA8888(), bullet=self._bullet, )
+        return tag
 
 
 def Text(
@@ -38,8 +32,5 @@ def Text(
         bullet: bool = False
 ):
     """Текст"""
-    return _Text(
-        _bullet=bullet,
-        _value_default=default,
-        _color=color
-    )
+    text = _Text(_bullet=bullet, _value_default=default, _color=color)
+    return text

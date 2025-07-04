@@ -3,7 +3,7 @@ from dpg_ui.impl.boxes import IntDisplay
 from dpg_ui.impl.boxes import IntInput
 from dpg_ui.impl.boxes import TextInput
 from dpg_ui.impl.button import Button
-from dpg_ui.impl.container.window import ChildWindow
+from dpg_ui.impl.containers import ChildWindow
 from dpg_ui.impl.text import Text
 from game.core.entities.player import Player
 from game.core.entities.player import PlayerRegistry
