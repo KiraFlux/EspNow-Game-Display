@@ -10,7 +10,7 @@ from typing import Optional
 from game.core.entities.player import Player
 from game.core.entities.rules import ScoreRules
 from lina.vector import Vector2D
-from misc.observer import Subject
+from rs.observer import Subject
 
 
 @dataclass(frozen=True)

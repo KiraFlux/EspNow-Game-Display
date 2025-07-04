@@ -11,7 +11,7 @@ from game.core.entities.rules import GameRules
 from game.core.entities.team import TeamRegistry
 from lina.vector import Vector2D
 from misc.log import Logger
-from misc.observer import Subject
+from rs.observer import Subject
 
 
 class Environment:

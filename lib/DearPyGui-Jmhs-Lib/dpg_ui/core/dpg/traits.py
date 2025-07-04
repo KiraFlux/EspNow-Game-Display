@@ -40,11 +40,13 @@ class DpgDeletable(DpgItem, Deletable):
 class DpgVisibility(DpgItem, Visibility):
     @final
     def hide(self) -> None:
-        dpg.hide_item(self.tag())
+        if self.isRegistered():
+            dpg.hide_item(self.tag())
 
     @final
     def show(self) -> None:
-        dpg.show_item(self.tag())
+        if self.isRegistered():
+            dpg.show_item(self.tag())
 
 
 class DpgValued[T](DpgItem, Valued[T], ABC):

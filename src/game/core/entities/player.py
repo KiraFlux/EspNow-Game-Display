@@ -7,7 +7,7 @@ from game.core.entities.mac import Mac
 from game.core.entities.team import Team
 from game.core.entities.team import TeamRegistry
 from misc.log import Logger
-from misc.observer import Subject
+from rs.observer import Subject
 
 
 class Player(Subject['Player']):

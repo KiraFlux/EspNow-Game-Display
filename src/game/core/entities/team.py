@@ -3,8 +3,8 @@ from typing import Final
 
 from game.impl.valuegen.color import ColorGenerator
 from misc.log import Logger
-from misc.observer import Subject
 from rs.color import Color
+from rs.observer import Subject
 
 
 class Team(Subject['Team']):
@@ -56,6 +56,7 @@ class TeamRegistry(Subject[Team]):
     def __init__(self, color_generator: ColorGenerator) -> None:
         super().__init__()
         self._log = Logger("team-registry")
+        self._team_index: int = 0
 
         self._color_generator: Final = color_generator
         self._teams: Final = set[Team]()
@@ -72,9 +73,17 @@ class TeamRegistry(Subject[Team]):
         self._log.write(f'registered: {team}')
         return team
 
+    def unregister(self, team: Team) -> None:
+        """Отменить регистрацию команды"""
+        # self._teams.remove(team)
+
+        self._log.write(f"unregistered: {team}")
+
     def teams(self) -> AbstractSet[Team]:
         """Получить существующие команды"""
         return self._teams
 
     def _calcTeamIndex(self) -> int:
-        return len(self._teams)
+        ret = self._team_index
+        self._team_index += 1
+        return ret

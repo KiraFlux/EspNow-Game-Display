@@ -7,7 +7,7 @@ from typing import MutableMapping
 from typing import MutableSequence
 from typing import Sequence
 
-from misc.observer import Subject
+from rs.observer import Subject
 
 
 class Logger:

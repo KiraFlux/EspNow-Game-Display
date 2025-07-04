@@ -5,6 +5,7 @@ from dpg_ui.abc.traits import Intervaled
 from dpg_ui.abc.traits import Valued
 from dpg_ui.core.custom import CustomWidget
 from dpg_ui.impl.boxes import IntInput
+from dpg_ui.impl.containers import HBox
 from dpg_ui.impl.containers import VBox
 from dpg_ui.impl.text import Text
 from lina.vector import Vector2D
@@ -20,9 +21,7 @@ class InputInt2D(CustomWidget, Valued[Vector2D[int]], Intervaled[int]):
             *,
             on_change: Callable[[Vector2D], None] = 0,
             default: Vector2D[int] = Vector2D(0, 0),
-            label_x: str = "x",
-            label_y: str = "y",
-            width: int = 0,
+            width: int = 500,
             step: int = 1,
             step_fast: int = 1
     ) -> None:
@@ -41,11 +40,13 @@ class InputInt2D(CustomWidget, Valued[Vector2D[int]], Intervaled[int]):
 
         interval_min, interval_max = interval
 
+        item_width = width // 3
+
         self._y = IntInput(
-            label=label_y,
+            label=None,
             on_change=_on_change_y,
             default=default.y,
-            width=width,
+            width=item_width,
             step=step,
             step_fast=step_fast,
             interval_max=interval_max,
@@ -53,10 +54,10 @@ class InputInt2D(CustomWidget, Valued[Vector2D[int]], Intervaled[int]):
         )
 
         self._x = IntInput(
-            label=label_x,
+            label=None,
             on_change=_on_change_x,
             default=default.x,
-            width=width,
+            width=item_width,
             step=step,
             step_fast=step_fast,
             interval_max=interval_max,
@@ -64,10 +65,13 @@ class InputInt2D(CustomWidget, Valued[Vector2D[int]], Intervaled[int]):
         )
 
         base = (
-            VBox()
+            HBox()
+            .add(
+                VBox()
+                .add(self._x)
+                .add(self._y)
+            )
             .add(Text(label))
-            .add(self._x)
-            .add(self._y)
         )
 
         super().__init__(base)

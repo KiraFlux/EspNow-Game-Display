@@ -10,13 +10,13 @@ import dearpygui.dearpygui as dpg
 from dpg_ui.abc.entities import Canvas
 from dpg_ui.abc.entities import Figure
 from dpg_ui.core.dpg.container import DpgContainer
-from dpg_ui.core.dpg.item import DpgItem
 from dpg_ui.core.dpg.item import DpgTag
+from dpg_ui.core.dpg.traits import DpgVisibility
 from lina.vector import Vector2D
 from rs.color import Color
 
 
-class _DpgFigure(DpgItem, Figure, ABC):
+class _DpgFigure(DpgVisibility, Figure, ABC):
     """Фигура из списка рисования"""
 
     @final
@@ -24,6 +24,7 @@ class _DpgFigure(DpgItem, Figure, ABC):
         self._onRegister(self._createTag(canvas.tag()))
 
 
+@final
 @dataclass
 class DpgCanvas(Canvas[DpgTag], DpgContainer):
     """Список рисования"""
@@ -77,6 +78,7 @@ class _HasTwoVertexes:
     """Вторая координата"""
 
 
+@final
 @dataclass
 class Rectangle(_DpgFigure, _HasTwoVertexes, _HasFillColor, _HasContourColor, _HasContourThickness):
     """Прямоугольник"""
@@ -98,6 +100,7 @@ class Rectangle(_DpgFigure, _HasTwoVertexes, _HasFillColor, _HasContourColor, _H
         )
 
 
+@final
 @dataclass
 class Line(_DpgFigure, _HasTwoVertexes, _HasFillColor, _HasContourThickness):
     """Линия"""
@@ -126,6 +129,7 @@ class _HasSize:
     """Размер в пикселях"""
 
 
+@final
 @dataclass
 class Circle(_DpgFigure, _HasSinglePosition, _HasSize, _HasContourColor, _HasContourThickness, _HasFillColor):
     """Окружность"""
@@ -143,6 +147,7 @@ class Circle(_DpgFigure, _HasSinglePosition, _HasSize, _HasContourColor, _HasCon
         )
 
 
+@final
 @dataclass
 class TextFigure(_DpgFigure, _HasSinglePosition, _HasSize, _HasFillColor):
     """Нарисованный текст"""

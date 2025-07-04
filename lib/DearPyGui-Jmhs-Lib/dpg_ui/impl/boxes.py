@@ -18,7 +18,7 @@ from dpg_ui.core.dpg.widget import DpgWidget
 class _ValueBox[T](DpgWidget, DpgValued[T], ABC):
     """Окно значения"""
 
-    _label: str
+    _label: Optional[str]
     """Наименование"""
 
     _readonly: bool
@@ -97,6 +97,8 @@ class _IntInputBox(_ValueBox[int], DpgIntervaled[int]):
     _step_fast: int
 
     def _createTag(self, parent_tag: DpgTag) -> DpgTag:
+        clamped = self._interval_min != self._interval_max
+
         return dpg.add_input_int(
             parent=parent_tag,
 
@@ -111,11 +113,14 @@ class _IntInputBox(_ValueBox[int], DpgIntervaled[int]):
 
             step_fast=self._step_fast,
             step=self._step,
+
+            min_clamped=clamped,
+            max_clamped=clamped,
         )
 
 
 def IntInput(
-        label: str,
+        label: Optional[str],
         on_change: Callable[[int], None] = None,
         default: int = 0,
         *,

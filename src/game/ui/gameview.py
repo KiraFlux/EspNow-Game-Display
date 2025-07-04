@@ -5,21 +5,25 @@ from dpg_ui.impl.containers import HBox
 from dpg_ui.impl.containers import Tab
 from dpg_ui.impl.containers import TabBar
 from dpg_ui.impl.containers import VBox
-from dpg_ui.impl.text import Text
+from dpg_ui.impl.misc import Spacer
 from game.core.environment import Environment
 from game.res import Assets
 from game.ui.boardview import BoardView
+from game.ui.input2d import InputInt2D
 from game.ui.playerlist import PlayerList
 from game.ui.teamlist import TeamList
-from rs.color import Color
+from lina.vector import Vector2D
 
 
 class GameView(CustomWidget):
 
     def __init__(self, env: Environment) -> None:
-        host_mac_display = TextDisplay("Хост", default="Ожидание...", width=300).withFont(Assets.label_font)
+        host_mac_display = TextDisplay("Хост", default="Ожидание...", width=300)
 
         env.host_mac_subject.addObserver(host_mac_display.setValue)
+
+        def _update_board_size(new_size: Vector2D):
+            env.board.size = new_size
 
         base = (
             HBox()
@@ -43,9 +47,17 @@ class GameView(CustomWidget):
                 VBox()
                 .add(
                     HBox()
+                    .add(
+                        InputInt2D(
+                            "Поле",
+                            (1, 20),
+                            on_change=_update_board_size,
+                            default=env.board.size,
+                        )
+                    )
+                    .add(Spacer(width=300))
                     .add(host_mac_display)
-                    .add(Text("GAME", color=Color.fromHex('#affff8')).withFont(Assets.title_font))
-                )
+                ).withFont(Assets.label_font)
                 .add(
                     BoardView(env.board)
                 )

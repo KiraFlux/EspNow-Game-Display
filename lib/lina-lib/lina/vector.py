@@ -14,17 +14,41 @@ class Vector2D[T]:
         """Преобразовать в кортеж"""
         return self.x, self.y
 
-    def __add__(self, other: Vector2D[T]):
-        return Vector2D(self.x + other.x, self.y + other.y)
+    def __add__(self, other: Vector2D[T] | T) -> Vector2D[T]:
+        if isinstance(other, Vector2D):
+            return Vector2D(self.x + other.x, self.y + other.y)
 
-    def __sub__(self, other: Vector2D[T]):
-        return Vector2D(self.x - other.x, self.y - other.y)
+        if isinstance(other, (int, float)):
+            return Vector2D(self.x + other, self.y + other)
 
-    def __mul__(self, other: T):
-        return Vector2D(self.x * other, self.y * other)
+        raise TypeError("Unsupported operand type")
 
-    def __truediv__(self, other: T):
-        return Vector2D(self.x / other, self.y / other)
+    def __sub__(self, other: Vector2D[T] | T) -> Vector2D[T]:
+        if isinstance(other, Vector2D):
+            return Vector2D(self.x - other.x, self.y - other.y)
+
+        if isinstance(other, (int, float)):
+            return Vector2D(self.x - other, self.y - other)
+
+        raise TypeError("Unsupported operand type")
+
+    def __mul__(self, other: Vector2D[T] | T) -> Vector2D[T]:
+        if isinstance(other, Vector2D):
+            return Vector2D(self.x * other.x, self.y * other.y)
+
+        if isinstance(other, (int, float)):
+            return Vector2D(self.x * other, self.y * other)
+
+        raise TypeError("Unsupported operand type")
+
+    def __truediv__(self, other: Vector2D[T] | T) -> Vector2D[T]:
+        if isinstance(other, Vector2D):
+            return Vector2D(self.x / other.x, self.y / other.y)
+
+        if isinstance(other, (int, float)):
+            return Vector2D(self.x / other, self.y / other)
+
+        raise TypeError("Unsupported operand type")
 
 
 @dataclass(frozen=True)
