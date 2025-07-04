@@ -54,6 +54,48 @@ class Color:
         """
         return cls(grayness, grayness, grayness, 1.0)
 
+    # discord
+
+    @classmethod
+    def grey(cls) -> Self:
+        """Discord Grey"""
+        return cls.fromHex("#99AAB5")
+
+    @classmethod
+    def nitro(cls) -> Self:
+        """Discord Nitro"""
+        return cls.fromHex("#FF73FA")
+
+    @classmethod
+    def online(cls) -> Self:
+        """Discord Online"""
+        return cls.fromHex("#43B581")
+
+    @classmethod
+    def primary(cls) -> Self:
+        """Discord Primary Button (Blurple)"""
+        return cls.fromHex("#5865F2")
+
+    @classmethod
+    def secondary(cls) -> Self:
+        """Discord Secondary Button (Grey)"""
+        return cls.fromHex("#4F545C")
+
+    @classmethod
+    def success(cls) -> Self:
+        """Discord Success Button (Green)"""
+        return cls.fromHex("#57F287")
+
+    @classmethod
+    def danger(cls) -> Self:
+        """Discord Danger Button (Red)"""
+        return cls.fromHex("#ED4245")
+
+    @classmethod
+    def warning(cls) -> Self:
+        """Discord Warning Button (Yellow)"""
+        return cls.fromHex("#FEE75C")
+
     # from
 
     @classmethod

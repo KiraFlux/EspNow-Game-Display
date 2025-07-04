@@ -1,5 +1,5 @@
 from dpg_ui.core.custom import CustomWidget
-from dpg_ui.impl.checkbox import CheckBox
+from dpg_ui.impl.buttons import CheckBox
 from dpg_ui.impl.containers import HBox
 from dpg_ui.impl.containers import VBox
 from dpg_ui.impl.containers import ChildWindow
