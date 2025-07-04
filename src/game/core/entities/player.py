@@ -1,8 +1,11 @@
 from __future__ import annotations
 
+from typing import Final
 from typing import Mapping
 
 from game.core.entities.mac import Mac
+from game.core.entities.team import Team
+from game.core.entities.team import TeamRegistry
 from misc.log import Logger
 from misc.observer import Subject
 
@@ -10,7 +13,7 @@ from misc.observer import Subject
 class Player(Subject['Player']):
     """Сведения об игроке"""
 
-    def __init__(self, mac: Mac, username: str, team: int) -> None:
+    def __init__(self, mac: Mac, username: str, team: Team) -> None:
         super().__init__()
         self.mac = mac
         self._username = username
@@ -29,8 +32,8 @@ class Player(Subject['Player']):
         self.notifyObservers(self)
 
     @property
-    def team(self) -> int:
-        """Номер команды"""
+    def team(self) -> Team:
+        """Команда"""
         return self._team
 
     @team.setter
@@ -53,15 +56,17 @@ class Player(Subject['Player']):
         self.username = new_username
 
     def __str__(self) -> str:
-        return f"Игрок {self.mac} '{self.username}' (команда: {self.team})"
+        return f"Игрок {self.mac} '{self.username}' ({self.team})"
 
 
 class PlayerRegistry(Subject[Player]):
     """Список игроков"""
 
-    def __init__(self) -> None:
+    def __init__(self, team_registry: TeamRegistry) -> None:
         super().__init__()
         self._log = Logger("player-registry")
+
+        self._team_registry: Final = team_registry
         self._players = dict[Mac, Player]()
 
     def register(self, mac: Mac, username: str) -> Player:
@@ -70,7 +75,7 @@ class PlayerRegistry(Subject[Player]):
         p = Player(
             mac=mac,
             username=username,
-            team=self._calcPlayerTeam(),
+            team=self._team_registry.default_team,
         )
 
         self._players[mac] = p
@@ -89,6 +94,3 @@ class PlayerRegistry(Subject[Player]):
     def getPlayers(self) -> Mapping[Mac, Player]:
         """Получить игроков"""
         return self._players
-
-    def _calcPlayerTeam(self):
-        return len(self._players) + 1

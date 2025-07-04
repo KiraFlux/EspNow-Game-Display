@@ -74,7 +74,10 @@ class Board:
             return Board.MakeMoveResult.CellNotEmpty
 
         self._state[pos] = cell = Cell(player)
-        player.score += self._calcScore(cell, pos)
+        score = self._calcScore(cell, pos)
+
+        player.score += score
+        player.team.score += score
 
         self.move_subject.notifyObservers((player, pos))
         return Board.MakeMoveResult.Ok

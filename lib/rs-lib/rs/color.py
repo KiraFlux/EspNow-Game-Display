@@ -150,7 +150,7 @@ class Color:
         )
 
         r, g, b = table[index]
-        return cls(r + m, g + m, b + m)
+        return cls(r + m, g + m, b + m, 1.0)
 
     # to
 

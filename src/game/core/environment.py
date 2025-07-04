@@ -8,6 +8,7 @@ from game.core.entities.board import Board
 from game.core.entities.mac import Mac
 from game.core.entities.player import PlayerRegistry
 from game.core.entities.rules import GameRules
+from game.core.entities.team import TeamRegistry
 from lina.vector import Vector2D
 from misc.log import Logger
 from misc.observer import Subject
@@ -24,7 +25,8 @@ class Environment:
         self._host_mac: Optional[Mac] = None
         self.host_mac_subject: Final[Subject[Mac]] = Subject()
 
-        self.player_registry: Final = PlayerRegistry()
+        self.team_registry: Final = TeamRegistry(self.rules.team_color_generator)
+        self.player_registry: Final = PlayerRegistry(self.team_registry)
 
         self.board: Final = Board(Vector2D(12, 8), self.rules.score)
 
@@ -65,6 +67,10 @@ class Environment:
         if player is None:
             self._log.write(f"Ход {move} от {mac} отклонён (незарегистрированный клиент)")
             return f"Клиент {mac} (не зарегистрирован): Ход отклонён"
+
+        if player.team is self.team_registry.default_team:
+            self._log.write(f"Ход {move} от {player} Отклонён (Не определена команда)")
+            return f"{player}: Вы не можете совершать ход не имея принадлежности в команде"
 
         now = time.time()
 

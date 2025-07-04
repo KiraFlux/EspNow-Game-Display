@@ -1,4 +1,5 @@
 from threading import Thread
+from time import sleep
 from typing import Callable
 
 from bytelang.impl.stream.serials import SerialStream
@@ -39,15 +40,19 @@ def _create_protocol_task(env: Environment) -> Thread:
 
 
 def _agents_task(env: Environment):
-    for i in range(30):
+    for i in range(10):
         mac = Mac(bytes((0, 0, 0, 0, 0, i)))
+
         env.onPlayerMessage(mac, f"User-{i}")
+
+        team = env.team_registry.register(f"Team-{i}")
+
+        player = env.player_registry.getPlayers().get(mac)
+        player.team = team
 
         env.onPlayerMove(mac, Vector2D(i % env.board.size.x, i // env.board.size.x))
 
-    # for i in range(10):
-    #     env.onPlayerMessage(Mac(bytes((0, 0, 0, 0, 0, 0))), f"Cool_Name_{i}")
-    #     sleep(1)
+        sleep(1)
 
     return
 
