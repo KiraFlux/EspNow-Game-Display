@@ -5,6 +5,7 @@ from abc import abstractmethod
 from dataclasses import dataclass
 from typing import final
 
+from lina.vector import Vector2D
 from rs.color import Color
 
 
@@ -104,6 +105,47 @@ class Valued[T](ABC):
     @abstractmethod
     def getValue(self) -> T:
         """Получить актуальное значение"""
+
+
+@dataclass(kw_only=True)
+class Sizable[T: (int, float)](ABC):
+    """Объект с управляемыми размерами"""
+
+    _width: T = 0
+    """Изначальная ширина"""
+
+    _height: T = 0
+    """Изначальная высота"""
+
+    @abstractmethod
+    def getWidth(self) -> T:
+        """Получить актуальную ширину"""
+
+    @abstractmethod
+    def getHeight(self) -> T:
+        """Получить актуальную высоту"""
+
+    @final
+    def getSize(self) -> Vector2D[T]:
+        """Получить актуальный размер"""
+        return Vector2D(
+            self.getWidth(),
+            self.getHeight()
+        )
+
+    @abstractmethod
+    def setWidth(self, new_width: T) -> None:
+        """Установить ширину"""
+
+    @abstractmethod
+    def setHeight(self, new_height: T) -> None:
+        """"Установить ширину"""
+
+    @final
+    def setSize(self, new_size: Vector2D[T]) -> None:
+        """Установить размер"""
+        self.setWidth(new_size.x)
+        self.setHeight(new_size.y)
 
 
 class Enableable(ABC):

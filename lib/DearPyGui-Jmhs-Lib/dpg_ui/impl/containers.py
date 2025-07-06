@@ -9,6 +9,7 @@ from dearpygui import dearpygui as dpg
 from dpg_ui.abc.entities import Widget
 from dpg_ui.core.dpg.container import DpgContainer
 from dpg_ui.core.dpg.item import DpgTag
+from dpg_ui.core.dpg.traits import DpgSizable
 from dpg_ui.core.dpg.widget import DpgWidget
 
 
@@ -112,9 +113,9 @@ class Window(_DpgWidgetContainer):
     _auto_size: bool = True
     """Размер окна автоматически подстраивается под виджеты"""
 
+    # noinspection PyFinal
     def register(self, parent: Widget) -> None:
-        tag = dpg.add_window(label=self._label, menubar=self._menubar, autosize=self._auto_size, )
-        self._onRegister(tag)
+        self._onRegister(dpg.add_window(label=self._label, menubar=self._menubar, autosize=self._auto_size, ))
 
     def _createTag(self, parent_tag: DpgTag) -> DpgTag:
         raise RuntimeError
@@ -122,11 +123,8 @@ class Window(_DpgWidgetContainer):
 
 @final
 @dataclass(kw_only=True)
-class ChildWindow(_DpgWidgetContainer):
+class ChildWindow(_DpgWidgetContainer, DpgSizable[int]):
     """Дочернее очно"""
-
-    width: int = 0
-    height: int = 0
 
     resizable_x: bool = False
     resizable_y: bool = False
@@ -154,6 +152,6 @@ class ChildWindow(_DpgWidgetContainer):
             horizontal_scrollbar=self.scrollable_x,
             autosize_x=self.auto_size_x,
             autosize_y=self.auto_size_y,
-            width=self.width,
-            height=self.height,
+            width=self._width,
+            height=self._height,
         )

@@ -1,5 +1,5 @@
 from dpg_ui.core.custom import CustomWidget
-from dpg_ui.impl.boxes import IntDisplay
+from dpg_ui.impl.boxes import DisplayInt
 from dpg_ui.impl.containers import ChildWindow
 from dpg_ui.impl.text import Text
 from game.core.entities.team import Team
@@ -13,7 +13,7 @@ class TeamCard(CustomWidget):
         team.addObserver(self._update)
 
         self.name = Text(team.name, color=team.color, bullet=True)
-        self.score = IntDisplay("Счёт", team.score)
+        self.score = DisplayInt("Счёт", team.score)
 
         base = (
             ChildWindow(

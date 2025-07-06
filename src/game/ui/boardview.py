@@ -1,3 +1,5 @@
+from itertools import product
+
 from dpg_ui.core.custom import CustomWidget
 from dpg_ui.core.dpg.draw import DpgCanvas
 from dpg_ui.core.dpg.draw import Rectangle
@@ -56,19 +58,22 @@ class BoardView(CustomWidget):
             if not (0 <= pos.x < board_size.x and 0 <= pos.y < board_size.y):
                 rectangle.hide()
 
-        for x in range(board_size.x):
-            for y in range(board_size.y):
-                pos = Vector2D(x, y)
+        positions = map(
+            lambda coords: Vector2D(*coords),
+            product(range(board_size.x), range(board_size.y))
+        )
 
-                if pos in self._grid:
-                    rectangle = self._grid[pos]
+        for pos in positions:
 
-                else:
-                    rectangle = self._createCellFigure(pos)
-                    self._grid[pos] = rectangle
-                    self._canvas.add(rectangle)
+            if pos in self._grid:
+                rectangle = self._grid[pos]
 
-                rectangle.show()
+            else:
+                rectangle = self._createCellFigure(pos)
+                self._grid[pos] = rectangle
+                self._canvas.add(rectangle)
+
+            rectangle.show()
 
         self._log.write(f"Доска перестроена: {board_size}")
 

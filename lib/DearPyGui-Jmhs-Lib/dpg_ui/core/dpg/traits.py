@@ -9,6 +9,7 @@ from dpg_ui.abc.traits import Colored
 from dpg_ui.abc.traits import Deletable
 from dpg_ui.abc.traits import Enableable
 from dpg_ui.abc.traits import Intervaled
+from dpg_ui.abc.traits import Sizable
 from dpg_ui.abc.traits import Valued
 from dpg_ui.abc.traits import Visibility
 from dpg_ui.core.dpg.item import DpgItem
@@ -70,10 +71,38 @@ class DpgValued[T](DpgItem, Valued[T], ABC):
 
 
 class DpgIntervaled[T](DpgItem, Intervaled[T], ABC):
-    """Виджет DPG имеет диапазон и значение"""
+    """Виджет DPG имеющий диапазон и значение"""
 
     def _onIntervalMaxChanged(self, new_max: T) -> None:
         self.configure(max_value=new_max)
 
     def _onIntervalMinChanged(self, new_min: T) -> None:
         self.configure(min_value=new_min)
+
+
+class DpgSizable[T: (int, float)](DpgItem, Sizable[T]):
+    """Виджет DPG имеющий размеры"""
+
+    def setWidth(self, new_width: T) -> None:
+        if self.isRegistered():
+            self.configure(width=new_width)
+        else:
+            self._width = new_width
+
+    def setHeight(self, new_height: T) -> None:
+        if self.isRegistered():
+            self.configure(height=new_height)
+        else:
+            self._height = new_height
+
+    def getWidth(self) -> T:
+        if self.isRegistered():
+            return dpg.get_item_width(self.tag())
+        else:
+            return self._width
+
+    def getHeight(self) -> T:
+        if self.isRegistered():
+            return dpg.get_item_height(self.tag())
+        else:
+            return self._height

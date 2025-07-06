@@ -4,7 +4,7 @@ from typing import Final
 from dpg_ui.abc.traits import Intervaled
 from dpg_ui.abc.traits import Valued
 from dpg_ui.core.custom import CustomWidget
-from dpg_ui.impl.boxes import IntInput
+from dpg_ui.impl.boxes import InputInt
 from dpg_ui.impl.containers import HBox
 from dpg_ui.impl.containers import VBox
 from dpg_ui.impl.text import Text
@@ -42,7 +42,7 @@ class InputInt2D(CustomWidget, Valued[Vector2D[int]], Intervaled[int]):
 
         item_width = width // 3
 
-        self._y = IntInput(
+        self._y = InputInt(
             label=None,
             on_change=_on_change_y,
             default=default.y,
@@ -53,7 +53,7 @@ class InputInt2D(CustomWidget, Valued[Vector2D[int]], Intervaled[int]):
             interval_min=interval_min,
         )
 
-        self._x = IntInput(
+        self._x = InputInt(
             label=None,
             on_change=_on_change_x,
             default=default.x,

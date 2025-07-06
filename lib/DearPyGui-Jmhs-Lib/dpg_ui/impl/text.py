@@ -32,5 +32,4 @@ def Text(
         bullet: bool = False
 ):
     """Текст"""
-    text = _Text(_bullet=bullet, _value_default=default, _color=color)
-    return text
+    return _Text(_bullet=bullet, _value_default=default, _color=color)

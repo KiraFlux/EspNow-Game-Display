@@ -15,7 +15,7 @@ from dpg_ui.core.dpg.widget import DpgWidget
 
 
 @dataclass(kw_only=True)
-class _ValueBox[T](DpgWidget, DpgValued[T], ABC):
+class _InputBox[T](DpgWidget, DpgValued[T], ABC):
     """Окно значения"""
 
     _label: Optional[str]
@@ -36,7 +36,7 @@ class _ValueBox[T](DpgWidget, DpgValued[T], ABC):
 
 @final
 @dataclass(kw_only=True)
-class _TextBox(_ValueBox[str]):
+class _InputText(_InputBox[str]):
     """Окно текста"""
 
     def _createTag(self, parent_tag: DpgTag) -> DpgTag:
@@ -51,7 +51,7 @@ class _TextBox(_ValueBox[str]):
         )
 
 
-def TextInput(
+def InputText(
         label: str,
         on_change: Callable[[str], None],
         *,
@@ -60,7 +60,7 @@ def TextInput(
         width: int = 0
 ):
     """Создать окно ввода текста"""
-    return _TextBox(
+    return _InputText(
         _label=label,
         _readonly=False,
         _on_change=on_change,
@@ -70,14 +70,14 @@ def TextInput(
     )
 
 
-def TextDisplay(
+def DisplayText(
         label: str,
         *,
         default: str = None,
         width: int = 0
 ):
     """Создать окно вывода текста"""
-    return _TextBox(
+    return _InputText(
         _label=label,
         _readonly=True,
         _on_change=None,
@@ -89,7 +89,7 @@ def TextDisplay(
 
 @final
 @dataclass(kw_only=True)
-class _IntInputBox(_ValueBox[int], DpgIntervaled[int]):
+class _InputInt(_InputBox[int], DpgIntervaled[int]):
     """Окно целого числа"""
 
     _step: int
@@ -119,7 +119,7 @@ class _IntInputBox(_ValueBox[int], DpgIntervaled[int]):
         )
 
 
-def IntInput(
+def InputInt(
         label: Optional[str],
         on_change: Callable[[int], None] = None,
         default: int = 0,
@@ -132,7 +132,7 @@ def IntInput(
         on_enter: bool = False,
 ):
     """Окно ввода целого числа"""
-    return _IntInputBox(
+    return _InputInt(
         _interval_max=interval_max,
         _interval_min=interval_min,
         _value_default=default,
@@ -146,14 +146,14 @@ def IntInput(
     )
 
 
-def IntDisplay(
+def DisplayInt(
         label: str,
         default: int = 0,
         *,
         width: int = 0
 ):
     """Окно вывода целого числа"""
-    return _IntInputBox(
+    return _InputInt(
         _interval_max=0,
         _interval_min=0,
         _value_default=default,

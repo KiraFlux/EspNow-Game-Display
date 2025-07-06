@@ -1,6 +1,6 @@
 from dpg_ui.core.custom import CustomWidget
-from dpg_ui.impl.boxes import IntDisplay
-from dpg_ui.impl.boxes import TextInput
+from dpg_ui.impl.boxes import DisplayInt
+from dpg_ui.impl.boxes import InputText
 from dpg_ui.impl.buttons import Button
 from dpg_ui.impl.containers import ChildWindow
 from dpg_ui.impl.text import Text
@@ -14,10 +14,10 @@ class PlayerCard(CustomWidget):
 
     def __init__(self, player: Player, player_registry: PlayerRegistry):
         player.addObserver(self._update)
-        self.username = TextInput("Игрок", player.rename, default=player.username)
+        self.username = InputText("Игрок", player.rename, default=player.username)
         self.team = Text(player.team.name, color=player.team.color, bullet=True)
         self.mac = Text(f"MAC: {player.mac}", color=Color.gray(0.75))
-        self.score = IntDisplay("Счёт", player.score)
+        self.score = DisplayInt("Счёт", player.score)
 
         def _remove():
             player_registry.unregister(player.mac)

@@ -1,5 +1,5 @@
 from dpg_ui.core.custom import CustomWidget
-from dpg_ui.impl.boxes import TextDisplay
+from dpg_ui.impl.boxes import DisplayText
 from dpg_ui.impl.containers import ChildWindow
 from dpg_ui.impl.containers import HBox
 from dpg_ui.impl.containers import Tab
@@ -18,7 +18,7 @@ from lina.vector import Vector2D
 class GameView(CustomWidget):
 
     def __init__(self, env: Environment) -> None:
-        host_mac_display = TextDisplay("Хост", default="Ожидание...", width=300)
+        host_mac_display = DisplayText("Хост", default="Ожидание...", width=300)
 
         env.host_mac_subject.addObserver(host_mac_display.setValue)
 
