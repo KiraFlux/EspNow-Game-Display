@@ -1,3 +1,4 @@
+import colorsys
 from dataclasses import dataclass
 from typing import ClassVar
 from typing import Self
@@ -171,13 +172,71 @@ class Color:
             int(self.alpha * self._rgba_8888_max)
         )
 
+    def toHSL(self) -> tuple[float, float, float]:
+        """Преобразует цвет в формат HSL"""
+        h, l, s = colorsys.rgb_to_hls(self.red, self.green, self.blue)
+        return h * 360, s, l
+
+    # methods
+
     def toHex(self) -> str:
         """Преобразовать в HEX представление"""
         r, g, b = self.toRGB888()
         return f"#{r:02x}{g:02x}{b:02x}"
 
-    # methods
-
     def brightness(self) -> float:
         """Вычислить нормализованную яркость"""
         return self._luma_r * self.red + self._luma_g * self.green + self._luma_b * self.blue
+
+    def darker(self, k: float) -> Self:
+        """Возвращает более темный цвет.
+        :param k: Коэффициент затемнения [0;1]
+        """
+        assert 0.0 <= k <= 1.0
+        h, s, l = self.toHSL()
+        new_l = l * (1 - k)
+
+        return Color.fromHSL(h, s, new_l).withAlpha(self.alpha)
+
+    def lighter(self, k: float) -> Self:
+        """Возвращает более светлый цвет.
+        :param k: Коэффициент осветления [0;1]
+        """
+
+        assert 0.0 <= k <= 1.0
+
+        h, s, l = self.toHSL()
+        new_l = l + (1 - l) * k
+
+        return Color.fromHSL(h, s, new_l).withAlpha(self.alpha)
+
+    def saturated(self, k: float) -> Self:
+        """Увеличивает насыщенность цвета.
+
+        :param k: Коэффициент увеличения насыщенности [0;1]
+        """
+        assert 0.0 <= k <= 1.0
+
+        h, s, l = self.toHSL()
+        new_s = s + (1 - s) * k
+
+        return Color.fromHSL(h, new_s, l).withAlpha(self.alpha)
+
+    def desaturated(self, k: float) -> Self:
+        """Уменьшает насыщенность цвета (делает блеклым).
+
+        :param k: Коэффициент уменьшения насыщенности [0;1]
+        """
+        assert 0.0 <= k <= 1.0
+
+        h, s, l = self.toHSL()
+        new_s = s * (1 - k)
+
+        return Color.fromHSL(h, new_s, l).withAlpha(self.alpha)
+
+    def withAlpha(self, alpha: float) -> Self:
+        """Возвращает копию цвета с новой прозрачностью.
+
+        :param alpha: Новое значение прозрачности [0;1]
+        """
+        return Color(self.red, self.green, self.blue, alpha)

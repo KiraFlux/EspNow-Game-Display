@@ -40,7 +40,7 @@ def _create_protocol_task(env: Environment) -> Thread:
 
 
 def _agents_task(env: Environment):
-    for i in range(10):
+    for i in range(30):
         mac = Mac(bytes((0, 0, 0, 0, 0, i)))
 
         env.onPlayerMessage(mac, f"User-{i}")
@@ -52,7 +52,7 @@ def _agents_task(env: Environment):
 
         env.onPlayerMove(mac, Vector2D(i % env.board.size.x, i // env.board.size.x))
 
-        sleep(1)
+        sleep(0.1)
 
     return
 
@@ -64,8 +64,8 @@ def _create_agents_task(env: Environment):
 def _main():
     rules = GameRules(
         score=ScoreRules(
-            friend_cell=25,
-            enemy_cell=-50
+            friend_cell=50,
+            enemy_cell=-25
         ),
         player_move_cooldown_secs=2.0,
         team_color_generator=ColorGenerator(
@@ -76,12 +76,12 @@ def _main():
             ),
             saturation=PhasedAmplitudeGenerator(
                 scale=1.618,
-                base=0.6,
+                base=0.7,
                 amplitude=0.2
             ),
             light=PhasedAmplitudeGenerator(
                 scale=0.618,
-                base=0.7,
+                base=0.6,
                 amplitude=0.2
             )
         )

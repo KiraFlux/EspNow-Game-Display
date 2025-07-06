@@ -42,15 +42,14 @@ class TeamList(CustomWidget):
     """Список команд"""
 
     def __init__(self, team_registry: TeamRegistry) -> None:
-        team_list = (
-            ChildWindow()
-            .add(
-                TeamCard(team_registry.default_team)
-            )
-        )
+        team_list = ChildWindow()
 
-        team_registry.addObserver(
-            lambda team: team_list.add(TeamCard(team))
-        )
+        def _add_team_card(_team):
+            team_list.add(TeamCard(_team))
+
+        for team in team_registry.teams():
+            _add_team_card(team)
+
+        team_registry.addObserver(_add_team_card)
 
         super().__init__(team_list)

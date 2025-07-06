@@ -43,8 +43,8 @@ class BoardView(CustomWidget):
         pos_2 = pos_1 + cell_size
 
         rectangle = Rectangle(
-            pos_1 + contour_thickness,
-            pos_2 - contour_thickness,
+            _position_1=pos_1 + contour_thickness,
+            _position_2=pos_2 - contour_thickness,
             _contour_thickness=contour_thickness,
             _fill_color=Color.nitro(),
             _contour_color=Color.white(),
@@ -78,4 +78,9 @@ class BoardView(CustomWidget):
         self._log.write(f"Доска перестроена: {board_size}")
 
     def _onPlayerMove(self, player: Player, position: Vector2D[int]):
+
+        rectangle = self._grid[position]
+        rectangle.fill_color = player.team.color
+        rectangle.contour_color = player.team.color.darker(0.4)
+
         self._log.write(f"Отображен ход игрока '{player}' на позиции {position}")

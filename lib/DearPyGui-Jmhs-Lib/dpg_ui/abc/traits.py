@@ -91,8 +91,8 @@ class WidthAdjustable[T: (int, float)](ABC):
         return self
 
 
-class Sizable[T: (int, float)](WidthAdjustable, ABC):
-    """Обладает размерами (шириной и высотой)"""
+class HeightAdjustable[T: (int, float)](ABC):
+    """Обладает высотой"""
 
     @abstractmethod
     def getHeight(self) -> T:
@@ -107,6 +107,10 @@ class Sizable[T: (int, float)](WidthAdjustable, ABC):
         """Установить ширину и вернуть себя"""
         self.setHeight(height)
         return self
+
+
+class Sizable[T: (int, float)](HeightAdjustable, WidthAdjustable, ABC):
+    """Обладает размерами (шириной и высотой)"""
 
     @final
     def getSize(self) -> Vector2D[T]:

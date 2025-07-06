@@ -5,6 +5,7 @@ from abc import abstractmethod
 from dataclasses import dataclass
 from typing import Any
 from typing import Callable
+from typing import ClassVar
 from typing import Optional
 from typing import final
 
@@ -13,6 +14,7 @@ from dearpygui import dearpygui as dpg
 from dpg_ui.abc.traits import Colored
 from dpg_ui.abc.traits import Deletable
 from dpg_ui.abc.traits import Handlerable
+from dpg_ui.abc.traits import HeightAdjustable
 from dpg_ui.abc.traits import Intervaled
 from dpg_ui.abc.traits import Labelable
 from dpg_ui.abc.traits import Sizable
@@ -289,14 +291,16 @@ class DpgWidthAdjustable[T: (int, float)](DpgItem, WidthAdjustable[T]):
 
 
 @dataclass(kw_only=True)
-class DpgSizable[T: (int, float)](Sizable[T], DpgWidthAdjustable[T], DpgItem):
-    """Виджет DPG имеющий размеры"""
+class DpgHeightAdjustable[T: (int, float)](DpgItem, HeightAdjustable):
+    _height_key: ClassVar[str] = 'height'
 
     _height: T = 0
     """Изначальная высота"""
 
     def _updateHeight(self):
-        self.configure(height=self._height)
+        self.configure(**{
+            self._height_key: self._height
+        })
 
     def update(self) -> None:
         super().update()
@@ -305,7 +309,7 @@ class DpgSizable[T: (int, float)](Sizable[T], DpgWidthAdjustable[T], DpgItem):
     @final
     def getHeight(self) -> T:
         if self.isRegistered():
-            self._width = dpg.get_item_height(self.tag())
+            self._height = dpg.get_item_height(self.tag())
 
         return self._height
 
@@ -315,3 +319,8 @@ class DpgSizable[T: (int, float)](Sizable[T], DpgWidthAdjustable[T], DpgItem):
 
         if self.isRegistered():
             self._updateHeight()
+
+
+@dataclass(kw_only=True)
+class DpgSizable[T: (int, float)](DpgWidthAdjustable[T], DpgHeightAdjustable[T], Sizable[T], DpgItem):
+    """Виджет DPG имеющий размеры"""
