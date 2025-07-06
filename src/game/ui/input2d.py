@@ -76,13 +76,13 @@ class InputInt2D(CustomWidget, Valued[Vector2D[int]], Intervaled[int]):
 
         super().__init__(base)
 
-    def _onIntervalMinChanged(self, new_min: int) -> None:
-        self._x.setIntervalMin(new_min)
-        self._y.setIntervalMin(new_min)
-
-    def _onIntervalMaxChanged(self, new_max: int) -> None:
+    def setIntervalMax(self, new_max: int) -> None:
         self._x.setIntervalMax(new_max)
         self._y.setIntervalMax(new_max)
+
+    def setIntervalMin(self, new_min: int) -> None:
+        self._x.setIntervalMin(new_min)
+        self._y.setIntervalMin(new_min)
 
     def setValue(self, value: Vector2D[int]) -> None:
         self._x.setValue(value.x)

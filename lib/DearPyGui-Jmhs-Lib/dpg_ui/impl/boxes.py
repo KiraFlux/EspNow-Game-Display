@@ -43,7 +43,7 @@ class _InputText(_InputBox[str]):
         return dpg.add_input_text(
             parent=parent_tag,
             label=self._label,
-            default_value=self._value_default,
+            default_value=self._value,
             readonly=self._readonly,
             width=self._width,
             on_enter=self._on_enter,
@@ -65,7 +65,7 @@ def InputText(
         _readonly=False,
         _on_change=on_change,
         _on_enter=on_enter,
-        _value_default=default,
+        _value=default,
         _width=width
     )
 
@@ -82,7 +82,7 @@ def DisplayText(
         _readonly=True,
         _on_change=None,
         _on_enter=False,
-        _value_default=default,
+        _value=default,
         _width=width
     )
 
@@ -103,7 +103,7 @@ class _InputInt(_InputBox[int], DpgIntervaled[int]):
             parent=parent_tag,
 
             label=self._label,
-            default_value=self._value_default,
+            default_value=self._value,
             readonly=self._readonly,
             width=self._width,
             callback=None if self._on_change is None else (lambda _: self._on_change(self.getValue())),
@@ -135,7 +135,7 @@ def InputInt(
     return _InputInt(
         _interval_max=interval_max,
         _interval_min=interval_min,
-        _value_default=default,
+        _value=default,
         _label=label,
         _readonly=False,
         _on_change=on_change,
@@ -156,7 +156,7 @@ def DisplayInt(
     return _InputInt(
         _interval_max=0,
         _interval_min=0,
-        _value_default=default,
+        _value=default,
         _label=label,
         _readonly=True,
         _on_change=None,

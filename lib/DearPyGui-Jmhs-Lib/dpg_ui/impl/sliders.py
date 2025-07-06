@@ -40,7 +40,7 @@ class _IntSlider(_Slider[int]):
         return dpg.add_slider_int(
             parent=parent_tag,
             label=self._label,
-            default_value=self._value_default,
+            default_value=self._value,
             callback=None if self._on_change is None else lambda _: self._on_change(self.getValue()),
             max_value=self._interval_max,
             min_value=self._interval_min,
@@ -62,7 +62,7 @@ def IntSlider(
     return _IntSlider(
         _interval_max=_max,
         _interval_min=_min,
-        _value_default=default,
+        _value=default,
         _label=label,
         _on_change=on_change,
         _units=units,
@@ -86,7 +86,7 @@ class _FloatSlider(_Slider[float]):
         return dpg.add_slider_float(
             parent=parent_tag,
             label=self._label,
-            default_value=self._value_default,
+            default_value=self._value,
             callback=None if self._on_change is None else lambda _: self._on_change(self.getValue()),
             format=f,
             max_value=self._interval_max,
@@ -109,7 +109,7 @@ def FloatSlider(
     return _FloatSlider(
         _interval_max=_max,
         _interval_min=_min,
-        _value_default=default,
+        _value=default,
         _label=label,
         _on_change=on_change,
         _units=units,

@@ -25,7 +25,7 @@ class PlayerCard(CustomWidget):
 
         base = (
             ChildWindow(
-                height=180,
+                _height=180,
             )
             .add(self.mac)
             .add(self.username)

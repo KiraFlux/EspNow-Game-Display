@@ -29,7 +29,7 @@ class LogView(CustomWidget):
                     .add(Text("Каналы").withFont(Assets.label_font))
                     .add(
                         ChildWindow(
-                            width=300,
+                            _width=300,
                             resizable_x=True,
                         )
                         .add(
@@ -57,7 +57,7 @@ class LogView(CustomWidget):
             CheckBox(
                 key,
                 _on_change=lambda state: self._onKeyWidget(key, state),
-                _value_default=False,
+                _value=False,
             )
         )
 

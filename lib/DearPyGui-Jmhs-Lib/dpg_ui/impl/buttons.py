@@ -81,6 +81,6 @@ class CheckBox(DpgWidget, DpgValued[bool]):
         return dpg.add_checkbox(
             parent=parent_tag,
             label=self._label,
-            default_value=bool(self._value_default),
+            default_value=bool(self._value),
             callback=None if self._on_change is None else (lambda _: self._on_change(self.getValue()))
         )

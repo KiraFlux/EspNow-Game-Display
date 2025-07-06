@@ -29,7 +29,7 @@ class GameView(CustomWidget):
             HBox()
             .add(
                 ChildWindow(
-                    width=400,
+                    _width=400,
                     resizable_x=True,
                     background=True
                 )

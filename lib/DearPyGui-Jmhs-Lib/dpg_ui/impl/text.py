@@ -21,7 +21,7 @@ class _Text(DpgWidget, DpgValued[str], DpgColored):
     """Отображает маркер перед текстом"""
 
     def _createTag(self, parent_tag: DpgTag) -> DpgTag:
-        tag = dpg.add_text(self._value_default, parent=parent_tag, color=self._color.toRGBA8888(), bullet=self._bullet, )
+        tag = dpg.add_text(self._value, parent=parent_tag, color=self._color.toRGBA8888(), bullet=self._bullet, )
         return tag
 
 
@@ -32,4 +32,4 @@ def Text(
         bullet: bool = False
 ):
     """Текст"""
-    return _Text(_bullet=bullet, _value_default=default, _color=color)
+    return _Text(_bullet=bullet, _value=default, _color=color)

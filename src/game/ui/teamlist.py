@@ -17,7 +17,7 @@ class TeamCard(CustomWidget):
 
         base = (
             ChildWindow(
-                height=100
+                _height=100
             )
             .add(self.name)
             .add(self.score)

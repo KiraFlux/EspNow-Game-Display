@@ -13,12 +13,12 @@ from dpg_ui.abc.entities import Font
 from dpg_ui.abc.entities import Widget
 from dpg_ui.core.dpg.item import DpgTag
 from dpg_ui.core.dpg.traits import DpgDeletable
-from dpg_ui.core.dpg.traits import DpgEnableable
+from dpg_ui.core.dpg.traits import DpgToggleable
 from dpg_ui.core.dpg.traits import DpgVisibility
 
 
 @dataclass
-class DpgWidget(Widget[DpgTag], DpgDeletable, DpgEnableable, DpgVisibility, ABC):
+class DpgWidget(Widget[DpgTag], DpgDeletable, DpgToggleable, DpgVisibility, ABC):
     """Виджет системы DPG"""
 
     __font: Optional[Font] = field(init=False, default=None)
