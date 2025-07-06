@@ -48,7 +48,7 @@ def _agents_task(env: Environment):
         team = env.team_registry.register(f"Team-{i}")
 
         player = env.player_registry.getPlayers().get(mac)
-        player.team = team
+        player._team = team
 
         env.onPlayerMove(mac, Vector2D(i % env.board.size.x, i // env.board.size.x))
 

@@ -12,7 +12,7 @@ from game.ui.logview import LogView
 class GameApp(App):
 
     def __init__(self, env: Environment) -> None:
-        super().__init__(Window("").withFont(Assets.default_font))
+        super().__init__(Window().withFont(Assets.default_font))
 
         self.window.add(
             TabBar()

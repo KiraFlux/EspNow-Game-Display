@@ -14,10 +14,11 @@ class PlayerCard(CustomWidget):
 
     def __init__(self, player: Player, player_registry: PlayerRegistry):
         player.addObserver(self._update)
-        self.username = InputText("Игрок", player.rename, default=player.username)
-        self.team = Text(player.team.name, color=player.team.color, bullet=True)
-        self.mac = Text(f"MAC: {player.mac}", color=Color.gray(0.75))
-        self.score = DisplayInt("Счёт", default=player.score)
+
+        self._username = InputText("Игрок", default=player.username).withCallback(player.rename)
+        self._team = Text(player.team.name, color=player.team.color, bullet=True)
+        self._mac = Text(f"MAC: {player.mac}", color=Color.gray(0.75))
+        self._score = DisplayInt("Счёт", default=player.score)
 
         def _remove():
             player_registry.unregister(player.mac)
@@ -27,20 +28,24 @@ class PlayerCard(CustomWidget):
             ChildWindow(
                 _height=180,
             )
-            .add(self.mac)
-            .add(self.username)
-            .add(self.team)
-            .add(self.score)
-            .add(Button("Исключить", _on_click=_remove))
+            .add(self._mac)
+            .add(self._username)
+            .add(self._team)
+            .add(self._score)
+            .add(
+                Button()
+                .withLabel("Исключить")
+                .withCallback(_remove)
+            )
         )
 
         super().__init__(base)
 
     def _update(self, p: Player) -> None:
-        self.username.setValue(p.username)
-        self.team.setValue(p.team.name)
-        self.team.setColor(p.team.color)
-        self.score.setValue(p.score)
+        self._username.setValue(p.username)
+        self._team.setValue(p.team.name)
+        self._team.setColor(p.team.color)
+        self._score.setValue(p.score)
 
 
 class PlayerList(CustomWidget):

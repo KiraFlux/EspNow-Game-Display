@@ -15,12 +15,15 @@ DpgTag = int | str
 class DpgItem(Item[DpgTag], ABC):
     _tag: Optional[DpgTag] = field(init=False, default=None)
 
+    def update(self) -> None:
+        """Обновить компонент"""
+
     def _onRegister(self, tag: DpgTag) -> None:
         # if self.isRegistered():
         #     raise ValueError(f"re registering not allowed: {tag} (exist: {self.tag()}")
 
         self._tag = tag
-        pass
+        self.update()
 
     @final
     def tag(self) -> Optional[DpgTag]:

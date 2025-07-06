@@ -3,6 +3,8 @@ from __future__ import annotations
 from abc import ABC
 from abc import abstractmethod
 from dataclasses import dataclass
+from typing import Callable
+from typing import Optional
 from typing import Self
 from typing import final
 
@@ -212,3 +214,42 @@ class Deletable(ABC):
     @abstractmethod
     def delete(self) -> None:
         """Удалить"""
+
+
+@dataclass(kw_only=True)
+class CallbackSupport[F: Callable](ABC):
+    """Позволяет подключить callback"""
+
+    _callback: Optional[F] = None
+    """Обработчик обратного вызова"""
+
+    @abstractmethod
+    def setCallback(self, f: Optional[F]) -> None:
+        """Установить обработчик обратного вызова"""
+
+    @final
+    def withCallback(self, f: Optional[F]) -> Self:
+        """Установить обработчик обратного вызова и вернуть себя"""
+        self.setCallback(f)
+        return self
+
+
+@dataclass(kw_only=True)
+class Labelable(ABC):
+    """Объект, который может иметь метку (label)"""
+
+    _label: Optional[str] = None
+
+    @abstractmethod
+    def setLabel(self, label: Optional[str]) -> None:
+        """Установить метку объекта"""
+
+    @abstractmethod
+    def getLabel(self) -> Optional[str]:
+        """Получить текущую метку объекта"""
+
+    @final
+    def withLabel(self, label: Optional[str]) -> Self:
+        """Установить метку объекта и вернуть текущий экземпляр"""
+        self.setLabel(label)
+        return self

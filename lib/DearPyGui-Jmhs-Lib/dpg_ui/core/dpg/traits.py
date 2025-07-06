@@ -1,13 +1,19 @@
 from __future__ import annotations
 
 from abc import ABC
+from abc import abstractmethod
+from typing import Any
+from typing import Callable
+from typing import Optional
 from typing import final
 
 from dearpygui import dearpygui as dpg
 
+from dpg_ui.abc.traits import CallbackSupport
 from dpg_ui.abc.traits import Colored
 from dpg_ui.abc.traits import Deletable
 from dpg_ui.abc.traits import Intervaled
+from dpg_ui.abc.traits import Labelable
 from dpg_ui.abc.traits import Sizable
 from dpg_ui.abc.traits import Toggleable
 from dpg_ui.abc.traits import Valued
@@ -15,6 +21,31 @@ from dpg_ui.abc.traits import Visibility
 from dpg_ui.abc.traits import WidthAdjustable
 from dpg_ui.core.dpg.item import DpgItem
 from rs.color import Color
+
+
+class DpgLabelable(DpgItem, Labelable):
+    """Объект Dpg имеющий метку (label)"""
+
+    @final
+    def getLabel(self) -> Optional[str]:
+        if self.isRegistered():
+            self._label = dpg.get_item_label(self.tag())
+
+        return self._label
+
+    @final
+    def setLabel(self, label: Optional[str]) -> None:
+        self._label = label
+
+        if self.isRegistered():
+            self._updateLabel()
+
+    def _updateLabel(self) -> None:
+        dpg.set_item_label(self.tag(), self._label)
+
+    def update(self) -> None:
+        super().update()
+        self._updateLabel()
 
 
 class DpgColored(DpgItem, Colored):
@@ -27,6 +58,10 @@ class DpgColored(DpgItem, Colored):
 
     def _updateColor(self):
         self.configure(color=super().getColor().toRGBA8888())
+
+    def update(self) -> None:
+        super().update()
+        self._updateColor()
 
 
 class DpgToggleable(DpgItem, Toggleable):
@@ -44,12 +79,15 @@ class DpgToggleable(DpgItem, Toggleable):
         if self.isRegistered():
             self._updateEnabled()
 
-    @final
     def _updateEnabled(self) -> None:
         if self._enabled:
             dpg.enable_item(self.tag())
         else:
             dpg.disable_item(self.tag())
+
+    def update(self) -> None:
+        super().update()
+        self._updateEnabled()
 
 
 class DpgDeletable(DpgItem, Deletable):
@@ -73,12 +111,15 @@ class DpgVisibility(DpgItem, Visibility):
         if self.isRegistered():
             self._updateVisibility()
 
-    @final
     def _updateVisibility(self) -> None:
         if self._visible:
             dpg.show_item(self.tag())
         else:
             dpg.hide_item(self.tag())
+
+    def update(self) -> None:
+        super().update()
+        self._updateVisibility()
 
 
 class DpgValued[T](DpgItem, Valued[T], ABC):
@@ -98,9 +139,12 @@ class DpgValued[T](DpgItem, Valued[T], ABC):
         if self.isRegistered():
             self._updateValue()
 
-    @final
     def _updateValue(self):
         dpg.set_value(self.tag(), self._value)
+
+    def update(self) -> None:
+        super().update()
+        self._updateValue()
 
 
 class DpgIntervaled[T](DpgItem, Intervaled[T]):
@@ -119,13 +163,57 @@ class DpgIntervaled[T](DpgItem, Intervaled[T]):
         if self.isRegistered():
             self._updateIntervalMin()
 
-    @final
     def _updateIntervalMax(self) -> None:
         self.configure(max_value=self._interval_max)
 
-    @final
     def _updateIntervalMin(self) -> None:
         self.configure(min_value=self._interval_min)
+
+    def update(self) -> None:
+        super().update()
+        self._updateIntervalMin()
+        self._updateIntervalMax()
+
+
+class _DpgCallbackSupport[F: Callable](DpgItem, CallbackSupport[F], ABC):
+
+    @abstractmethod
+    def _createCallbackWrapper(self) -> Callable[[Any], Any]:
+        """Создать обёртку для передачи в DPG"""
+
+    @final
+    def setCallback(self, f: F) -> None:
+        self._callback = f
+
+        if self.isRegistered():
+            self._updateCallback()
+
+    def _updateCallback(self) -> None:
+        self.configure(
+            callback=(
+                None
+                if self._callback is None else
+                self._createCallbackWrapper()
+            )
+        )
+
+    def update(self) -> None:
+        super().update()
+        self._updateCallback()
+
+
+class DpgValuedCallbackSupport[T](DpgValued[T], _DpgCallbackSupport[Callable[[T], Any]]):
+    """Объект DPG поддерживающий обратный вызов со значением"""
+
+    def _createCallbackWrapper(self) -> Callable[[Any], Any]:
+        return lambda _: self._callback(self.getValue())
+
+
+class DpgCallbackSupport(_DpgCallbackSupport[Callable[[], Any]]):
+    """Объект DPG поддерживающий обратный вызов"""
+
+    def _createCallbackWrapper(self) -> Callable[[Any], Any]:
+        return lambda _: self._callback()
 
 
 class DpgWidthAdjustable[T: (int, float)](DpgItem, WidthAdjustable[T]):
@@ -145,9 +233,12 @@ class DpgWidthAdjustable[T: (int, float)](DpgItem, WidthAdjustable[T]):
 
         return self._width
 
-    @final
     def _updateWidth(self) -> None:
         self.configure(width=self._width)
+
+    def update(self) -> None:
+        super().update()
+        self._updateWidth()
 
 
 class DpgSizable[T: (int, float)](Sizable[T], DpgWidthAdjustable[T], DpgItem):
@@ -167,6 +258,9 @@ class DpgSizable[T: (int, float)](Sizable[T], DpgWidthAdjustable[T], DpgItem):
 
         return self._height
 
-    @final
     def _updateHeight(self):
         self.configure(height=self._height)
+
+    def update(self) -> None:
+        super().update()
+        self._updateHeight()

@@ -14,10 +14,9 @@ class ControlPanel(CustomWidget):
             FloatSlider(
                 "Кул-даун ходов",
                 default=env.rules.player_move_cooldown_secs,
-                on_change=_update_cooldown,
                 units="сек",
                 interval=(0, 10)
-            )
+            ).withCallback(_update_cooldown)
         )
 
         super().__init__(base)

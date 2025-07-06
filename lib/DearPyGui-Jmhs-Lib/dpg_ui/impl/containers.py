@@ -9,30 +9,21 @@ from dearpygui import dearpygui as dpg
 from dpg_ui.abc.entities import Widget
 from dpg_ui.core.dpg.container import DpgContainer
 from dpg_ui.core.dpg.item import DpgTag
+from dpg_ui.core.dpg.traits import DpgLabelable
 from dpg_ui.core.dpg.traits import DpgSizable
-from dpg_ui.core.dpg.widget import DpgWidget
 
 
 @dataclass
-class _DpgWidgetContainer(DpgContainer[Widget[DpgWidget]], ABC):
+class _DpgWidgetContainer(DpgContainer[Widget[DpgTag]], ABC):
 
     @final
-    def _registerItem(self, item: Widget[DpgWidget]) -> None:
+    def _registerItem(self, item: Widget[DpgTag]) -> None:
         item.register(self)
-
-
-@dataclass
-class _DpgSizableWidgetContainer(_DpgWidgetContainer, DpgSizable[int], ABC):
-
-    def _onRegister(self, tag: DpgTag) -> None:
-        super()._onRegister(tag)
-        self._updateWidth()
-        self._updateHeight()
 
 
 @final
 @dataclass(kw_only=True)
-class _Box(_DpgSizableWidgetContainer):
+class _Box(_DpgWidgetContainer, DpgSizable[int]):
     """Dpg: group"""
 
     _is_horizontal: bool
@@ -56,25 +47,22 @@ def HBox() -> _Box:
 
 @final
 @dataclass
-class Details(_DpgWidgetContainer):
+class Details(_DpgWidgetContainer, DpgLabelable):
     """Dpg: collapsing_header"""
 
-    _label: str
-    """Заголовок"""
     _default_open: bool = False
     """Открыт по умолчанию"""
 
     def _createTag(self, parent_tag: DpgTag) -> DpgTag:
         return dpg.add_collapsing_header(
             parent=parent_tag,
-            label=self._label,
             default_open=self._default_open
         )
 
 
 @final
 @dataclass
-class Tab(_DpgWidgetContainer):
+class Tab(_DpgWidgetContainer, DpgLabelable):
     """Dpg: tab"""
 
     _label: str
@@ -86,7 +74,6 @@ class Tab(_DpgWidgetContainer):
     def _createTag(self, parent_tag: DpgTag) -> DpgTag:
         return dpg.add_tab(
             parent=parent_tag,
-            label=self._label,
             closable=self._closable,
         )
 
@@ -111,11 +98,8 @@ class TabBar(DpgContainer[Tab]):
 
 @final
 @dataclass
-class Window(_DpgSizableWidgetContainer):
+class Window(_DpgWidgetContainer, DpgSizable[int], DpgLabelable):
     """Dpg: window"""
-
-    _label: str
-    """Заголовок окна"""
 
     _menubar: bool = False
     """Место под полосу меню"""
@@ -126,7 +110,6 @@ class Window(_DpgSizableWidgetContainer):
     # noinspection PyFinal
     def register(self, parent: Widget) -> None:
         self._onRegister(dpg.add_window(
-            label=self._label,
             menubar=self._menubar,
             autosize=self._auto_size,
         ))
@@ -137,7 +120,7 @@ class Window(_DpgSizableWidgetContainer):
 
 @final
 @dataclass(kw_only=True)
-class ChildWindow(_DpgSizableWidgetContainer):
+class ChildWindow(_DpgWidgetContainer, DpgSizable[int]):
     """Дочернее очно"""
 
     resizable_x: bool = False
