@@ -61,7 +61,7 @@ class TeamRegistry(Subject[Team]):
         self._color_generator: Final = color_generator
         self._teams: Final = set[Team]()
 
-        self.default_team: Final = self.register("default")
+        self.default_team: Final = Team("default", Color.grey())
 
     def register(self, name: str) -> Team:
         """Зарегистрировать команду"""

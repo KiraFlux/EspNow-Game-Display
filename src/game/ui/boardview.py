@@ -1,4 +1,5 @@
 from itertools import product
+from typing import Final
 
 from dpg_ui.core.custom import CustomWidget
 from dpg_ui.core.dpg.draw import DpgCanvas
@@ -16,7 +17,8 @@ type Pos = Vector2D[int]
 class BoardView(CustomWidget):
     """Визуализация игрового поля"""
 
-    def __init__(self, board: Board) -> None:
+    def __init__(self, board: Board, empty_cell_color: Color) -> None:
+        self._empty_cell_border_color: Final = empty_cell_color
         self._log = Logger("game-board-view")
 
         board.size_subject.addObserver(self._onBoardResized)
@@ -28,10 +30,10 @@ class BoardView(CustomWidget):
             scrollable_y=True,
             scrollable_x=True
         ).add(self._canvas)
+
         super().__init__(base)
 
         self._grid = dict[Pos, Rectangle]()
-
         self._onBoardResized(board.size)
 
     def _createCellFigure(self, pos: Pos) -> Rectangle:
@@ -46,8 +48,8 @@ class BoardView(CustomWidget):
             _position_1=pos_1 + contour_thickness,
             _position_2=pos_2 - contour_thickness,
             _contour_thickness=contour_thickness,
-            _fill_color=Color.nitro(),
-            _contour_color=Color.white(),
+            _fill_color=Color.none(),
+            _contour_color=self._empty_cell_border_color,
             _rounding=rounding
         )
 

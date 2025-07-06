@@ -1,10 +1,12 @@
 from dpg_ui.core.custom import CustomWidget
 from dpg_ui.impl.boxes import DisplayText
+from dpg_ui.impl.buttons import CheckBox
 from dpg_ui.impl.containers import ChildWindow
 from dpg_ui.impl.containers import HBox
 from dpg_ui.impl.containers import Tab
 from dpg_ui.impl.containers import TabBar
 from dpg_ui.impl.containers import VBox
+from dpg_ui.impl.misc import Separator
 from dpg_ui.impl.misc import Spacer
 from game.core.environment import Environment
 from game.res import Assets
@@ -24,6 +26,9 @@ class GameView(CustomWidget):
 
         def _update_board_size(new_size: Vector2D):
             env.board.size = new_size
+
+        def _is_player_moves_available_setter(x):
+            env.is_player_moves_available = x
 
         base = (
             HBox()
@@ -55,11 +60,21 @@ class GameView(CustomWidget):
                             default=env.board.size,
                         )
                     )
-                    .add(Spacer(width=300))
-                    .add(host_mac_display)
+                    .add(Spacer(width=200))
+
+                    .add(
+                        VBox()
+                        .add(host_mac_display)
+                        .add(Separator())
+                        .add(
+                            CheckBox(_value=env.is_player_moves_available)
+                            .withLabel("Разрешить ходы")
+                            .withHandler(_is_player_moves_available_setter)
+                        )
+                    )
                 ).withFont(Assets.label_font)
                 .add(
-                    BoardView(env.board)
+                    BoardView(env.board, env.team_registry.default_team.color.darker(0.6))
                 )
             )
         )

@@ -72,6 +72,12 @@ class Valued[T](ABC):
     def setValue(self, value: T) -> None:
         """Установить значение"""
 
+    @final
+    def withValue(self, value: T) -> Self:
+        """Установить значение и вернуть себя"""
+        self.setValue(value)
+        return self
+
 
 class WidthAdjustable[T: (int, float)](ABC):
     """Обладает шириной"""

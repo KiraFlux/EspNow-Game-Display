@@ -19,7 +19,7 @@ class InputInt2D(CustomWidget, Valued[Vector2D[int]], Intervaled[int]):
             label: str,
             interval: tuple[int, int],
             *,
-            on_change: Callable[[Vector2D], None] = 0,
+            on_change: Callable[[Vector2D], None] = None,
             default: Vector2D[int] = Vector2D(0, 0),
             width: int = 500,
             step: int = 1,

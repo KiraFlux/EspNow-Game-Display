@@ -40,19 +40,27 @@ def _create_protocol_task(env: Environment) -> Thread:
 
 
 def _agents_task(env: Environment):
-    for i in range(30):
-        mac = Mac(bytes((0, 0, 0, 0, 0, i)))
+    x = env.board.size.x // 2
+    y = env.board.size.y // 2
 
-        env.onPlayerMessage(mac, f"User-{i}")
+    sleep(2)
 
+    for i in range(x):
         team = env.team_registry.register(f"Team-{i}")
 
-        player = env.player_registry.getPlayers().get(mac)
-        player._team = team
+        for j in range(y):
+            mac = Mac(bytes((0, 0, 0, 0, j, i)))
 
-        env.onPlayerMove(mac, Vector2D(i % env.board.size.x, i // env.board.size.x))
+            env.onPlayerMessage(mac, f"User-{i}-{j}")
 
-        sleep(0.1)
+            player = env.player_registry.getPlayers().get(mac)
+            player.team = team
+
+            k = i * x + j
+
+            env.onPlayerMove(mac, Vector2D(k % x, k // x))
+
+            sleep(0.1)
 
     return
 

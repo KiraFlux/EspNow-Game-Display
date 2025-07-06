@@ -25,6 +25,8 @@ class Environment:
         self._host_mac: Optional[Mac] = None
         self.host_mac_subject: Final[Subject[Mac]] = Subject()
 
+        self._player_moves_available: bool = False
+
         self.team_registry: Final = TeamRegistry(self.rules.team_color_generator)
         self.player_registry: Final = PlayerRegistry(self.team_registry)
 
@@ -39,6 +41,16 @@ class Environment:
     def host_mac(self, mac: Mac) -> None:
         self._host_mac = mac
         self.host_mac_subject.notifyObservers(self._host_mac)
+
+    @property
+    def is_player_moves_available(self):
+        """Ходы игроков разрешены"""
+        return self._player_moves_available
+
+    @is_player_moves_available.setter
+    def is_player_moves_available(self, x):
+        self._player_moves_available = x
+        self._log.write(f"{self.is_player_moves_available=}")
 
     def onPlayerMessage(self, mac: Mac, message: str) -> str:
         """Обработчик сообщения от игрока"""
@@ -62,15 +74,22 @@ class Environment:
         """Обработчик хода игрока"""
         self._log.write(f"Получен ход от {mac}: '{move}'")
 
+        if not self.is_player_moves_available:
+            s = "Ход от игроков ещё не разрешены"
+            self._log.write(s)
+            return s
+
         player = self.player_registry.getPlayers().get(mac)
 
         if player is None:
-            self._log.write(f"Ход {move} от {mac} отклонён (незарегистрированный клиент)")
-            return f"Клиент {mac} (не зарегистрирован): Ход отклонён"
+            s = f"Клиент {mac} (не зарегистрирован): Ход отклонён"
+            self._log.write(s)
+            return s
 
         if player.team is self.team_registry.default_team:
-            self._log.write(f"Ход {move} от {player} Отклонён (Не определена команда)")
-            return f"{player}: Вы не можете совершать ход не имея принадлежности в команде"
+            s = f"{player}: Вы не можете совершать ход не имея принадлежности к команде"
+            self._log.write(s)
+            return s
 
         now = time.time()
 
@@ -78,12 +97,14 @@ class Environment:
 
         if time_since_last_move < self.rules.player_move_cooldown_secs:
             remaining_secs = self.rules.player_move_cooldown_secs - time_since_last_move
-            self._log.write(f"Ход {move} от {mac} отклонён (кулдаун: {remaining_secs:.1f} сек)")
-            return f"{player}: Подождите ещё {remaining_secs:.1f} сек"
+            s = f"{player}: Подождите ещё {remaining_secs:.1f} сек"
+            self._log.write(s)
+            return s
 
         player.last_send_secs = now
 
         result = self.board.makeMove(player, move)
 
-        self._log.write(f"{mac} ход {move}: {result}")
-        return f"{player}: Ход {move} выполнен: {result}"
+        s = f"{player}: Ход {move} выполнен: {result}"
+        self._log.write(s)
+        return s
