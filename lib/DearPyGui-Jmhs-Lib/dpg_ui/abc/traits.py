@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from abc import ABC
 from abc import abstractmethod
-from dataclasses import dataclass
 from typing import Callable
 from typing import Optional
 from typing import Self
@@ -12,45 +11,39 @@ from rs.lina.vector import Vector2D
 from rs.misc.color import Color
 
 
-@dataclass(kw_only=True)
 class Colored(ABC):
     """Содержит цвет"""
-
-    _color: Color
-    """Цвет"""
 
     @abstractmethod
     def setColor(self, color: Color) -> None:
         """Изменить цвет"""
 
-    @final
+    @abstractmethod
     def getColor(self) -> Color:
         """Получить актуальный цвет"""
-        return self._color
 
 
-@dataclass(kw_only=True)
 class Intervaled[T](ABC):
     """Имеет интервал"""
 
     type Interval = tuple[T, T]
     """Диапазон значений"""
 
-    _interval_max: T
-    """Максимальное допустимое значение"""
-
-    _interval_min: T
-    """Минимальное допустимое значение"""
-
-    @final
+    @abstractmethod
     def getIntervalMax(self) -> T:
         """Получить максимальное допустимое значение"""
-        return self._interval_max
 
-    @final
+    @abstractmethod
+    def setIntervalMax(self, new_max: T) -> None:
+        """Установить минимальное допустимое значение"""
+
+    @abstractmethod
     def getIntervalMin(self) -> T:
         """Получить минимальное допустимое значение"""
-        return self._interval_min
+
+    @abstractmethod
+    def setIntervalMin(self, new_min: T) -> None:
+        """Установить минимальное допустимое значение"""
 
     @final
     def getInterval(self) -> Interval:
@@ -60,14 +53,6 @@ class Intervaled[T](ABC):
             self.getIntervalMax()
         )
 
-    @abstractmethod
-    def setIntervalMax(self, new_max: T) -> None:
-        """Установить минимальное допустимое значение"""
-
-    @abstractmethod
-    def setIntervalMin(self, new_min: T) -> None:
-        """Установить минимальное допустимое значение"""
-
     @final
     def setInterval(self, new_range: Interval) -> None:
         """Установить диапазон"""
@@ -76,28 +61,20 @@ class Intervaled[T](ABC):
         self.setIntervalMax(new_max)
 
 
-@dataclass(kw_only=True)
 class Valued[T](ABC):
     """Содержит значение"""
-
-    _value: T
-    """Значение по умолчанию"""
-
-    @abstractmethod
-    def setValue(self, value: T) -> None:
-        """Установить значение"""
 
     @abstractmethod
     def getValue(self) -> T:
         """Получить актуальное значение"""
 
+    @abstractmethod
+    def setValue(self, value: T) -> None:
+        """Установить значение"""
 
-@dataclass(kw_only=True)
+
 class WidthAdjustable[T: (int, float)](ABC):
     """Объект с управляемой шириной"""
-
-    _width: T = 0
-    """Изначальная ширина"""
 
     @abstractmethod
     def getWidth(self) -> T:
@@ -114,24 +91,12 @@ class WidthAdjustable[T: (int, float)](ABC):
         return self
 
 
-@dataclass(kw_only=True)
 class Sizable[T: (int, float)](WidthAdjustable, ABC):
     """Объект с управляемыми размерами"""
-
-    _height: T = 0
-    """Изначальная высота"""
 
     @abstractmethod
     def getHeight(self) -> T:
         """Получить актуальную высоту"""
-
-    @final
-    def getSize(self) -> Vector2D[T]:
-        """Получить актуальный размер"""
-        return Vector2D(
-            self.getWidth(),
-            self.getHeight()
-        )
 
     @abstractmethod
     def setHeight(self, height: T) -> None:
@@ -142,6 +107,14 @@ class Sizable[T: (int, float)](WidthAdjustable, ABC):
         """Установить ширину и вернуть себя"""
         self.setHeight(height)
         return self
+
+    @final
+    def getSize(self) -> Vector2D[T]:
+        """Получить актуальный размер"""
+        return Vector2D(
+            self.getWidth(),
+            self.getHeight()
+        )
 
     @final
     def setSize(self, size: Vector2D[T]) -> None:
@@ -156,12 +129,8 @@ class Sizable[T: (int, float)](WidthAdjustable, ABC):
         return self
 
 
-@dataclass(kw_only=True)
 class Toggleable(ABC):
     """Объект, который может быть включен или выключен"""
-
-    _enabled: bool = True
-    """Объект включен"""
 
     @abstractmethod
     def setEnabled(self, enabled: bool) -> None:
@@ -182,12 +151,8 @@ class Toggleable(ABC):
         self.setEnabled(False)
 
 
-@dataclass(kw_only=True)
 class Visibility(ABC):
     """Способен управлять видимостью"""
-
-    _visible: bool = True
-    """Объект видимый"""
 
     @abstractmethod
     def setVisibility(self, is_visible: bool) -> None:
@@ -216,12 +181,8 @@ class Deletable(ABC):
         """Удалить"""
 
 
-@dataclass(kw_only=True)
 class CallbackSupport[F: Callable](ABC):
     """Позволяет подключить callback"""
-
-    _callback: Optional[F] = None
-    """Обработчик обратного вызова"""
 
     @abstractmethod
     def setCallback(self, f: Optional[F]) -> None:
@@ -234,11 +195,8 @@ class CallbackSupport[F: Callable](ABC):
         return self
 
 
-@dataclass(kw_only=True)
 class Labelable(ABC):
     """Объект, который может иметь метку (label)"""
-
-    _label: Optional[str] = None
 
     @abstractmethod
     def setLabel(self, label: Optional[str]) -> None:

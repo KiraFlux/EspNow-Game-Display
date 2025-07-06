@@ -11,12 +11,13 @@ from dpg_ui.abc.entities import Canvas
 from dpg_ui.abc.entities import Figure
 from dpg_ui.core.dpg.container import DpgContainer
 from dpg_ui.core.dpg.item import DpgTag
+from dpg_ui.core.dpg.traits import DpgDeletable
 from dpg_ui.core.dpg.traits import DpgVisibility
 from rs.lina.vector import Vector2D
 from rs.misc.color import Color
 
 
-class _DpgFigure(DpgVisibility, Figure, ABC):
+class DpgFigure(DpgVisibility, DpgDeletable, Figure, ABC):
     """Фигура из списка рисования"""
 
     @final
@@ -39,7 +40,7 @@ class DpgCanvas(Canvas[DpgTag], DpgContainer):
             height=self.height,
         )
 
-    def _registerItem(self, item: _DpgFigure) -> None:
+    def _registerItem(self, item: DpgFigure) -> None:
         item.register(self)
 
 
@@ -80,7 +81,7 @@ class _HasTwoVertexes:
 
 @final
 @dataclass
-class Rectangle(_DpgFigure, _HasTwoVertexes, _HasFillColor, _HasContourColor, _HasContourThickness):
+class Rectangle(DpgFigure, _HasTwoVertexes, _HasFillColor, _HasContourColor, _HasContourThickness):
     """Прямоугольник"""
 
     _rounding: float = field(kw_only=True, default=0)
@@ -102,7 +103,7 @@ class Rectangle(_DpgFigure, _HasTwoVertexes, _HasFillColor, _HasContourColor, _H
 
 @final
 @dataclass
-class Line(_DpgFigure, _HasTwoVertexes, _HasFillColor, _HasContourThickness):
+class Line(DpgFigure, _HasTwoVertexes, _HasFillColor, _HasContourThickness):
     """Линия"""
 
     def _createTag(self, parent_tag: DpgTag) -> DpgTag:
@@ -131,7 +132,7 @@ class _HasSize:
 
 @final
 @dataclass
-class Circle(_DpgFigure, _HasSinglePosition, _HasSize, _HasContourColor, _HasContourThickness, _HasFillColor):
+class Circle(DpgFigure, _HasSinglePosition, _HasSize, _HasContourColor, _HasContourThickness, _HasFillColor):
     """Окружность"""
 
     def _createTag(self, parent_tag: DpgTag) -> DpgTag:
@@ -149,7 +150,7 @@ class Circle(_DpgFigure, _HasSinglePosition, _HasSize, _HasContourColor, _HasCon
 
 @final
 @dataclass
-class TextFigure(_DpgFigure, _HasSinglePosition, _HasSize, _HasFillColor):
+class TextFigure(DpgFigure, _HasSinglePosition, _HasSize, _HasFillColor):
     """Нарисованный текст"""
 
     text: str

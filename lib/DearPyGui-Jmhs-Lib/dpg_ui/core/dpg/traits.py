@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from abc import ABC
 from abc import abstractmethod
+from dataclasses import dataclass
 from typing import Any
 from typing import Callable
 from typing import Optional
@@ -23,8 +24,11 @@ from dpg_ui.core.dpg.item import DpgItem
 from rs.misc.color import Color
 
 
+@dataclass(kw_only=True)
 class DpgLabelable(DpgItem, Labelable):
     """Объект Dpg имеющий метку (label)"""
+
+    _label: Optional[str] = None
 
     @final
     def getLabel(self) -> Optional[str]:
@@ -48,7 +52,22 @@ class DpgLabelable(DpgItem, Labelable):
         self._updateLabel()
 
 
+@dataclass(kw_only=True)
 class DpgColored(DpgItem, Colored):
+    _color: Color
+    """Цвет"""
+
+    def _updateColor(self):
+        self.configure(color=self._color.toRGBA8888())
+
+    def update(self) -> None:
+        super().update()
+        self._updateColor()
+
+    @final
+    def getColor(self) -> Color:
+        return self._color
+
     @final
     def setColor(self, color: Color) -> None:
         self._color = color
@@ -56,15 +75,22 @@ class DpgColored(DpgItem, Colored):
         if self.isRegistered():
             self._updateColor()
 
-    def _updateColor(self):
-        self.configure(color=super().getColor().toRGBA8888())
+
+@dataclass(kw_only=True)
+class DpgToggleable(DpgItem, Toggleable):
+    _enabled: bool = True
+    """Объект включен"""
+
+    def _updateEnabled(self) -> None:
+        if self._enabled:
+            dpg.enable_item(self.tag())
+        else:
+            dpg.disable_item(self.tag())
 
     def update(self) -> None:
         super().update()
-        self._updateColor()
+        self._updateEnabled()
 
-
-class DpgToggleable(DpgItem, Toggleable):
     @final
     def isEnabled(self) -> bool:
         if self.isRegistered():
@@ -79,16 +105,6 @@ class DpgToggleable(DpgItem, Toggleable):
         if self.isRegistered():
             self._updateEnabled()
 
-    def _updateEnabled(self) -> None:
-        if self._enabled:
-            dpg.enable_item(self.tag())
-        else:
-            dpg.disable_item(self.tag())
-
-    def update(self) -> None:
-        super().update()
-        self._updateEnabled()
-
 
 class DpgDeletable(DpgItem, Deletable):
     @final
@@ -96,7 +112,21 @@ class DpgDeletable(DpgItem, Deletable):
         dpg.delete_item(self.tag())
 
 
+@dataclass(kw_only=True)
 class DpgVisibility(DpgItem, Visibility):
+    _visible: bool = True
+    """Объект видимый"""
+
+    def _updateVisibility(self) -> None:
+        if self._visible:
+            dpg.show_item(self.tag())
+        else:
+            dpg.hide_item(self.tag())
+
+    def update(self) -> None:
+        super().update()
+        self._updateVisibility()
+
     @final
     def isVisible(self) -> bool:
         if self.isRegistered():
@@ -111,19 +141,20 @@ class DpgVisibility(DpgItem, Visibility):
         if self.isRegistered():
             self._updateVisibility()
 
-    def _updateVisibility(self) -> None:
-        if self._visible:
-            dpg.show_item(self.tag())
-        else:
-            dpg.hide_item(self.tag())
+
+@dataclass(kw_only=True)
+class DpgValued[T](DpgItem, Valued[T], ABC):
+    """Виджет со значением на стороне DPG"""
+
+    _value: T
+    """Значение по умолчанию"""
+
+    def _updateValue(self):
+        dpg.set_value(self.tag(), self._value)
 
     def update(self) -> None:
         super().update()
-        self._updateVisibility()
-
-
-class DpgValued[T](DpgItem, Valued[T], ABC):
-    """Виджет со значением на стороне DPG"""
+        self._updateValue()
 
     @final
     def getValue(self) -> T:
@@ -139,29 +170,16 @@ class DpgValued[T](DpgItem, Valued[T], ABC):
         if self.isRegistered():
             self._updateValue()
 
-    def _updateValue(self):
-        dpg.set_value(self.tag(), self._value)
 
-    def update(self) -> None:
-        super().update()
-        self._updateValue()
-
-
+@dataclass(kw_only=True)
 class DpgIntervaled[T](DpgItem, Intervaled[T]):
     """Виджет DPG имеющий диапазон и значение"""
 
-    @final
-    def setIntervalMax(self, new_max: T) -> None:
-        self._interval_max = new_max
+    _interval_max: T
+    """Максимальное допустимое значение"""
 
-        if self.isRegistered():
-            self._updateIntervalMax()
-
-    def setIntervalMin(self, new_min: T) -> None:
-        self._interval_min = new_min
-
-        if self.isRegistered():
-            self._updateIntervalMin()
+    _interval_min: T
+    """Минимальное допустимое значение"""
 
     def _updateIntervalMax(self) -> None:
         self.configure(max_value=self._interval_max)
@@ -174,8 +192,33 @@ class DpgIntervaled[T](DpgItem, Intervaled[T]):
         self._updateIntervalMin()
         self._updateIntervalMax()
 
+    @final
+    def setIntervalMax(self, new_max: T) -> None:
+        self._interval_max = new_max
 
+        if self.isRegistered():
+            self._updateIntervalMax()
+
+    @final
+    def setIntervalMin(self, new_min: T) -> None:
+        self._interval_min = new_min
+
+        if self.isRegistered():
+            self._updateIntervalMin()
+
+    @final
+    def getIntervalMax(self) -> T:
+        return self._interval_max
+
+    @final
+    def getIntervalMin(self) -> T:
+        return self._interval_min
+
+
+@dataclass(kw_only=True)
 class _DpgCallbackSupport[F: Callable](DpgItem, CallbackSupport[F], ABC):
+    _callback: Optional[F] = None
+    """Обработчик обратного вызова"""
 
     @abstractmethod
     def _createCallbackWrapper(self) -> Callable[[Any], Any]:
@@ -216,8 +259,12 @@ class DpgCallbackSupport(_DpgCallbackSupport[Callable[[], Any]]):
         return lambda _: self._callback()
 
 
+@dataclass(kw_only=True)
 class DpgWidthAdjustable[T: (int, float)](DpgItem, WidthAdjustable[T]):
     """Объект DPG способный управлять шириной"""
+
+    _width: T = 0
+    """Изначальная ширина"""
 
     @final
     def setWidth(self, width: T) -> None:
@@ -241,15 +288,19 @@ class DpgWidthAdjustable[T: (int, float)](DpgItem, WidthAdjustable[T]):
         self._updateWidth()
 
 
+@dataclass(kw_only=True)
 class DpgSizable[T: (int, float)](Sizable[T], DpgWidthAdjustable[T], DpgItem):
     """Виджет DPG имеющий размеры"""
 
-    @final
-    def setHeight(self, height: T) -> None:
-        self._height = height
+    _height: T = 0
+    """Изначальная высота"""
 
-        if self.isRegistered():
-            self._updateHeight()
+    def _updateHeight(self):
+        self.configure(height=self._height)
+
+    def update(self) -> None:
+        super().update()
+        self._updateHeight()
 
     @final
     def getHeight(self) -> T:
@@ -258,9 +309,9 @@ class DpgSizable[T: (int, float)](Sizable[T], DpgWidthAdjustable[T], DpgItem):
 
         return self._height
 
-    def _updateHeight(self):
-        self.configure(height=self._height)
+    @final
+    def setHeight(self, height: T) -> None:
+        self._height = height
 
-    def update(self) -> None:
-        super().update()
-        self._updateHeight()
+        if self.isRegistered():
+            self._updateHeight()
