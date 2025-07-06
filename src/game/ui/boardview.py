@@ -6,9 +6,9 @@ from dpg_ui.core.dpg.draw import Rectangle
 from dpg_ui.impl.containers import ChildWindow
 from game.core.entities.board import Board
 from game.core.entities.player import Player
-from lina.vector import Vector2D
-from misc.log import Logger
-from rs.color import Color
+from rs.lina.vector import Vector2D
+from rs.misc.color import Color
+from rs.misc.log import Logger
 
 type Pos = Vector2D[int]
 

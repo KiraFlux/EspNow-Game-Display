@@ -14,8 +14,8 @@ from bytelang.impl.stream.byte import ByteBufferInputStream
 from bytelang.impl.stream.byte import ByteBufferOutputStream
 from game.core.entities.mac import Mac
 from game.core.environment import Environment
-from lina.vector import Vector2D
-from misc.log import Logger
+from rs.lina.vector import Vector2D
+from rs.misc.log import Logger
 from rs.result import Result
 from rs.result import ok
 

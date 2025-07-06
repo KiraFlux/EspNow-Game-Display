@@ -6,8 +6,8 @@ from typing import Mapping
 from game.core.entities.mac import Mac
 from game.core.entities.team import Team
 from game.core.entities.team import TeamRegistry
-from misc.log import Logger
-from rs.observer import Subject
+from rs.misc.log import Logger
+from rs.misc.observer import Subject
 
 
 class Player(Subject['Player']):

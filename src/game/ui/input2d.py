@@ -8,7 +8,7 @@ from dpg_ui.impl.boxes import InputInt
 from dpg_ui.impl.containers import HBox
 from dpg_ui.impl.containers import VBox
 from dpg_ui.impl.text import Text
-from lina.vector import Vector2D
+from rs.lina.vector import Vector2D
 
 
 class InputInt2D(CustomWidget, Valued[Vector2D[int]], Intervaled[int]):

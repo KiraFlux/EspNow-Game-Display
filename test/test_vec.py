@@ -1,4 +1,4 @@
-from lina.vector import Vector2D
+from rs.lina.vector import Vector2D
 
 v1 = Vector2D(2, 3)
 v2 = Vector2D(1, 1)

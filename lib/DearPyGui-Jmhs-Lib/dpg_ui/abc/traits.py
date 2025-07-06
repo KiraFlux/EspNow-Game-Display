@@ -8,8 +8,8 @@ from typing import Optional
 from typing import Self
 from typing import final
 
-from lina.vector import Vector2D
-from rs.color import Color
+from rs.lina.vector import Vector2D
+from rs.misc.color import Color
 
 
 @dataclass(kw_only=True)

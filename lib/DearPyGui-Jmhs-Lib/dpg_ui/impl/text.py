@@ -9,7 +9,7 @@ from dpg_ui.core.dpg.item import DpgTag
 from dpg_ui.core.dpg.traits import DpgColored
 from dpg_ui.core.dpg.traits import DpgValued
 from dpg_ui.core.dpg.widget import DpgWidget
-from rs.color import Color
+from rs.misc.color import Color
 
 
 @final

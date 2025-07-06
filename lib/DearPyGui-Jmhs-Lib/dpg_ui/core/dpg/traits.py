@@ -20,7 +20,7 @@ from dpg_ui.abc.traits import Valued
 from dpg_ui.abc.traits import Visibility
 from dpg_ui.abc.traits import WidthAdjustable
 from dpg_ui.core.dpg.item import DpgItem
-from rs.color import Color
+from rs.misc.color import Color
 
 
 class DpgLabelable(DpgItem, Labelable):

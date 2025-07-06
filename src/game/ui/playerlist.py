@@ -6,7 +6,7 @@ from dpg_ui.impl.containers import ChildWindow
 from dpg_ui.impl.text import Text
 from game.core.entities.player import Player
 from game.core.entities.player import PlayerRegistry
-from rs.color import Color
+from rs.misc.color import Color
 
 
 class PlayerCard(CustomWidget):

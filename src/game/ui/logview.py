@@ -5,7 +5,7 @@ from dpg_ui.impl.containers import HBox
 from dpg_ui.impl.containers import VBox
 from dpg_ui.impl.text import Text
 from game.res import Assets
-from misc.log import Logger
+from rs.misc.log import Logger
 
 
 class LogView(CustomWidget):

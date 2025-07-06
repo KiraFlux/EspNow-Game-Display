@@ -12,7 +12,7 @@ from game.ui.boardview import BoardView
 from game.ui.input2d import InputInt2D
 from game.ui.playerlist import PlayerList
 from game.ui.teamlist import TeamList
-from lina.vector import Vector2D
+from rs.lina.vector import Vector2D
 
 
 class GameView(CustomWidget):

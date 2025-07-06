@@ -2,9 +2,9 @@ from typing import AbstractSet
 from typing import Final
 
 from game.impl.valuegen.color import ColorGenerator
-from misc.log import Logger
-from rs.color import Color
-from rs.observer import Subject
+from rs.misc.color import Color
+from rs.misc.log import Logger
+from rs.misc.observer import Subject
 
 
 class Team(Subject['Team']):

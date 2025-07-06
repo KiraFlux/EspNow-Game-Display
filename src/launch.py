@@ -12,8 +12,8 @@ from game.impl.valuegen.color import ColorGenerator
 from game.impl.valuegen.loopstep import LoopStepGenerator
 from game.impl.valuegen.phasedamplitude import PhasedAmplitudeGenerator
 from game.ui.app import GameApp
-from lina.vector import Vector2D
-from misc.log import Logger
+from rs.lina.vector import Vector2D
+from rs.misc.log import Logger
 
 
 def _create_task[T](f: Callable[[T], None], arg: T) -> Thread:

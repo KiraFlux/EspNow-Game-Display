@@ -9,9 +9,9 @@ from game.core.entities.mac import Mac
 from game.core.entities.player import PlayerRegistry
 from game.core.entities.rules import GameRules
 from game.core.entities.team import TeamRegistry
-from lina.vector import Vector2D
-from misc.log import Logger
-from rs.observer import Subject
+from rs.lina.vector import Vector2D
+from rs.misc.log import Logger
+from rs.misc.observer import Subject
 
 
 class Environment:

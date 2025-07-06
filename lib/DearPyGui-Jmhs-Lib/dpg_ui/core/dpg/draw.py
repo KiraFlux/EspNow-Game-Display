@@ -12,8 +12,8 @@ from dpg_ui.abc.entities import Figure
 from dpg_ui.core.dpg.container import DpgContainer
 from dpg_ui.core.dpg.item import DpgTag
 from dpg_ui.core.dpg.traits import DpgVisibility
-from lina.vector import Vector2D
-from rs.color import Color
+from rs.lina.vector import Vector2D
+from rs.misc.color import Color
 
 
 class _DpgFigure(DpgVisibility, Figure, ABC):
