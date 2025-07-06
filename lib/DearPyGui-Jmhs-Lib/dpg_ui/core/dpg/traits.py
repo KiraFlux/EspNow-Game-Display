@@ -12,6 +12,7 @@ from dpg_ui.abc.traits import Sizable
 from dpg_ui.abc.traits import Toggleable
 from dpg_ui.abc.traits import Valued
 from dpg_ui.abc.traits import Visibility
+from dpg_ui.abc.traits import WidthAdjustable
 from dpg_ui.core.dpg.item import DpgItem
 from rs.color import Color
 
@@ -127,8 +128,8 @@ class DpgIntervaled[T](DpgItem, Intervaled[T]):
         self.configure(min_value=self._interval_min)
 
 
-class DpgSizable[T: (int, float)](DpgItem, Sizable[T]):
-    """Виджет DPG имеющий размеры"""
+class DpgWidthAdjustable[T: (int, float)](DpgItem, WidthAdjustable[T]):
+    """Объект DPG способный управлять шириной"""
 
     @final
     def setWidth(self, width: T) -> None:
@@ -138,13 +139,6 @@ class DpgSizable[T: (int, float)](DpgItem, Sizable[T]):
             self._updateWidth()
 
     @final
-    def setHeight(self, height: T) -> None:
-        self._height = height
-
-        if self.isRegistered():
-            self._updateHeight()
-
-    @final
     def getWidth(self) -> T:
         if self.isRegistered():
             self._width = dpg.get_item_width(self.tag())
@@ -152,15 +146,26 @@ class DpgSizable[T: (int, float)](DpgItem, Sizable[T]):
         return self._width
 
     @final
+    def _updateWidth(self) -> None:
+        self.configure(width=self._width)
+
+
+class DpgSizable[T: (int, float)](Sizable[T], DpgWidthAdjustable[T], DpgItem):
+    """Виджет DPG имеющий размеры"""
+
+    @final
+    def setHeight(self, height: T) -> None:
+        self._height = height
+
+        if self.isRegistered():
+            self._updateHeight()
+
+    @final
     def getHeight(self) -> T:
         if self.isRegistered():
             self._width = dpg.get_item_height(self.tag())
 
         return self._height
-
-    @final
-    def _updateWidth(self) -> None:
-        self.configure(width=self._width)
 
     @final
     def _updateHeight(self):

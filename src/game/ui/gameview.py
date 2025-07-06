@@ -18,7 +18,7 @@ from lina.vector import Vector2D
 class GameView(CustomWidget):
 
     def __init__(self, env: Environment) -> None:
-        host_mac_display = DisplayText("Хост", default="Ожидание...", width=300)
+        host_mac_display = DisplayText("Хост", default="Ожидание...").withWidth(300)
 
         env.host_mac_subject.addObserver(host_mac_display.setValue)
 

@@ -4,7 +4,6 @@ from abc import ABC
 from dataclasses import dataclass
 from dataclasses import field
 from typing import Optional
-from typing import Self
 from typing import final
 
 from dearpygui import dearpygui as dpg
@@ -13,12 +12,11 @@ from dpg_ui.abc.entities import Font
 from dpg_ui.abc.entities import Widget
 from dpg_ui.core.dpg.item import DpgTag
 from dpg_ui.core.dpg.traits import DpgDeletable
-from dpg_ui.core.dpg.traits import DpgToggleable
 from dpg_ui.core.dpg.traits import DpgVisibility
 
 
 @dataclass
-class DpgWidget(Widget[DpgTag], DpgDeletable, DpgToggleable, DpgVisibility, ABC):
+class DpgWidget(Widget[DpgTag], DpgDeletable, DpgVisibility, ABC):
     """Виджет системы DPG"""
 
     __font: Optional[Font] = field(init=False, default=None)
@@ -26,19 +24,21 @@ class DpgWidget(Widget[DpgTag], DpgDeletable, DpgToggleable, DpgVisibility, ABC)
 
     def _onRegister(self, tag: DpgTag) -> None:
         super()._onRegister(tag)
+        self._updateVisibility()
 
         if self.__font is not None:
-            self.withFont(self.__font)
+            self._updateFont()
 
     @final
-    def withFont(self, font: Font[DpgTag]) -> Self:
+    def setFont(self, font: Font[DpgTag]) -> None:
+        self.__font = font
+
         if self.isRegistered():
-            dpg.bind_item_font(self.tag(), font.tag())
+            self._updateFont()
 
-        else:
-            self.__font = font
-
-        return self
+    def _updateFont(self):
+        if self.__font:
+            dpg.bind_item_font(self.tag(), self.__font.tag())
 
     @final
     def register(self, parent: Widget[DpgTag]) -> None:

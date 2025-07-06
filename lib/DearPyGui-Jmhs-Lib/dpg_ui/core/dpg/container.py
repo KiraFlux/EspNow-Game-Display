@@ -33,5 +33,7 @@ class DpgContainer[T](DpgWidget, Container[T], ABC):
     def _onRegister(self, tag: DpgTag) -> None:
         super()._onRegister(tag)
 
+        self._updateVisibility()
+
         for item in self._items:
             self._registerItem(item)

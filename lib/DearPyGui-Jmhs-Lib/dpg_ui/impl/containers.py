@@ -15,14 +15,24 @@ from dpg_ui.core.dpg.widget import DpgWidget
 
 @dataclass
 class _DpgWidgetContainer(DpgContainer[Widget[DpgWidget]], ABC):
+
     @final
     def _registerItem(self, item: Widget[DpgWidget]) -> None:
         item.register(self)
 
 
+@dataclass
+class _DpgSizableWidgetContainer(_DpgWidgetContainer, DpgSizable[int], ABC):
+
+    def _onRegister(self, tag: DpgTag) -> None:
+        super()._onRegister(tag)
+        self._updateWidth()
+        self._updateHeight()
+
+
 @final
 @dataclass(kw_only=True)
-class _Box(_DpgWidgetContainer):
+class _Box(_DpgSizableWidgetContainer):
     """Dpg: group"""
 
     _is_horizontal: bool
@@ -58,7 +68,7 @@ class Details(_DpgWidgetContainer):
         return dpg.add_collapsing_header(
             parent=parent_tag,
             label=self._label,
-            default_open=self._default_open,
+            default_open=self._default_open
         )
 
 
@@ -101,7 +111,7 @@ class TabBar(DpgContainer[Tab]):
 
 @final
 @dataclass
-class Window(_DpgWidgetContainer):
+class Window(_DpgSizableWidgetContainer):
     """Dpg: window"""
 
     _label: str
@@ -115,15 +125,19 @@ class Window(_DpgWidgetContainer):
 
     # noinspection PyFinal
     def register(self, parent: Widget) -> None:
-        self._onRegister(dpg.add_window(label=self._label, menubar=self._menubar, autosize=self._auto_size, ))
+        self._onRegister(dpg.add_window(
+            label=self._label,
+            menubar=self._menubar,
+            autosize=self._auto_size,
+        ))
 
-    def _createTag(self, parent_tag: DpgTag) -> DpgTag:
+    def _createTag(self, parent_tag):
         raise RuntimeError
 
 
 @final
 @dataclass(kw_only=True)
-class ChildWindow(_DpgWidgetContainer, DpgSizable[int]):
+class ChildWindow(_DpgSizableWidgetContainer):
     """Дочернее очно"""
 
     resizable_x: bool = False
@@ -152,6 +166,4 @@ class ChildWindow(_DpgWidgetContainer, DpgSizable[int]):
             horizontal_scrollbar=self.scrollable_x,
             autosize_x=self.auto_size_x,
             autosize_y=self.auto_size_y,
-            width=self._width,
-            height=self._height,
         )

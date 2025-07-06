@@ -44,8 +44,14 @@ class Widget[T](Item[T], ABC):
         """Создать элемент"""
 
     @abstractmethod
-    def withFont(self, font: Font) -> Self:
+    def setFont(self, font: Font) -> None:
         """Установить шрифт"""
+
+    @final
+    def withFont(self, font: Font) -> Self:
+        """Установить шрифт и вернуть себя"""
+        self.setFont(font)
+        return self
 
     @abstractmethod
     def register(self, parent: Widget[T]) -> None:

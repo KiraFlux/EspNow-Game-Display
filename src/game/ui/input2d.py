@@ -46,23 +46,21 @@ class InputInt2D(CustomWidget, Valued[Vector2D[int]], Intervaled[int]):
             label=None,
             on_change=_on_change_y,
             default=default.y,
-            width=item_width,
             step=step,
             step_fast=step_fast,
             interval_max=interval_max,
             interval_min=interval_min,
-        )
+        ).withWidth(item_width)
 
         self._x = InputInt(
             label=None,
             on_change=_on_change_x,
             default=default.x,
-            width=item_width,
             step=step,
             step_fast=step_fast,
             interval_max=interval_max,
             interval_min=interval_min,
-        )
+        ).withWidth(item_width)
 
         base = (
             HBox()

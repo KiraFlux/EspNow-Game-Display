@@ -1,6 +1,8 @@
 from dpg_ui.core.custom import CustomWidget
 from dpg_ui.impl.boxes import DisplayInt
+from dpg_ui.impl.buttons import ColorDisplay
 from dpg_ui.impl.containers import ChildWindow
+from dpg_ui.impl.containers import HBox
 from dpg_ui.impl.text import Text
 from game.core.entities.team import Team
 from game.core.entities.team import TeamRegistry
@@ -12,22 +14,28 @@ class TeamCard(CustomWidget):
     def __init__(self, team: Team):
         team.addObserver(self._update)
 
-        self.name = Text(team.name, color=team.color, bullet=True)
-        self.score = DisplayInt("Счёт", team.score)
+        self._name = Text(team.name, color=team.color)
+        self._score = DisplayInt("Счёт", default=team.score)
+        self._color = ColorDisplay(_label='Цвет', _color=team.color)
 
         base = (
             ChildWindow(
                 _height=100
             )
-            .add(self.name)
-            .add(self.score)
+            .add(
+                HBox()
+                .add(self._color)
+                .add(self._name)
+            )
+            .add(self._score)
         )
 
         super().__init__(base)
 
     def _update(self, team: Team) -> None:
-        self.name.setValue(team.name)
-        self.score.setValue(team.score)
+        self._name.setValue(team.name)
+        self._score.setValue(team.score)
+        self._color.setColor(team.color)
 
 
 class TeamList(CustomWidget):

@@ -17,7 +17,7 @@ class PlayerCard(CustomWidget):
         self.username = InputText("Игрок", player.rename, default=player.username)
         self.team = Text(player.team.name, color=player.team.color, bullet=True)
         self.mac = Text(f"MAC: {player.mac}", color=Color.gray(0.75))
-        self.score = DisplayInt("Счёт", player.score)
+        self.score = DisplayInt("Счёт", default=player.score)
 
         def _remove():
             player_registry.unregister(player.mac)

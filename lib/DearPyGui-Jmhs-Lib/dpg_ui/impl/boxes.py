@@ -10,12 +10,14 @@ from dearpygui import dearpygui as dpg
 
 from dpg_ui.core.dpg.item import DpgTag
 from dpg_ui.core.dpg.traits import DpgIntervaled
+from dpg_ui.core.dpg.traits import DpgSizable
 from dpg_ui.core.dpg.traits import DpgValued
+from dpg_ui.core.dpg.traits import DpgWidthAdjustable
 from dpg_ui.core.dpg.widget import DpgWidget
 
 
 @dataclass(kw_only=True)
-class _InputBox[T](DpgWidget, DpgValued[T], ABC):
+class _InputBox[T](DpgWidget, DpgValued[T], DpgWidthAdjustable[int], ABC):
     """Окно значения"""
 
     _label: Optional[str]
@@ -27,25 +29,31 @@ class _InputBox[T](DpgWidget, DpgValued[T], ABC):
     _on_change: Optional[Callable[[T], None]]
     """При изменении"""
 
-    _width: int
-    """Ширина"""
-
     _on_enter: bool
     """Засчитывать изменение по Enter"""
+
+    def _onRegister(self, tag: DpgTag) -> None:
+        super()._onRegister(tag)
+
+        self._updateWidth()
+        self._updateValue()
 
 
 @final
 @dataclass(kw_only=True)
-class _InputText(_InputBox[str]):
+class _InputText(_InputBox[str], DpgSizable[int]):
     """Окно текста"""
+
+    def _onRegister(self, tag: DpgTag) -> None:
+        super()._onRegister(tag)
+        self._updateHeight()
 
     def _createTag(self, parent_tag: DpgTag) -> DpgTag:
         return dpg.add_input_text(
             parent=parent_tag,
             label=self._label,
-            default_value=self._value,
             readonly=self._readonly,
-            width=self._width,
+
             on_enter=self._on_enter,
             callback=None if self._on_change is None else (lambda _: self._on_change(self.getValue()))
         )
@@ -57,7 +65,6 @@ def InputText(
         *,
         on_enter: bool = False,
         default: str = None,
-        width: int = 0
 ):
     """Создать окно ввода текста"""
     return _InputText(
@@ -66,7 +73,6 @@ def InputText(
         _on_change=on_change,
         _on_enter=on_enter,
         _value=default,
-        _width=width
     )
 
 
@@ -74,7 +80,6 @@ def DisplayText(
         label: str,
         *,
         default: str = None,
-        width: int = 0
 ):
     """Создать окно вывода текста"""
     return _InputText(
@@ -83,7 +88,6 @@ def DisplayText(
         _on_change=None,
         _on_enter=False,
         _value=default,
-        _width=width
     )
 
 
@@ -96,6 +100,12 @@ class _InputInt(_InputBox[int], DpgIntervaled[int]):
 
     _step_fast: int
 
+    def _onRegister(self, tag: DpgTag) -> None:
+        super()._onRegister(tag)
+
+        self._updateIntervalMax()
+        self._updateIntervalMin()
+
     def _createTag(self, parent_tag: DpgTag) -> DpgTag:
         clamped = self._interval_min != self._interval_max
 
@@ -103,13 +113,8 @@ class _InputInt(_InputBox[int], DpgIntervaled[int]):
             parent=parent_tag,
 
             label=self._label,
-            default_value=self._value,
             readonly=self._readonly,
-            width=self._width,
             callback=None if self._on_change is None else (lambda _: self._on_change(self.getValue())),
-
-            max_value=self._interval_max,
-            min_value=self._interval_min,
 
             step_fast=self._step_fast,
             step=self._step,
@@ -124,7 +129,6 @@ def InputInt(
         on_change: Callable[[int], None] = None,
         default: int = 0,
         *,
-        width: int = 0,
         step: int = 1,
         step_fast: int = 1,
         interval_min: int = 0,
@@ -139,7 +143,6 @@ def InputInt(
         _label=label,
         _readonly=False,
         _on_change=on_change,
-        _width=width,
         _on_enter=on_enter,
         _step=step,
         _step_fast=step_fast,
@@ -148,20 +151,20 @@ def InputInt(
 
 def DisplayInt(
         label: str,
-        default: int = 0,
         *,
-        width: int = 0
+        default: int = 0,
 ):
     """Окно вывода целого числа"""
     return _InputInt(
         _interval_max=0,
         _interval_min=0,
+
         _value=default,
         _label=label,
         _readonly=True,
         _on_change=None,
-        _width=width,
         _on_enter=False,
+
         _step=0,
         _step_fast=0
     )

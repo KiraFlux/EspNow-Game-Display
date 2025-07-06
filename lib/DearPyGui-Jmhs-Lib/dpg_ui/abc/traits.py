@@ -3,6 +3,7 @@ from __future__ import annotations
 from abc import ABC
 from abc import abstractmethod
 from dataclasses import dataclass
+from typing import Self
 from typing import final
 
 from lina.vector import Vector2D
@@ -90,18 +91,33 @@ class Valued[T](ABC):
 
 
 @dataclass(kw_only=True)
-class Sizable[T: (int, float)](ABC):
-    """Объект с управляемыми размерами"""
+class WidthAdjustable[T: (int, float)](ABC):
+    """Объект с управляемой шириной"""
 
     _width: T = 0
     """Изначальная ширина"""
 
-    _height: T = 0
-    """Изначальная высота"""
-
     @abstractmethod
     def getWidth(self) -> T:
         """Получить актуальную ширину"""
+
+    @abstractmethod
+    def setWidth(self, width: T) -> None:
+        """Установить ширину"""
+
+    @final
+    def withWidth(self, width: T) -> Self:
+        """Установить ширину и вернуть"""
+        self.setWidth(width)
+        return self
+
+
+@dataclass(kw_only=True)
+class Sizable[T: (int, float)](WidthAdjustable, ABC):
+    """Объект с управляемыми размерами"""
+
+    _height: T = 0
+    """Изначальная высота"""
 
     @abstractmethod
     def getHeight(self) -> T:
@@ -115,17 +131,27 @@ class Sizable[T: (int, float)](ABC):
             self.getHeight()
         )
 
-    def setWidth(self, new_width: T) -> None:
+    @abstractmethod
+    def setHeight(self, height: T) -> None:
         """Установить ширину"""
 
-    def setHeight(self, new_height: T) -> None:
-        """"Установить ширину"""
+    @final
+    def withHeight(self, height: T) -> Self:
+        """Установить ширину и вернуть себя"""
+        self.setHeight(height)
+        return self
 
     @final
-    def setSize(self, new_size: Vector2D[T]) -> None:
+    def setSize(self, size: Vector2D[T]) -> None:
         """Установить размер"""
-        self.setWidth(new_size.x)
-        self.setHeight(new_size.y)
+        self.setWidth(size.x)
+        self.setHeight(size.y)
+
+    @final
+    def withSize(self, size: Vector2D[T]) -> Self:
+        """Установить размер и вернуть себя"""
+        self.setSize(size)
+        return self
 
 
 @dataclass(kw_only=True)
