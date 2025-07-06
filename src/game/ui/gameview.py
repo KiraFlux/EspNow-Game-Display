@@ -6,15 +6,12 @@ from dpg_ui.impl.containers import HBox
 from dpg_ui.impl.containers import Tab
 from dpg_ui.impl.containers import TabBar
 from dpg_ui.impl.containers import VBox
-from dpg_ui.impl.misc import Separator
 from dpg_ui.impl.misc import Spacer
 from game.core.environment import Environment
 from game.res import Assets
 from game.ui.boardview import BoardView
-from game.ui.input2d import InputInt2D
 from game.ui.playerlist import PlayerList
 from game.ui.teamlist import TeamList
-from rs.lina.vector import Vector2D
 
 
 class GameView(CustomWidget):
@@ -24,11 +21,8 @@ class GameView(CustomWidget):
 
         env.host_mac_subject.addObserver(host_mac_display.setValue)
 
-        def _update_board_size(new_size: Vector2D):
-            env.board.size = new_size
-
-        def _is_player_moves_available_setter(x):
-            env.is_player_moves_available = x
+        def _env_rules_moves_available(x):
+            env.rules.moves_available = x
 
         base = (
             HBox()
@@ -52,27 +46,15 @@ class GameView(CustomWidget):
                 VBox()
                 .add(
                     HBox()
+                    .withFont(Assets.label_font)
                     .add(
-                        InputInt2D(
-                            "Поле",
-                            (1, 20),
-                            on_change=_update_board_size,
-                            default=env.board.size,
-                        )
+                        CheckBox(_value=env.rules.moves_available)
+                        .withLabel("Разрешить ходы")
+                        .withHandler(_env_rules_moves_available)
                     )
                     .add(Spacer(width=200))
-
-                    .add(
-                        VBox()
-                        .add(host_mac_display)
-                        .add(Separator())
-                        .add(
-                            CheckBox(_value=env.is_player_moves_available)
-                            .withLabel("Разрешить ходы")
-                            .withHandler(_is_player_moves_available_setter)
-                        )
-                    )
-                ).withFont(Assets.label_font)
+                    .add(host_mac_display)
+                )
                 .add(
                     BoardView(env.board, env.team_registry.default_team.color.darker(0.6))
                 )

@@ -129,9 +129,9 @@ class SupportContourColor(DpgItem):
 class SupportTwoPositionsConstruct(DpgItem, ABC):
     """Фигура задаётся двумя координатами"""
 
-    _position_1: Vector2D[float]
+    _position_1: Vector2D[float] = Vector2D(0, 0)
 
-    _position_2: Vector2D[float]
+    _position_2: Vector2D[float] = Vector2D(0, 0)
 
     @property
     def position_1(self):

@@ -20,8 +20,11 @@ class GameRules:
     score: ScoreRules
     """Правила начисления счёта"""
 
-    player_move_cooldown_secs: float
-    """Кул-даун ходов игрока"""
-
     team_color_generator: ColorGenerator
     """Генератор цвета команды"""
+
+    move_cooldown_secs: float
+    """Кул-даун ходов игрока"""
+
+    moves_available: bool
+    """Ходы разрешены"""

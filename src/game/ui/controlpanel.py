@@ -8,12 +8,12 @@ class ControlPanel(CustomWidget):
 
     def __init__(self, env: Environment) -> None:
         def _update_cooldown(v: float) -> None:
-            env.rules.player_move_cooldown_secs = v
+            env.rules.move_cooldown_secs = v
 
         base = (
             FloatSlider(
                 "Кул-даун ходов",
-                default=env.rules.player_move_cooldown_secs,
+                default=env.rules.move_cooldown_secs,
                 units="сек",
                 interval=(0, 10)
             ).withHandler(_update_cooldown)

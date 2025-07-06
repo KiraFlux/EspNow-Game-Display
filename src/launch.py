@@ -75,7 +75,6 @@ def _main():
             friend_cell=50,
             enemy_cell=-25
         ),
-        player_move_cooldown_secs=2.0,
         team_color_generator=ColorGenerator(
             hue=LoopStepGenerator(
                 start=15,
@@ -92,7 +91,9 @@ def _main():
                 base=0.6,
                 amplitude=0.2
             )
-        )
+        ),
+        move_cooldown_secs=2.0,
+        moves_available=True,
     )
 
     env = Environment(rules)
