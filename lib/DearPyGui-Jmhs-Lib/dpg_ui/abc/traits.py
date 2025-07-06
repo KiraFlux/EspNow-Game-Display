@@ -181,7 +181,7 @@ class Deletable(ABC):
         """Удалить"""
 
 
-class CallbackSupport[F: Callable](ABC):
+class Handlerable[F: Callable](ABC):
     """Обладает обработчиком"""
 
     @abstractmethod

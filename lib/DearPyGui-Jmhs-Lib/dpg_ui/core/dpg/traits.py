@@ -10,9 +10,9 @@ from typing import final
 
 from dearpygui import dearpygui as dpg
 
-from dpg_ui.abc.traits import CallbackSupport
 from dpg_ui.abc.traits import Colored
 from dpg_ui.abc.traits import Deletable
+from dpg_ui.abc.traits import Handlerable
 from dpg_ui.abc.traits import Intervaled
 from dpg_ui.abc.traits import Labelable
 from dpg_ui.abc.traits import Sizable
@@ -216,7 +216,7 @@ class DpgIntervaled[T](DpgItem, Intervaled[T]):
 
 
 @dataclass(kw_only=True)
-class _DpgCallbackSupport[F: Callable](DpgItem, CallbackSupport[F], ABC):
+class _DpgHandlerable[F: Callable](DpgItem, Handlerable[F], ABC):
     _callback: Optional[F] = None
     """Обработчик обратного вызова"""
 
@@ -245,14 +245,14 @@ class _DpgCallbackSupport[F: Callable](DpgItem, CallbackSupport[F], ABC):
         self._updateCallback()
 
 
-class DpgValuedCallbackSupport[T](DpgValued[T], _DpgCallbackSupport[Callable[[T], Any]]):
+class DpgValueHandlerable[T](DpgValued[T], _DpgHandlerable[Callable[[T], Any]]):
     """Объект DPG поддерживающий обратный вызов со значением"""
 
     def _createCallbackWrapper(self) -> Callable[[Any], Any]:
         return lambda _: self._callback(self.getValue())
 
 
-class DpgCallbackSupport(_DpgCallbackSupport[Callable[[], Any]]):
+class DpgSimpleHandlerable(_DpgHandlerable[Callable[[], Any]]):
     """Объект DPG поддерживающий обратный вызов"""
 
     def _createCallbackWrapper(self) -> Callable[[Any], Any]:

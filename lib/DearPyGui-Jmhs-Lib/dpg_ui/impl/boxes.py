@@ -10,13 +10,13 @@ from dearpygui import dearpygui as dpg
 from dpg_ui.core.dpg.item import DpgTag
 from dpg_ui.core.dpg.traits import DpgIntervaled
 from dpg_ui.core.dpg.traits import DpgSizable
-from dpg_ui.core.dpg.traits import DpgValuedCallbackSupport
+from dpg_ui.core.dpg.traits import DpgValueHandlerable
 from dpg_ui.core.dpg.traits import DpgWidthAdjustable
 from dpg_ui.core.dpg.widget import DpgWidget
 
 
 @dataclass(kw_only=True)
-class _InputBox[T](DpgWidget, DpgValuedCallbackSupport[T], DpgWidthAdjustable[int], ABC):
+class _InputBox[T](DpgWidget, DpgValueHandlerable[T], DpgWidthAdjustable[int], ABC):
     """Окно значения"""
 
     _label: Optional[str]
