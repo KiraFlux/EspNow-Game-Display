@@ -17,14 +17,8 @@ class Colored(ABC):
     """Цвет"""
 
     @abstractmethod
-    def _setColorImpl(self, color: Color) -> None:
-        """Реализация изменения цвета """
-
-    @final
     def setColor(self, color: Color) -> None:
         """Изменить цвет"""
-        self._color = color
-        self._setColorImpl(color)
 
     @final
     def getColor(self) -> Color:
@@ -45,14 +39,6 @@ class Intervaled[T](ABC):
     _interval_min: T
     """Минимальное допустимое значение"""
 
-    @abstractmethod
-    def _onIntervalMinChanged(self, new_min: T) -> None:
-        """При изменении минимального значения"""
-
-    @abstractmethod
-    def _onIntervalMaxChanged(self, new_max: T) -> None:
-        """При изменении максимального значения"""
-
     @final
     def getIntervalMax(self) -> T:
         """Получить максимальное допустимое значение"""
@@ -71,17 +57,13 @@ class Intervaled[T](ABC):
             self.getIntervalMax()
         )
 
-    @final
+    @abstractmethod
     def setIntervalMax(self, new_max: T) -> None:
         """Установить минимальное допустимое значение"""
-        self._interval_max = new_max
-        self._onIntervalMaxChanged(new_max)
 
-    @final
+    @abstractmethod
     def setIntervalMin(self, new_min: T) -> None:
         """Установить минимальное допустимое значение"""
-        self._interval_min = new_min
-        self._onIntervalMinChanged(new_min)
 
     @final
     def setInterval(self, new_range: Interval) -> None:
@@ -95,7 +77,7 @@ class Intervaled[T](ABC):
 class Valued[T](ABC):
     """Содержит значение"""
 
-    _value_default: T
+    _value: T
     """Значение по умолчанию"""
 
     @abstractmethod
@@ -133,11 +115,9 @@ class Sizable[T: (int, float)](ABC):
             self.getHeight()
         )
 
-    @abstractmethod
     def setWidth(self, new_width: T) -> None:
         """Установить ширину"""
 
-    @abstractmethod
     def setHeight(self, new_height: T) -> None:
         """"Установить ширину"""
 
@@ -148,48 +128,56 @@ class Sizable[T: (int, float)](ABC):
         self.setHeight(new_size.y)
 
 
-class Enableable(ABC):
-    """Способен быть включен или выключен"""
+@dataclass(kw_only=True)
+class Toggleable(ABC):
+    """Объект, который может быть включен или выключен"""
+
+    _enabled: bool = True
+    """Объект включен"""
 
     @abstractmethod
-    def enable(self) -> None:
-        """Включить"""
-
-    @abstractmethod
-    def disable(self) -> None:
-        """Отключить"""
-
-    @final
-    def setEnabled(self, is_enabled: bool) -> None:
+    def setEnabled(self, enabled: bool) -> None:
         """Установить включенность объекта"""
 
-        if is_enabled:
-            self.enable()
+    @abstractmethod
+    def isEnabled(self) -> bool:
+        """Включен объект"""
 
-        else:
-            self.disable()
+    @final
+    def enable(self) -> None:
+        """Включить"""
+        self.setEnabled(True)
+
+    @final
+    def disable(self) -> None:
+        """Отключить"""
+        self.setEnabled(False)
 
 
+@dataclass(kw_only=True)
 class Visibility(ABC):
     """Способен управлять видимостью"""
 
-    @abstractmethod
-    def show(self) -> None:
-        """Показать"""
+    _visible: bool = True
+    """Объект видимый"""
 
     @abstractmethod
-    def hide(self) -> None:
-        """Скрыть"""
-
-    @final
     def setVisibility(self, is_visible: bool) -> None:
         """Установить видимость объекта"""
 
-        if is_visible:
-            self.show()
+    @abstractmethod
+    def isVisible(self) -> bool:
+        """Объект видимый"""
 
-        else:
-            self.hide()
+    @final
+    def show(self) -> None:
+        """Показать"""
+        self.setVisibility(True)
+
+    @final
+    def hide(self) -> None:
+        """Скрыть"""
+        self.setVisibility(False)
 
 
 class Deletable(ABC):

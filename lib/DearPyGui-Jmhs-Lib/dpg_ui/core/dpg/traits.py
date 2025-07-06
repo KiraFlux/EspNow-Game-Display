@@ -7,9 +7,9 @@ from dearpygui import dearpygui as dpg
 
 from dpg_ui.abc.traits import Colored
 from dpg_ui.abc.traits import Deletable
-from dpg_ui.abc.traits import Enableable
 from dpg_ui.abc.traits import Intervaled
 from dpg_ui.abc.traits import Sizable
+from dpg_ui.abc.traits import Toggleable
 from dpg_ui.abc.traits import Valued
 from dpg_ui.abc.traits import Visibility
 from dpg_ui.core.dpg.item import DpgItem
@@ -18,18 +18,37 @@ from rs.color import Color
 
 class DpgColored(DpgItem, Colored):
     @final
-    def _setColorImpl(self, color: Color) -> None:
-        self.configure(color=color.toRGBA8888())
+    def setColor(self, color: Color) -> None:
+        self._color = color
+
+        if self.isRegistered():
+            self._updateColor()
+
+    def _updateColor(self):
+        self.configure(color=super().getColor().toRGBA8888())
 
 
-class DpgEnableable(DpgItem, Enableable):
+class DpgToggleable(DpgItem, Toggleable):
     @final
-    def disable(self) -> None:
-        dpg.disable_item(self.tag())
+    def isEnabled(self) -> bool:
+        if self.isRegistered():
+            self._enabled = dpg.is_item_enabled(self.tag())
+
+        return self._enabled
 
     @final
-    def enable(self) -> None:
-        dpg.enable_item(self.tag())
+    def setEnabled(self, enabled: bool) -> None:
+        self._enabled = enabled
+
+        if self.isRegistered():
+            self._updateEnabled()
+
+    @final
+    def _updateEnabled(self) -> None:
+        if self._enabled:
+            dpg.enable_item(self.tag())
+        else:
+            dpg.disable_item(self.tag())
 
 
 class DpgDeletable(DpgItem, Deletable):
@@ -40,14 +59,25 @@ class DpgDeletable(DpgItem, Deletable):
 
 class DpgVisibility(DpgItem, Visibility):
     @final
-    def hide(self) -> None:
+    def isVisible(self) -> bool:
         if self.isRegistered():
-            dpg.hide_item(self.tag())
+            self._visible = dpg.is_item_visible(self.tag())
+
+        return self._visible
 
     @final
-    def show(self) -> None:
+    def setVisibility(self, is_visible: bool) -> None:
+        self._visible = is_visible
+
         if self.isRegistered():
+            self._updateVisibility()
+
+    @final
+    def _updateVisibility(self) -> None:
+        if self._visible:
             dpg.show_item(self.tag())
+        else:
+            dpg.hide_item(self.tag())
 
 
 class DpgValued[T](DpgItem, Valued[T], ABC):
@@ -56,53 +86,82 @@ class DpgValued[T](DpgItem, Valued[T], ABC):
     @final
     def getValue(self) -> T:
         if self.isRegistered():
-            return dpg.get_value(self.tag())
+            self._value = dpg.get_value(self.tag())
 
-        else:
-            return self._value_default
+        return self._value
 
     @final
     def setValue(self, value: T) -> None:
+        self._value = value
+
         if self.isRegistered():
-            dpg.set_value(self.tag(), value)
+            self._updateValue()
 
-        else:
-            self._value_default = value
+    @final
+    def _updateValue(self):
+        dpg.set_value(self.tag(), self._value)
 
 
-class DpgIntervaled[T](DpgItem, Intervaled[T], ABC):
+class DpgIntervaled[T](DpgItem, Intervaled[T]):
     """Виджет DPG имеющий диапазон и значение"""
 
-    def _onIntervalMaxChanged(self, new_max: T) -> None:
-        self.configure(max_value=new_max)
+    @final
+    def setIntervalMax(self, new_max: T) -> None:
+        self._interval_max = new_max
 
-    def _onIntervalMinChanged(self, new_min: T) -> None:
-        self.configure(min_value=new_min)
+        if self.isRegistered():
+            self._updateIntervalMax()
+
+    def setIntervalMin(self, new_min: T) -> None:
+        self._interval_min = new_min
+
+        if self.isRegistered():
+            self._updateIntervalMin()
+
+    @final
+    def _updateIntervalMax(self) -> None:
+        self.configure(max_value=self._interval_max)
+
+    @final
+    def _updateIntervalMin(self) -> None:
+        self.configure(min_value=self._interval_min)
 
 
 class DpgSizable[T: (int, float)](DpgItem, Sizable[T]):
     """Виджет DPG имеющий размеры"""
 
-    def setWidth(self, new_width: T) -> None:
-        if self.isRegistered():
-            self.configure(width=new_width)
-        else:
-            self._width = new_width
+    @final
+    def setWidth(self, width: T) -> None:
+        self._width = width
 
-    def setHeight(self, new_height: T) -> None:
         if self.isRegistered():
-            self.configure(height=new_height)
-        else:
-            self._height = new_height
+            self._updateWidth()
 
+    @final
+    def setHeight(self, height: T) -> None:
+        self._height = height
+
+        if self.isRegistered():
+            self._updateHeight()
+
+    @final
     def getWidth(self) -> T:
         if self.isRegistered():
-            return dpg.get_item_width(self.tag())
-        else:
-            return self._width
+            self._width = dpg.get_item_width(self.tag())
 
+        return self._width
+
+    @final
     def getHeight(self) -> T:
         if self.isRegistered():
-            return dpg.get_item_height(self.tag())
-        else:
-            return self._height
+            self._width = dpg.get_item_height(self.tag())
+
+        return self._height
+
+    @final
+    def _updateWidth(self) -> None:
+        self.configure(width=self._width)
+
+    @final
+    def _updateHeight(self):
+        self.configure(height=self._height)
