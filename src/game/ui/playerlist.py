@@ -15,7 +15,7 @@ class PlayerCard(CustomWidget):
     def __init__(self, player: Player, player_registry: PlayerRegistry):
         player.addObserver(self._update)
 
-        self._username = InputText("Игрок", default=player.username).withCallback(player.rename)
+        self._username = InputText("Игрок", default=player.username).withHandler(player.rename)
         self._team = Text(player.team.name, color=player.team.color, bullet=True)
         self._mac = Text(f"MAC: {player.mac}", color=Color.gray(0.75))
         self._score = DisplayInt("Счёт", default=player.score)
@@ -35,7 +35,7 @@ class PlayerCard(CustomWidget):
             .add(
                 Button()
                 .withLabel("Исключить")
-                .withCallback(_remove)
+                .withHandler(_remove)
             )
         )
 

@@ -225,7 +225,7 @@ class _DpgCallbackSupport[F: Callable](DpgItem, CallbackSupport[F], ABC):
         """Создать обёртку для передачи в DPG"""
 
     @final
-    def setCallback(self, f: F) -> None:
+    def setHandler(self, f: F) -> None:
         self._callback = f
 
         if self.isRegistered():

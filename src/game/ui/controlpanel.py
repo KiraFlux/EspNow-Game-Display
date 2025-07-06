@@ -16,7 +16,7 @@ class ControlPanel(CustomWidget):
                 default=env.rules.player_move_cooldown_secs,
                 units="сек",
                 interval=(0, 10)
-            ).withCallback(_update_cooldown)
+            ).withHandler(_update_cooldown)
         )
 
         super().__init__(base)

@@ -12,7 +12,7 @@ from rs.misc.color import Color
 
 
 class Colored(ABC):
-    """Содержит цвет"""
+    """Обладает цветом"""
 
     @abstractmethod
     def setColor(self, color: Color) -> None:
@@ -24,7 +24,7 @@ class Colored(ABC):
 
 
 class Intervaled[T](ABC):
-    """Имеет интервал"""
+    """Обладает интервалом"""
 
     type Interval = tuple[T, T]
     """Диапазон значений"""
@@ -62,7 +62,7 @@ class Intervaled[T](ABC):
 
 
 class Valued[T](ABC):
-    """Содержит значение"""
+    """Обладает значением"""
 
     @abstractmethod
     def getValue(self) -> T:
@@ -74,7 +74,7 @@ class Valued[T](ABC):
 
 
 class WidthAdjustable[T: (int, float)](ABC):
-    """Объект с управляемой шириной"""
+    """Обладает шириной"""
 
     @abstractmethod
     def getWidth(self) -> T:
@@ -92,7 +92,7 @@ class WidthAdjustable[T: (int, float)](ABC):
 
 
 class Sizable[T: (int, float)](WidthAdjustable, ABC):
-    """Объект с управляемыми размерами"""
+    """Обладает размерами (шириной и высотой)"""
 
     @abstractmethod
     def getHeight(self) -> T:
@@ -130,7 +130,7 @@ class Sizable[T: (int, float)](WidthAdjustable, ABC):
 
 
 class Toggleable(ABC):
-    """Объект, который может быть включен или выключен"""
+    """Обладает свойством включения и выключения"""
 
     @abstractmethod
     def setEnabled(self, enabled: bool) -> None:
@@ -152,7 +152,7 @@ class Toggleable(ABC):
 
 
 class Visibility(ABC):
-    """Способен управлять видимостью"""
+    """Обладает способностью быть видимым или скрытым"""
 
     @abstractmethod
     def setVisibility(self, is_visible: bool) -> None:
@@ -174,7 +174,7 @@ class Visibility(ABC):
 
 
 class Deletable(ABC):
-    """Удаляемый объект"""
+    """Обладает возможностью быть удаленным"""
 
     @abstractmethod
     def delete(self) -> None:
@@ -182,21 +182,21 @@ class Deletable(ABC):
 
 
 class CallbackSupport[F: Callable](ABC):
-    """Позволяет подключить callback"""
+    """Обладает обработчиком"""
 
     @abstractmethod
-    def setCallback(self, f: Optional[F]) -> None:
+    def setHandler(self, f: Optional[F]) -> None:
         """Установить обработчик обратного вызова"""
 
     @final
-    def withCallback(self, f: Optional[F]) -> Self:
+    def withHandler(self, f: Optional[F]) -> Self:
         """Установить обработчик обратного вызова и вернуть себя"""
-        self.setCallback(f)
+        self.setHandler(f)
         return self
 
 
 class Labelable(ABC):
-    """Объект, который может иметь метку (label)"""
+    """Обладаем меткой (label)"""
 
     @abstractmethod
     def setLabel(self, label: Optional[str]) -> None:

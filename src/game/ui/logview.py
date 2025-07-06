@@ -58,7 +58,7 @@ class LogView(CustomWidget):
                 _value=False,
             )
             .withLabel(key)
-            .withCallback(
+            .withHandler(
                 lambda state: self._onKeyWidget(key, state)
             )
         )
