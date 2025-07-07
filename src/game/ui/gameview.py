@@ -21,9 +21,6 @@ class GameView(CustomWidget):
 
         env.host_mac_subject.addObserver(host_mac_display.setValue)
 
-        def _env_rules_moves_available(x):
-            env.rules.moves_available = x
-
         base = (
             HBox()
             .add(
@@ -48,9 +45,9 @@ class GameView(CustomWidget):
                     HBox()
                     .withFont(Assets.label_font)
                     .add(
-                        CheckBox(_value=env.rules.moves_available)
+                        CheckBox(_value=env.rules.move_available)
                         .withLabel("Разрешить ходы")
-                        .withHandler(_env_rules_moves_available)
+                        .withHandler(env.rules.setMoveAvailable)
                     )
                     .add(Spacer(width=200))
                     .add(host_mac_display)

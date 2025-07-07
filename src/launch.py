@@ -93,7 +93,7 @@ def _main():
             )
         ),
         move_cooldown_secs=2.0,
-        moves_available=True,
+        move_available=True,
     )
 
     env = Environment(rules)

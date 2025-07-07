@@ -2,38 +2,62 @@ from abc import ABC
 from abc import abstractmethod
 from dataclasses import dataclass
 from dataclasses import field
-from typing import MutableSequence
 from typing import Self
 from typing import final
 
 from dpg_ui.abc.entities import Container
+from dpg_ui.abc.traits import Deletable
 from dpg_ui.core.dpg.item import DpgTag
 from dpg_ui.core.dpg.widget import DpgWidget
 
 
 @dataclass
-class DpgContainer[T](DpgWidget, Container[T], ABC):
-    """Контейнер из DPG"""
-
-    _items: MutableSequence[T] = field(init=False, default_factory=list)
+class DpgContainer[T: Deletable](DpgWidget, Container[T], ABC):
+    _items: dict[int, T] = field(init=False, default_factory=dict)
+    _deleted: bool = field(init=False, default=False)
 
     @abstractmethod
     def _registerItem(self, item: T) -> None:
-        """Регистрация элемента в контейнере"""
+        """Регистрация элемента"""
 
     @final
     def add(self, item: T) -> Self:
-        self._items.append(item)
+        item_id = id(item)
+        self._items[item_id] = item
+
+        # Подписываемся на удаление элемента
+        item.attachDeleteObserver(self._onItemDeleted)
 
         if self.isRegistered():
             self._registerItem(item)
 
         return self
 
+    def _onItemDeleted(self, item: Deletable) -> None:
+        if self._deleted:
+            return
+
+        if id(item) in self._items:
+            item.detachDeleteObserver(self._onItemDeleted)
+            del self._items[id(item)]
+
+    @final
+    def delete(self) -> None:
+        if self._deleted:
+            return
+
+        self._deleted = True
+
+        # Очищаем все элементы
+        for item in list(self._items.values()):
+            item.detachDeleteObserver(self._onItemDeleted)
+            item.delete()
+
+        self._items.clear()
+        super().delete()
+
     def _onRegister(self, tag: DpgTag) -> None:
         super()._onRegister(tag)
-
-        self._updateVisibility()
-
-        for item in self._items:
+        # Регистрируем все существующие элементы
+        for item in self._items.values():
             self._registerItem(item)

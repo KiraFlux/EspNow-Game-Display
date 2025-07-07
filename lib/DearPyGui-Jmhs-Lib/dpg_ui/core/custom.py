@@ -1,3 +1,5 @@
+from typing import Any
+from typing import Callable
 from typing import Optional
 
 from dpg_ui.abc.entities import Font
@@ -13,6 +15,12 @@ class CustomWidget(Widget[DpgWidget], Deletable, Visibility):
 
     def __init__(self, base: DpgWidget) -> None:
         self.__base = base
+
+    def detachDeleteObserver(self, f: Callable[[Deletable], Any]) -> None:
+        self.__base.detachDeleteObserver(f)
+
+    def attachDeleteObserver(self, f: Callable[[Deletable], Any]) -> None:
+        self.__base.attachDeleteObserver(f)
 
     def isVisible(self) -> bool:
         return self.__base.isVisible()

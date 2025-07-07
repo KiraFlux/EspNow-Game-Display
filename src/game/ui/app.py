@@ -17,6 +17,6 @@ class GameApp(App):
         self.window.add(
             TabBar()
             .add(Tab("Игра").add(GameView(env)))
-            .add(Tab("Панель управления").add(ControlPanel(env)))
+            .add(Tab("Игровые правила").add(ControlPanel(env.rules)))
             .add(Tab("Журнал").add(LogView()))
         )

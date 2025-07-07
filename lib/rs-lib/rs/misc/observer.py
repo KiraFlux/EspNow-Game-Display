@@ -6,7 +6,7 @@ class Subject[T]:
     """Субъект"""
 
     def __init__(self) -> None:
-        self.__observers = list[Callable[[T], Any]]()
+        self.__observers = set[Callable[[T], Any]]()
 
     def notifyObservers(self, value: T) -> None:
         """Уведомить наблюдателей"""
@@ -15,4 +15,8 @@ class Subject[T]:
 
     def addObserver(self, observer: Callable[[T], Any]) -> None:
         """Добавить наблюдателя"""
-        self.__observers.append(observer)
+        self.__observers.add(observer)
+
+    def removeObserver(self, observer: Callable[[T], Any]):
+        """Удалить наблюдателя"""
+        self.__observers.remove(observer)

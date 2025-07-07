@@ -3,6 +3,7 @@ from __future__ import annotations
 from abc import ABC
 from abc import abstractmethod
 from dataclasses import dataclass
+from dataclasses import field
 from typing import Any
 from typing import Callable
 from typing import ClassVar
@@ -11,6 +12,7 @@ from typing import final
 
 from dearpygui import dearpygui as dpg
 
+from dpg_ui.abc.entities import Item
 from dpg_ui.abc.traits import Colored
 from dpg_ui.abc.traits import Deletable
 from dpg_ui.abc.traits import Handlerable
@@ -24,6 +26,7 @@ from dpg_ui.abc.traits import Visibility
 from dpg_ui.abc.traits import WidthAdjustable
 from dpg_ui.core.dpg.item import DpgItem
 from rs.misc.color import Color
+from rs.misc.observer import Subject
 
 
 @dataclass(kw_only=True)
@@ -108,9 +111,18 @@ class DpgToggleable(DpgItem, Toggleable):
             self._updateEnabled()
 
 
+@dataclass
 class DpgDeletable(DpgItem, Deletable):
-    @final
+    _delete_subject: Subject[Deletable] = field(init=False, default_factory=Subject)
+
+    def attachDeleteObserver(self, f: Callable[[Deletable], Any]) -> None:
+        self._delete_subject.addObserver(f)
+
+    def detachDeleteObserver(self, f: Callable[[Deletable], Any]) -> None:
+        self._delete_subject.removeObserver(f)
+
     def delete(self) -> None:
+        self._delete_subject.notifyObservers(self)
         dpg.delete_item(self.tag())
 
 

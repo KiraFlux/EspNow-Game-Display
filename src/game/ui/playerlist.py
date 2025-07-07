@@ -20,10 +20,6 @@ class PlayerCard(CustomWidget):
         self._mac = Text(f"MAC: {player.mac}", color=Color.gray(0.75))
         self._score = DisplayInt("Счёт", default=player.score)
 
-        def _remove():
-            player_registry.unregister(player.mac)
-            self.delete()
-
         base = (
             ChildWindow(
                 _height=180,
@@ -35,11 +31,13 @@ class PlayerCard(CustomWidget):
             .add(
                 Button()
                 .withLabel("Исключить")
-                .withHandler(_remove)
+                .withHandler(self.delete)
             )
         )
 
         super().__init__(base)
+
+        self.attachDeleteObserver(lambda _: player_registry.unregister(player.mac))
 
     def _update(self, p: Player) -> None:
         self._username.setValue(p.username)

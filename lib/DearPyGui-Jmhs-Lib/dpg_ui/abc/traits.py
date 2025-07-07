@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from abc import ABC
 from abc import abstractmethod
+from typing import Any
 from typing import Callable
 from typing import Optional
 from typing import Self
@@ -185,6 +186,14 @@ class Visibility(ABC):
 
 class Deletable(ABC):
     """Обладает возможностью быть удаленным"""
+
+    @abstractmethod
+    def attachDeleteObserver(self, f: Callable[[Deletable], Any]) -> None:
+        """Добавить наблюдатель при удалении объекта"""
+
+    @abstractmethod
+    def detachDeleteObserver(self, f: Callable[[Deletable], Any]) -> None:
+        """Удалить наблюдателя при удалении объекта"""
 
     @abstractmethod
     def delete(self) -> None:

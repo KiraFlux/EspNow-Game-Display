@@ -26,5 +26,13 @@ class GameRules:
     move_cooldown_secs: float
     """Кул-даун ходов игрока"""
 
-    moves_available: bool
+    move_available: bool
     """Ходы разрешены"""
+
+    def setMoveCooldown(self, cooldown_secs: float) -> None:
+        """Установить кул-даун хода"""
+        self.move_cooldown_secs = cooldown_secs
+
+    def setMoveAvailable(self, available: bool) -> None:
+        """Установить разрешение совершать ходы"""
+        self.move_available = available

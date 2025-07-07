@@ -1,22 +1,19 @@
 from dpg_ui.core.custom import CustomWidget
 from dpg_ui.impl.sliders import FloatSlider
-from game.core.environment import Environment
+from game.core.entities.rules import GameRules
 
 
 class ControlPanel(CustomWidget):
     """Панель управления"""
 
-    def __init__(self, env: Environment) -> None:
-        def _update_cooldown(v: float) -> None:
-            env.rules.move_cooldown_secs = v
-
+    def __init__(self, rules: GameRules) -> None:
         base = (
             FloatSlider(
                 "Кул-даун ходов",
-                default=env.rules.move_cooldown_secs,
+                default=rules.move_cooldown_secs,
                 units="сек",
                 interval=(0, 10)
-            ).withHandler(_update_cooldown)
+            ).withHandler(rules.setMoveCooldown)
         )
 
         super().__init__(base)

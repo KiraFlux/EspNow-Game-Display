@@ -62,7 +62,7 @@ class Environment:
         """Обработчик хода игрока"""
         self._log.write(f"Получен ход от {mac}: '{move}'")
 
-        if not self.rules.moves_available:
+        if not self.rules.move_available:
             s = "Ход от игроков ещё не разрешены"
             self._log.write(s)
             return s
