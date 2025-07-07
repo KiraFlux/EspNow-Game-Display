@@ -205,7 +205,7 @@ class Handlerable[F: Callable](ABC):
         return self
 
 
-class Labelable(ABC):
+class Labeled(ABC):
     """Обладаем меткой (label)"""
 
     @abstractmethod

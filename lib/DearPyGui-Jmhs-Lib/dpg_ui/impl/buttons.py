@@ -6,7 +6,7 @@ from dearpygui import dearpygui as dpg
 
 from dpg_ui.core.dpg.item import DpgTag
 from dpg_ui.core.dpg.traits import DpgColored
-from dpg_ui.core.dpg.traits import DpgLabelable
+from dpg_ui.core.dpg.traits import DpgLabeled
 from dpg_ui.core.dpg.traits import DpgSimpleHandlerable
 from dpg_ui.core.dpg.traits import DpgSizable
 from dpg_ui.core.dpg.traits import DpgValueHandlerable
@@ -15,7 +15,7 @@ from dpg_ui.core.dpg.widget import DpgWidget
 
 @final
 @dataclass
-class Button(DpgWidget, DpgSizable[int], DpgSimpleHandlerable, DpgLabelable):
+class Button(DpgWidget, DpgSizable[int], DpgSimpleHandlerable, DpgLabeled):
     """Dpg: button"""
 
     _small: bool = field(kw_only=True, default=False)
@@ -30,7 +30,7 @@ class Button(DpgWidget, DpgSizable[int], DpgSimpleHandlerable, DpgLabelable):
 
 
 @dataclass
-class ColorDisplay(DpgWidget, DpgSizable, DpgColored, DpgLabelable):
+class ColorDisplay(DpgWidget, DpgSizable, DpgColored, DpgLabeled):
     """Кнопка"""
 
     _border: bool = field(kw_only=True, default=False)
@@ -48,7 +48,7 @@ class ColorDisplay(DpgWidget, DpgSizable, DpgColored, DpgLabelable):
 
 @final
 @dataclass
-class CheckBox(DpgWidget, DpgValueHandlerable[bool], DpgLabelable):
+class CheckBox(DpgWidget, DpgValueHandlerable[bool], DpgLabeled):
     """Dpg: checkbox"""
 
     def _createTag(self, parent_tag: DpgTag) -> DpgTag:

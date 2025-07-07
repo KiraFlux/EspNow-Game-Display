@@ -16,7 +16,7 @@ from dpg_ui.abc.traits import Deletable
 from dpg_ui.abc.traits import Handlerable
 from dpg_ui.abc.traits import HeightAdjustable
 from dpg_ui.abc.traits import Intervaled
-from dpg_ui.abc.traits import Labelable
+from dpg_ui.abc.traits import Labeled
 from dpg_ui.abc.traits import Sizable
 from dpg_ui.abc.traits import Toggleable
 from dpg_ui.abc.traits import Valued
@@ -27,7 +27,7 @@ from rs.misc.color import Color
 
 
 @dataclass(kw_only=True)
-class DpgLabelable(DpgItem, Labelable):
+class DpgLabeled(DpgItem, Labeled):
     """Объект Dpg имеющий метку (label)"""
 
     _label: Optional[str] = None

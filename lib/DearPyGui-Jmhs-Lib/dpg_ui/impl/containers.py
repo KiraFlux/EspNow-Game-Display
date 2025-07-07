@@ -9,7 +9,7 @@ from dearpygui import dearpygui as dpg
 from dpg_ui.abc.entities import Widget
 from dpg_ui.core.dpg.container import DpgContainer
 from dpg_ui.core.dpg.item import DpgTag
-from dpg_ui.core.dpg.traits import DpgLabelable
+from dpg_ui.core.dpg.traits import DpgLabeled
 from dpg_ui.core.dpg.traits import DpgSizable
 
 
@@ -47,7 +47,7 @@ def HBox() -> _Box:
 
 @final
 @dataclass
-class Details(_DpgWidgetContainer, DpgLabelable):
+class Details(_DpgWidgetContainer, DpgLabeled):
     """Dpg: collapsing_header"""
 
     _default_open: bool = False
@@ -62,7 +62,7 @@ class Details(_DpgWidgetContainer, DpgLabelable):
 
 @final
 @dataclass
-class Tab(_DpgWidgetContainer, DpgLabelable):
+class Tab(_DpgWidgetContainer, DpgLabeled):
     """Dpg: tab"""
 
     _label: str
@@ -98,7 +98,7 @@ class TabBar(DpgContainer[Tab]):
 
 @final
 @dataclass
-class Window(_DpgWidgetContainer, DpgSizable[int], DpgLabelable):
+class Window(_DpgWidgetContainer, DpgSizable[int], DpgLabeled):
     """Dpg: window"""
 
     _menubar: bool = False
