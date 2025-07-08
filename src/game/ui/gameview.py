@@ -6,6 +6,7 @@ from dpg_ui.impl.containers import HBox
 from dpg_ui.impl.containers import Tab
 from dpg_ui.impl.containers import TabBar
 from dpg_ui.impl.containers import VBox
+from dpg_ui.impl.misc import Separator
 from dpg_ui.impl.misc import Spacer
 from game.core.environment import Environment
 from game.res import Assets
@@ -25,7 +26,7 @@ class GameView(CustomWidget):
             HBox()
             .add(
                 ChildWindow(
-                    _width=400,
+                    _width=320,
                     resizable_x=True,
                     background=True
                 )
@@ -49,11 +50,12 @@ class GameView(CustomWidget):
                         .withLabel("Разрешить ходы")
                         .withHandler(env.rules.setMoveAvailable)
                     )
-                    .add(Spacer(width=200))
+                    .add(Spacer().withWidth(200))
                     .add(host_mac_display)
                 )
+                .add(Separator())
                 .add(
-                    BoardView(env.board, env.team_registry.default_team.color.darker(0.6))
+                    BoardView(env.board)
                 )
             )
         )

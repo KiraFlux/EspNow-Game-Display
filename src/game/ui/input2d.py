@@ -43,7 +43,6 @@ class InputInt2D(CustomWidget, Valued[Vector2D[int]], Intervaled[int]):
         item_width = width // 3
 
         self._y = InputInt(
-            label=None,
             default=default.y,
             step=step,
             step_fast=step_fast,
@@ -52,7 +51,6 @@ class InputInt2D(CustomWidget, Valued[Vector2D[int]], Intervaled[int]):
         ).withWidth(item_width).withHandler(_on_change_y)
 
         self._x = InputInt(
-            label=None,
             default=default.x,
             step=step,
             step_fast=step_fast,

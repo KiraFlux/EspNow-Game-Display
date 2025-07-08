@@ -13,6 +13,15 @@ from rs.misc.observer import Subject
 class Player(Subject['Player']):
     """Сведения об игроке"""
 
+    @classmethod
+    def dummy(cls):
+        """Вернуть "Болванку" для значения по умолчанию"""
+        return cls(
+            mac=Mac.broadcast(),
+            username="Dummy",
+            team=Team.default(),
+        )
+
     def __init__(self, mac: Mac, username: str, team: Team) -> None:
         super().__init__()
         self.mac = mac
@@ -75,7 +84,7 @@ class PlayerRegistry(Subject[Player]):
         p = Player(
             mac=mac,
             username=username,
-            team=self._team_registry.default_team,
+            team=Team.default(),
         )
 
         self._players[mac] = p

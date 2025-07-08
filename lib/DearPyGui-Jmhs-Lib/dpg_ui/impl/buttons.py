@@ -23,6 +23,7 @@ class Button(DpgWidget, DpgSizable[int], DpgSimpleHandlerable, DpgLabeled):
 
     def _createTag(self, parent_tag: DpgTag) -> DpgTag:
         return dpg.add_button(
+
             parent=parent_tag,
 
             small=self._small,

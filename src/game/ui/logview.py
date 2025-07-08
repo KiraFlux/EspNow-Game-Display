@@ -26,11 +26,15 @@ class LogView(CustomWidget):
                 HBox()
                 .add(
                     VBox()
-                    .add(Text("Каналы").withFont(Assets.label_font))
+                    .add(
+                        Text("Каналы")
+                        .withFont(Assets.label_font)
+                    )
                     .add(
                         ChildWindow(
                             _width=300,
                             resizable_x=True,
+                            scrollable_y=True
                         )
                         .add(
                             self._channels
@@ -38,7 +42,9 @@ class LogView(CustomWidget):
                     )
                 )
                 .add(
-                    ChildWindow()
+                    ChildWindow(
+                        scrollable_y=True
+                    )
                     .add(self._text)
                 )
             )

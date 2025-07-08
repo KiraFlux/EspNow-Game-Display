@@ -43,7 +43,7 @@ def _agents_task(env: Environment):
     x = env.board.size.x // 2
     y = env.board.size.y // 2
 
-    sleep(2)
+    sleep(0.1)
 
     for i in range(x):
         team = env.team_registry.register(f"Team-{i}")

@@ -35,7 +35,7 @@ class App:
             y_pos=y,
         )
 
-        self.window.register(None)
+        Window.registerAll()
 
         for task in user_tasks:
             task.start()

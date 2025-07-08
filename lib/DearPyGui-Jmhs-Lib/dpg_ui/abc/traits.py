@@ -55,11 +55,17 @@ class Intervaled[T](ABC):
         )
 
     @final
-    def setInterval(self, new_range: Interval) -> None:
+    def setInterval(self, interval: Interval) -> None:
         """Установить диапазон"""
-        new_min, new_max = new_range
+        new_min, new_max = interval
         self.setIntervalMin(new_min)
         self.setIntervalMax(new_max)
+
+    @final
+    def withInterval(self, interval: Interval) -> Self:
+        """Установить интервал и вернуть себя"""
+        self.setInterval(interval)
+        return self
 
 
 class Valued[T](ABC):

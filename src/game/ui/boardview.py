@@ -6,9 +6,11 @@ from dpg_ui.core.dpg.draw import DpgCanvas
 from dpg_ui.core.dpg.draw import Rectangle
 from dpg_ui.impl.containers import ChildWindow
 from dpg_ui.impl.containers import HBox
+from dpg_ui.impl.containers import VBox
 from dpg_ui.impl.sliders import FloatSlider
 from game.core.entities.board import Board
 from game.core.entities.player import Player
+from game.core.entities.team import Team
 from game.ui.input2d import InputInt2D
 from rs.lina.vector import Vector2D
 from rs.misc.color import Color
@@ -20,18 +22,15 @@ type Pos = Vector2D[int]
 class BoardView(CustomWidget):
     """Визуализация игрового поля"""
 
-    def __init__(self, board: Board, empty_cell_color: Color) -> None:
+    def __init__(self, board: Board) -> None:
         self._log = Logger("game-board-view")
 
-        self._empty_cell_border_color: Final = empty_cell_color
+        self._empty_cell_border_color: Final = Team.default().color.darker(0.6)
         self._board: Final = board
         self._scale: int = 1
 
         board.size_subject.addObserver(self._onBoardResized)
         board.move_subject.addObserver(lambda args: self._onPlayerMove(*args))
-
-        def _update_board_size(new_size: Vector2D):
-            board.size = new_size
 
         self._canvas = DpgCanvas(2000, 2000)
 
@@ -43,25 +42,24 @@ class BoardView(CustomWidget):
             .add(self._canvas)
         )
 
-        _scale_slider = (
-            FloatSlider("Масштаб", default=self._scale, interval=(0.1, 2.0), digits=2)
-            .withHandler(self._onBoardRescaled)
-            .withWidth(200)
-        )
-
         base = (
-            ChildWindow()
+            VBox()
             .add(
                 HBox()
-                .add(_scale_slider)
+                .add(
+                    FloatSlider("Масштаб", default=self._scale, interval=(0.1, 2.0), digits=2)
+                    .withHandler(self._onBoardRescaled)
+                    .withWidth(200)
+                )
                 .add(
                     InputInt2D(
                         "Поле",
                         (1, 20),
-                        on_change=_update_board_size,
+                        on_change=board.setSize,
                         default=board.size,
                     )
                 )
+
             )
             .add(self._canvas_window)
         )
@@ -83,7 +81,7 @@ class BoardView(CustomWidget):
 
         cell_size = self._calcCellSize() * self._scale
 
-        thickness = cell_size // 10
+        thickness = cell_size / 10
         rect.position_1 = pos * cell_size + thickness
         rect.position_2 = pos * cell_size + cell_size - thickness
         rect.rounding = cell_size / 4

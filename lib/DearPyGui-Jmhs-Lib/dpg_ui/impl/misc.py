@@ -4,6 +4,7 @@ from typing import final
 import dearpygui.dearpygui as dpg
 
 from dpg_ui.core.dpg.item import DpgTag
+from dpg_ui.core.dpg.traits import DpgSizable
 from dpg_ui.core.dpg.widget import DpgWidget
 
 
@@ -19,15 +20,10 @@ class Separator(DpgWidget):
 
 @final
 @dataclass(kw_only=True)
-class Spacer(DpgWidget):
+class Spacer(DpgWidget, DpgSizable):
     """Dpg spacer"""
-
-    width: int = 0
-    height: int = 0
 
     def _createTag(self, parent_tag: DpgTag) -> DpgTag:
         return dpg.add_spacer(
             parent=parent_tag,
-            width=self.width,
-            height=self.height,
         )

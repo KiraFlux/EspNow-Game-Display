@@ -12,7 +12,6 @@ from typing import final
 
 from dearpygui import dearpygui as dpg
 
-from dpg_ui.abc.entities import Item
 from dpg_ui.abc.traits import Colored
 from dpg_ui.abc.traits import Deletable
 from dpg_ui.abc.traits import Handlerable
@@ -189,17 +188,19 @@ class DpgValued[T](DpgItem, Valued[T], ABC):
 class DpgIntervaled[T](DpgItem, Intervaled[T]):
     """Виджет DPG имеющий диапазон и значение"""
 
-    _interval_max: T
+    _interval_max: Optional[T]
     """Максимальное допустимое значение"""
 
-    _interval_min: T
+    _interval_min: Optional[T]
     """Минимальное допустимое значение"""
 
     def _updateIntervalMax(self) -> None:
-        self.configure(max_value=self._interval_max)
+        if self._interval_max:
+            self.configure(max_value=self._interval_max)
 
     def _updateIntervalMin(self) -> None:
-        self.configure(min_value=self._interval_min)
+        if self._interval_min:
+            self.configure(min_value=self._interval_min)
 
     def update(self) -> None:
         super().update()

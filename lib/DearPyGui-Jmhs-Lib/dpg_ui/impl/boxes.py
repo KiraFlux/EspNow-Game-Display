@@ -2,13 +2,13 @@ from __future__ import annotations
 
 from abc import ABC
 from dataclasses import dataclass
-from typing import Optional
 from typing import final
 
 from dearpygui import dearpygui as dpg
 
 from dpg_ui.core.dpg.item import DpgTag
 from dpg_ui.core.dpg.traits import DpgIntervaled
+from dpg_ui.core.dpg.traits import DpgLabeled
 from dpg_ui.core.dpg.traits import DpgSizable
 from dpg_ui.core.dpg.traits import DpgValueHandlerable
 from dpg_ui.core.dpg.traits import DpgWidthAdjustable
@@ -16,11 +16,8 @@ from dpg_ui.core.dpg.widget import DpgWidget
 
 
 @dataclass(kw_only=True)
-class _InputBox[T](DpgWidget, DpgValueHandlerable[T], DpgWidthAdjustable[int], ABC):
+class _InputBox[T](DpgWidget, DpgValueHandlerable[T], DpgWidthAdjustable[int], DpgLabeled, ABC):
     """Окно значения"""
-
-    _label: Optional[str]
-    """Наименование"""
 
     _readonly: bool
     """Поле только для ввода"""
@@ -37,22 +34,18 @@ class _InputText(_InputBox[str], DpgSizable[int]):
     def _createTag(self, parent_tag: DpgTag) -> DpgTag:
         return dpg.add_input_text(
             parent=parent_tag,
-            label=self._label,
             readonly=self._readonly,
-
             on_enter=self._on_enter,
         )
 
 
 def InputText(
-        label: str,
         *,
         default: str = None,
         on_enter: bool = False,
 ):
     """Создать окно ввода текста"""
     return _InputText(
-        _label=label,
         _readonly=False,
         _on_enter=on_enter,
         _value=default,
@@ -66,7 +59,6 @@ def DisplayText(
 ):
     """Создать окно вывода текста"""
     return _InputText(
-        _label=label,
         _readonly=True,
         _on_enter=False,
         _value=default,
@@ -83,7 +75,7 @@ class _InputInt(_InputBox[int], DpgIntervaled[int]):
     _step_fast: int
 
     def _createTag(self, parent_tag: DpgTag) -> DpgTag:
-        clamped = self._interval_min != self._interval_max
+        clamped = (self._interval_min != self._interval_max)
 
         return dpg.add_input_int(
             parent=parent_tag,
@@ -100,7 +92,6 @@ class _InputInt(_InputBox[int], DpgIntervaled[int]):
 
 
 def InputInt(
-        label: Optional[str],
         default: int = 0,
         *,
         step: int = 1,
@@ -114,7 +105,6 @@ def InputInt(
         _interval_max=interval_max,
         _interval_min=interval_min,
         _value=default,
-        _label=label,
         _readonly=False,
         _on_enter=on_enter,
         _step=step,
@@ -123,7 +113,6 @@ def InputInt(
 
 
 def DisplayInt(
-        label: str,
         *,
         default: int = 0,
 ):
@@ -133,7 +122,6 @@ def DisplayInt(
         _interval_min=0,
 
         _value=default,
-        _label=label,
         _readonly=True,
         _on_enter=False,
 

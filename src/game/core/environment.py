@@ -8,6 +8,7 @@ from game.core.entities.board import Board
 from game.core.entities.mac import Mac
 from game.core.entities.player import PlayerRegistry
 from game.core.entities.rules import GameRules
+from game.core.entities.team import Team
 from game.core.entities.team import TeamRegistry
 from rs.lina.vector import Vector2D
 from rs.misc.log import Logger
@@ -74,7 +75,7 @@ class Environment:
             self._log.write(s)
             return s
 
-        if player.team is self.team_registry.default_team:
+        if player.team == Team.default():
             s = f"{player}: Вы не можете совершать ход не имея принадлежности к команде"
             self._log.write(s)
             return s

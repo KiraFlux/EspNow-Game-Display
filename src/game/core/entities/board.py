@@ -45,9 +45,13 @@ class Board:
         return self._size
 
     @size.setter
-    def size(self, new_size: Pos) -> None:
-        self._size = new_size
+    def size(self, size: Pos) -> None:
+        self._size = size
         self.size_subject.notifyObservers(self._size)
+
+    def setSize(self, size: Pos) -> None:
+        """setter версия"""
+        self.size = size
 
     def getState(self) -> Mapping[Pos, Cell]:
         """Получить состояние поля"""

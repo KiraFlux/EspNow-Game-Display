@@ -1,3 +1,4 @@
+from functools import cache
 from typing import AbstractSet
 from typing import Final
 
@@ -9,6 +10,12 @@ from rs.misc.observer import Subject
 
 class Team(Subject['Team']):
     """Команда"""
+
+    @classmethod
+    @cache
+    def default(cls):
+        """Команда по умолчанию"""
+        return Team("default", Color.grey())
 
     def __init__(self, name: str, color: Color) -> None:
         super().__init__()
@@ -49,6 +56,10 @@ class Team(Subject['Team']):
         self._score = s
         self.notifyObservers(self)
 
+    def rename(self, name: str) -> None:
+        """Переименовать команду"""
+        self.name = name
+
 
 class TeamRegistry(Subject[Team]):
     """Реестр команд"""
@@ -56,12 +67,10 @@ class TeamRegistry(Subject[Team]):
     def __init__(self, color_generator: ColorGenerator) -> None:
         super().__init__()
         self._log = Logger("team-registry")
-        self._team_index: int = 0
+        self.__team_index: int = 0
 
         self._color_generator: Final = color_generator
         self._teams: Final = set[Team]()
-
-        self.default_team: Final = Team("default", Color.grey())
 
     def register(self, name: str) -> Team:
         """Зарегистрировать команду"""
@@ -84,6 +93,6 @@ class TeamRegistry(Subject[Team]):
         return self._teams
 
     def _calcTeamIndex(self) -> int:
-        ret = self._team_index
-        self._team_index += 1
+        ret = self.__team_index
+        self.__team_index += 1
         return ret

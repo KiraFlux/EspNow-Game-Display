@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from abc import ABC
 from dataclasses import dataclass
+from typing import ClassVar
+from typing import MutableSequence
 from typing import final
 
 from dearpygui import dearpygui as dpg
@@ -101,18 +103,38 @@ class TabBar(DpgContainer[Tab]):
 class Window(_DpgWidgetContainer, DpgSizable[int], DpgLabeled):
     """Dpg: window"""
 
+    _windows: ClassVar[MutableSequence[Window]] = list()
+    """Экземпляры окон"""
+
     _menubar: bool = False
     """Место под полосу меню"""
-
     _auto_size: bool = True
     """Размер окна автоматически подстраивается под виджеты"""
+    _modal: bool = False
+    """Является модальным окном"""
+
+    def __post_init__(self):
+        self.__class__._windows.append(self)
+
+    @classmethod
+    def registerAll(cls) -> None:
+        """Регистрация всех окон"""
+        for w in cls._windows:
+            # noinspection PyTypeChecker
+            w.register(None)
 
     # noinspection PyFinal
     def register(self, parent: Widget) -> None:
         self._onRegister(dpg.add_window(
             menubar=self._menubar,
             autosize=self._auto_size,
+            modal=self._modal,
         ))
+
+    def update(self) -> None:
+        super().update()
+        if self._modal:
+            self.hide()
 
     def _createTag(self, parent_tag):
         raise RuntimeError
@@ -134,7 +156,7 @@ class ChildWindow(_DpgWidgetContainer, DpgSizable[int]):
     # Внешний вид
     background: bool = False
     menu_bar: bool = False
-    scrollable_y: bool = True
+    scrollable_y: bool = False
     scrollable_x: bool = False
 
     def _createTag(self, parent_tag: DpgTag) -> DpgTag:
@@ -149,4 +171,5 @@ class ChildWindow(_DpgWidgetContainer, DpgSizable[int]):
             horizontal_scrollbar=self.scrollable_x,
             autosize_x=self.auto_size_x,
             autosize_y=self.auto_size_y,
+            no_scroll_with_mouse=not self.scrollable_y,
         )
