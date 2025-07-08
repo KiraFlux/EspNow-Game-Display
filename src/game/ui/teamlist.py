@@ -1,9 +1,9 @@
 from typing import Final
 
 from dpg_ui.core.custom import CustomWidget
-from dpg_ui.impl.boxes import DisplayInt
-from dpg_ui.impl.boxes import InputInt
-from dpg_ui.impl.boxes import InputText
+from dpg_ui.impl.boxes import IntDisplay
+from dpg_ui.impl.boxes import IntInput
+from dpg_ui.impl.boxes import TextInput
 from dpg_ui.impl.buttons import Button
 from dpg_ui.impl.containers import ChildWindow
 from dpg_ui.impl.containers import HBox
@@ -26,9 +26,9 @@ class TeamEditDialog(EditDialog[Team]):
         return team.__str__()
 
     def __init__(self) -> None:
-        self._name: Final = InputText()
+        self._name: Final = TextInput()
 
-        self._score: Final = InputInt(step=100, step_fast=1000)
+        self._score: Final = IntInput(step=100, step_fast=1000)
 
         super().__init__(
             VBox()
@@ -61,7 +61,7 @@ class TeamCard(CustomWidget):
         team.addObserver(self._update)
 
         self._name = Text(team.name, color=team.color)
-        self._score = DisplayInt(default=team.score)
+        self._score = IntDisplay(default=team.score)
 
         base = (
             ChildWindow()

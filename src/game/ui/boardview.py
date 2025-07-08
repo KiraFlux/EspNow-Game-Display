@@ -11,7 +11,7 @@ from dpg_ui.impl.sliders import FloatSlider
 from game.core.entities.board import Board
 from game.core.entities.player import Player
 from game.core.entities.team import Team
-from game.ui.input2d import InputInt2D
+from game.ui.input2d import Int2DInput
 from rs.lina.vector import Vector2D
 from rs.misc.color import Color
 from rs.misc.log import Logger
@@ -52,7 +52,7 @@ class BoardView(CustomWidget):
                     .withWidth(200)
                 )
                 .add(
-                    InputInt2D(
+                    Int2DInput(
                         "Поле",
                         (1, 20),
                         on_change=board.setSize,

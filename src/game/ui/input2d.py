@@ -4,14 +4,14 @@ from typing import Final
 from dpg_ui.abc.traits import Intervaled
 from dpg_ui.abc.traits import Valued
 from dpg_ui.core.custom import CustomWidget
-from dpg_ui.impl.boxes import InputInt
+from dpg_ui.impl.boxes import IntInput
 from dpg_ui.impl.containers import HBox
 from dpg_ui.impl.containers import VBox
 from dpg_ui.impl.text import Text
 from rs.lina.vector import Vector2D
 
 
-class InputInt2D(CustomWidget, Valued[Vector2D[int]], Intervaled[int]):
+class Int2DInput(CustomWidget, Valued[Vector2D[int]], Intervaled[int]):
     """Окно ввода 2D вектора"""
 
     def __init__(
@@ -42,7 +42,7 @@ class InputInt2D(CustomWidget, Valued[Vector2D[int]], Intervaled[int]):
 
         item_width = width // 3
 
-        self._y = InputInt(
+        self._y = IntInput(
             default=default.y,
             step=step,
             step_fast=step_fast,
@@ -50,7 +50,7 @@ class InputInt2D(CustomWidget, Valued[Vector2D[int]], Intervaled[int]):
             interval_min=interval_min,
         ).withWidth(item_width).withHandler(_on_change_y)
 
-        self._x = InputInt(
+        self._x = IntInput(
             default=default.x,
             step=step,
             step_fast=step_fast,

@@ -16,7 +16,7 @@ from dpg_ui.core.dpg.widget import DpgWidget
 
 
 @dataclass(kw_only=True)
-class _InputBox[T](DpgWidget, DpgValueHandlerable[T], DpgWidthAdjustable[int], DpgLabeled, ABC):
+class _Input[T](DpgWidget, DpgValueHandlerable[T], DpgWidthAdjustable[int], DpgLabeled, ABC):
     """Окно значения"""
 
     _readonly: bool
@@ -28,7 +28,7 @@ class _InputBox[T](DpgWidget, DpgValueHandlerable[T], DpgWidthAdjustable[int], D
 
 @final
 @dataclass(kw_only=True)
-class _InputText(_InputBox[str], DpgSizable[int]):
+class _TextInput(_Input[str], DpgSizable[int]):
     """Окно текста"""
 
     def _createTag(self, parent_tag: DpgTag) -> DpgTag:
@@ -39,26 +39,26 @@ class _InputText(_InputBox[str], DpgSizable[int]):
         )
 
 
-def InputText(
+def TextInput(
         *,
         default: str = None,
         on_enter: bool = False,
 ):
     """Создать окно ввода текста"""
-    return _InputText(
+    return _TextInput(
         _readonly=False,
         _on_enter=on_enter,
         _value=default,
     )
 
 
-def DisplayText(
+def TextDisplay(
         label: str,
         *,
         default: str = None,
 ):
     """Создать окно вывода текста"""
-    return _InputText(
+    return _TextInput(
         _readonly=True,
         _on_enter=False,
         _value=default,
@@ -67,7 +67,7 @@ def DisplayText(
 
 @final
 @dataclass(kw_only=True)
-class _InputInt(_InputBox[int], DpgIntervaled[int]):
+class _IntInput(_Input[int], DpgIntervaled[int]):
     """Окно целого числа"""
 
     _step: int
@@ -91,7 +91,7 @@ class _InputInt(_InputBox[int], DpgIntervaled[int]):
         )
 
 
-def InputInt(
+def IntInput(
         default: int = 0,
         *,
         step: int = 1,
@@ -101,7 +101,7 @@ def InputInt(
         on_enter: bool = False,
 ):
     """Окно ввода целого числа"""
-    return _InputInt(
+    return _IntInput(
         _interval_max=interval_max,
         _interval_min=interval_min,
         _value=default,
@@ -112,12 +112,12 @@ def InputInt(
     )
 
 
-def DisplayInt(
+def IntDisplay(
         *,
         default: int = 0,
 ):
     """Окно вывода целого числа"""
-    return _InputInt(
+    return _IntInput(
         _interval_max=0,
         _interval_min=0,
 

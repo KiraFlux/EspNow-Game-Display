@@ -1,9 +1,9 @@
 from typing import Final
 
 from dpg_ui.core.custom import CustomWidget
-from dpg_ui.impl.boxes import DisplayInt
-from dpg_ui.impl.boxes import InputInt
-from dpg_ui.impl.boxes import InputText
+from dpg_ui.impl.boxes import IntDisplay
+from dpg_ui.impl.boxes import IntInput
+from dpg_ui.impl.boxes import TextInput
 from dpg_ui.impl.buttons import Button
 from dpg_ui.impl.containers import ChildWindow
 from dpg_ui.impl.containers import HBox
@@ -19,8 +19,8 @@ class PlayerEditDialog(EditDialog[Player]):
     """Модальный диалог редактирования игрока"""
 
     def __init__(self) -> None:
-        self._username: Final = InputText()
-        self._score: Final = InputInt(step=10, step_fast=100)
+        self._username: Final = TextInput()
+        self._score: Final = IntInput(step=10, step_fast=100)
         super().__init__(
             (
                 VBox()
@@ -64,7 +64,7 @@ class PlayerCard(CustomWidget):
         self._mac = Text(f"MAC: {player.mac}", color=Color.grey())
         self._username = Text(player.username)
         self._team = Text(player.team.name, color=player.team.color)
-        self._score = DisplayInt(default=player.score)
+        self._score = IntDisplay(default=player.score)
 
         super().__init__(
             ChildWindow()
