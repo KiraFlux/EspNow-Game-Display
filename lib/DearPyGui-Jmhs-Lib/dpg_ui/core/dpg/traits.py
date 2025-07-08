@@ -165,6 +165,9 @@ class DpgValued[T](DpgItem, Valued[T], ABC):
     def _updateValue(self):
         dpg.set_value(self.tag(), self._value)
 
+    def _getValue(self) -> T:
+        return dpg.get_value(self.tag())
+
     def update(self) -> None:
         super().update()
         self._updateValue()
@@ -172,7 +175,7 @@ class DpgValued[T](DpgItem, Valued[T], ABC):
     @final
     def getValue(self) -> T:
         if self.isRegistered():
-            self._value = dpg.get_value(self.tag())
+            self._value = self._getValue()
 
         return self._value
 

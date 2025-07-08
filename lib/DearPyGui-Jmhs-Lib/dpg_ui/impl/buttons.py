@@ -30,6 +30,7 @@ class Button(DpgWidget, DpgSizable[int], DpgSimpleHandlerable, DpgLabeled):
         )
 
 
+@final
 @dataclass
 class ColorDisplay(DpgWidget, DpgSizable, DpgColored, DpgLabeled):
     """Кнопка"""

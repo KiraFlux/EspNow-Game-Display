@@ -1,17 +1,20 @@
 from typing import Final
 
 from dpg_ui.core.custom import CustomWidget
+from dpg_ui.impl.boxes import ColorInput
 from dpg_ui.impl.boxes import IntDisplay
 from dpg_ui.impl.boxes import IntInput
 from dpg_ui.impl.boxes import TextInput
 from dpg_ui.impl.buttons import Button
 from dpg_ui.impl.containers import ChildWindow
+from dpg_ui.impl.containers import Details
 from dpg_ui.impl.containers import HBox
 from dpg_ui.impl.containers import VBox
 from dpg_ui.impl.text import Text
 from game.core.entities.team import Team
 from game.core.entities.team import TeamRegistry
 from game.ui.dialog import EditDialog
+from rs.misc.color import Color
 
 
 class TeamEditDialog(EditDialog[Team]):
@@ -27,8 +30,10 @@ class TeamEditDialog(EditDialog[Team]):
 
     def __init__(self) -> None:
         self._name: Final = TextInput()
-
         self._score: Final = IntInput(step=100, step_fast=1000)
+        self._color = ColorInput(
+            _value=Color.none(),
+        )
 
         super().__init__(
             VBox()
@@ -41,17 +46,22 @@ class TeamEditDialog(EditDialog[Team]):
                 .withLabel("Общий счёт")
                 .withInterval((0, 100000))
             )
+            .add(
+                self._color
+            )
         )
 
     def apply(self, team: Team) -> None:
         super().apply(team)
         team.name = self._name.getValue()
         team.score = self._score.getValue()
+        team.color = self._color.getValue()
 
     def begin(self, team: Team) -> None:
         super().begin(team)
         self._name.setValue(team.name)
         self._score.setValue(team.score)
+        self._color.setValue(team.color)
 
 
 class TeamCard(CustomWidget):

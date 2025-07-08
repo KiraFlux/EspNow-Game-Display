@@ -13,10 +13,55 @@ from dpg_ui.core.dpg.traits import DpgSizable
 from dpg_ui.core.dpg.traits import DpgValueHandlerable
 from dpg_ui.core.dpg.traits import DpgWidthAdjustable
 from dpg_ui.core.dpg.widget import DpgWidget
+from rs.misc.color import Color
+
+
+@final
+@dataclass(kw_only=True)
+class ColorInput(DpgWidget, DpgValueHandlerable[Color], DpgLabeled, DpgSizable[int]):
+    """Виджет выбора цвета с расширенными настройками"""
+
+    _alpha: bool = False
+    """Показывать альфа-канал"""
+
+    _side_preview: bool = False
+    """Показывать большой превью-бокс"""
+
+    _small_preview: bool = True
+    """Показывать маленькое превью"""
+
+    _inputs: bool = True
+    """Показывать поля ввода"""
+
+    _tooltip: bool = True
+    """Показывать подсказку"""
+
+    def _updateValue(self) -> None:
+        """Обновить значение в DPG"""
+        dpg.set_value(self.tag(), self._value.toRGBA8888())
+
+    def _getValue(self) -> Color:
+        return Color.fromRGBA8888(*super()._getValue())
+
+    def _createTag(self, parent_tag: DpgTag) -> DpgTag:
+        """Создать элемент DPG с учетом всех параметров"""
+        return dpg.add_color_picker(
+            parent=parent_tag,
+            no_alpha=not self._alpha,
+            no_side_preview=not self._side_preview,
+            no_small_preview=not self._small_preview,
+            no_inputs=not self._inputs,
+            no_tooltip=not self._tooltip,
+            no_label=self._label is None,
+            alpha_bar=self._alpha,
+            picker_mode=dpg.mvColorPicker_wheel,
+            alpha_preview=dpg.mvColorEdit_AlphaPreviewHalf,
+            display_type=dpg.mvColorEdit_float,
+        )
 
 
 @dataclass(kw_only=True)
-class _Input[T](DpgWidget, DpgValueHandlerable[T], DpgWidthAdjustable[int], DpgLabeled, ABC):
+class _ValueInput[T](DpgWidget, DpgValueHandlerable[T], DpgWidthAdjustable[int], DpgLabeled, ABC):
     """Окно значения"""
 
     _readonly: bool
@@ -28,7 +73,7 @@ class _Input[T](DpgWidget, DpgValueHandlerable[T], DpgWidthAdjustable[int], DpgL
 
 @final
 @dataclass(kw_only=True)
-class _TextInput(_Input[str], DpgSizable[int]):
+class _TextInput(_ValueInput[str], DpgSizable[int]):
     """Окно текста"""
 
     def _createTag(self, parent_tag: DpgTag) -> DpgTag:
@@ -67,7 +112,7 @@ def TextDisplay(
 
 @final
 @dataclass(kw_only=True)
-class _IntInput(_Input[int], DpgIntervaled[int]):
+class _IntInput(_ValueInput[int], DpgIntervaled[int]):
     """Окно целого числа"""
 
     _step: int

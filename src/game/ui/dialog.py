@@ -62,7 +62,7 @@ class EditDialog[T](ModalDialog, ABC):
 
             .add(
                 HBox()
-                .withWidth(300)
+                .withWidth(400)
                 .add(
                     Button()
                     .withLabel("Применить")
