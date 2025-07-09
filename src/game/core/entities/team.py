@@ -61,16 +61,18 @@ class Team(Subject['Team']):
         self.name = name
 
 
-class TeamRegistry(Subject[Team]):
+class TeamRegistry:
     """Реестр команд"""
 
     def __init__(self, color_generator: ColorGenerator) -> None:
-        super().__init__()
         self._log = Logger("team-registry")
         self.__team_index: int = 0
 
         self._color_generator: Final = color_generator
         self._teams: Final = set[Team]()
+
+        self.on_team_add: Final[Subject[Team]] = Subject()
+        self.on_team_delete: Final[Subject[Team]] = Subject()
 
     def register(self, name: str) -> Team:
         """Зарегистрировать команду"""
@@ -78,13 +80,14 @@ class TeamRegistry(Subject[Team]):
 
         self._teams.add(team)
 
-        self.notifyObservers(team)
+        self.on_team_add.notifyObservers(team)
         self._log.write(f'registered: {team}')
         return team
 
     def unregister(self, team: Team) -> None:
         """Отменить регистрацию команды"""
         # self._teams.remove(team)
+        self.on_team_delete.notifyObservers(team)
 
         self._log.write(f"unregistered: {team}")
 

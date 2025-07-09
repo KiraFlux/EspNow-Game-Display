@@ -33,7 +33,7 @@ class GameView(CustomWidget):
                 .add(
                     TabBar()
                     .add(
-                        Tab("Игроки").add(PlayerList(env.player_registry))
+                        Tab("Игроки").add(PlayerList(env.player_registry, env.team_registry))
                     )
                     .add(
                         Tab("Команды").add(TeamList(env.team_registry))

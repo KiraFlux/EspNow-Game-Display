@@ -110,7 +110,7 @@ class TeamList(CustomWidget):
         for team in team_registry.teams():
             self._addTeamCard(team)
 
-        team_registry.addObserver(self._addTeamCard)
+        team_registry.on_team_add.addObserver(self._addTeamCard)
 
         super().__init__(self._team_list)
 

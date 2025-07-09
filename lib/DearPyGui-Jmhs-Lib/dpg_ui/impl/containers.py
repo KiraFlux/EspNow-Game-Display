@@ -4,6 +4,7 @@ from abc import ABC
 from dataclasses import dataclass
 from dataclasses import field
 from typing import ClassVar
+from typing import MutableMapping
 from typing import MutableSequence
 from typing import Self
 from typing import final
@@ -73,14 +74,15 @@ class Details(_DpgWidgetContainer, DpgLabeled):
 class ComboBox[T](DpgWidget, Container[T], DpgLabeled, DpgWidthAdjustable[int], DpgToggleable, DpgValueHandlerable[T]):
     """Dpg: combo_box"""
 
-    _items: MutableSequence[T] = field(init=False, default_factory=list)
+    _items: MutableMapping[T] = field(init=False, default_factory=dict)
 
     def _updateItems(self) -> None:
         self.configure(
-            items=sorted(
-                map(str, self._items),
-            )
+            items=sorted(self._items.keys())
         )
+
+    def _getValue(self) -> T:
+        return self._items[super()._getValue()]
 
     def update(self) -> None:
         super().update()
@@ -90,7 +92,7 @@ class ComboBox[T](DpgWidget, Container[T], DpgLabeled, DpgWidthAdjustable[int], 
             self.setValue(self._items[0])
 
     def add(self, item: T) -> Self:
-        self._items.append(item)
+        self._items[str(item)] = item
 
         if self.isRegistered():
             self._updateItems()

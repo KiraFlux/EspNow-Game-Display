@@ -68,7 +68,7 @@ class Player(Subject['Player']):
         return f"Игрок {self.mac} '{self.username}' ({self.team})"
 
 
-class PlayerRegistry(Subject[Player]):
+class PlayerRegistry:
     """Список игроков"""
 
     def __init__(self, team_registry: TeamRegistry) -> None:
@@ -77,6 +77,9 @@ class PlayerRegistry(Subject[Player]):
 
         self._team_registry: Final = team_registry
         self._players = dict[Mac, Player]()
+
+        self.on_player_add: Final[Subject[Player]] = Subject()
+        self.on_player_remove: Final[Subject[Player]] = Subject()
 
     def register(self, mac: Mac, username: str) -> Player:
         """Зарегистрировать игрока"""
@@ -90,13 +93,15 @@ class PlayerRegistry(Subject[Player]):
         self._players[mac] = p
         self._log.write(f"registered: {p}")
 
-        self.notifyObservers(p)
+        self.on_player_add.notifyObservers(p)
 
         return p
 
     def unregister(self, mac: Mac) -> None:
         """Удалить пользователя"""
         p = self._players.pop(mac)
+
+        self.on_player_remove.notifyObservers(p)
 
         self._log.write(f"unregistered: {p}")
 
