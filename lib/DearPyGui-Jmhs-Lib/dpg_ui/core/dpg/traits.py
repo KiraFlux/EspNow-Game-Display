@@ -159,11 +159,12 @@ class DpgVisibility(DpgItem, Visibility):
 class DpgValued[T](DpgItem, Valued[T], ABC):
     """Виджет со значением на стороне DPG"""
 
-    _value: T
+    _value: Optional[T] = None
     """Значение по умолчанию"""
 
     def _updateValue(self):
-        dpg.set_value(self.tag(), self._value)
+        if self._value is not None:
+            dpg.set_value(self.tag(), self._value)
 
     def _getValue(self) -> T:
         return dpg.get_value(self.tag())

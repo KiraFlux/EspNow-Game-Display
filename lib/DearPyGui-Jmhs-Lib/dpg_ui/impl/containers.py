@@ -2,17 +2,24 @@ from __future__ import annotations
 
 from abc import ABC
 from dataclasses import dataclass
+from dataclasses import field
 from typing import ClassVar
 from typing import MutableSequence
+from typing import Self
 from typing import final
 
 from dearpygui import dearpygui as dpg
 
+from dpg_ui.abc.entities import Container
 from dpg_ui.abc.entities import Widget
 from dpg_ui.core.dpg.container import DpgContainer
 from dpg_ui.core.dpg.item import DpgTag
 from dpg_ui.core.dpg.traits import DpgLabeled
 from dpg_ui.core.dpg.traits import DpgSizable
+from dpg_ui.core.dpg.traits import DpgToggleable
+from dpg_ui.core.dpg.traits import DpgValueHandlerable
+from dpg_ui.core.dpg.traits import DpgWidthAdjustable
+from dpg_ui.core.dpg.widget import DpgWidget
 
 
 @dataclass
@@ -59,6 +66,41 @@ class Details(_DpgWidgetContainer, DpgLabeled):
         return dpg.add_collapsing_header(
             parent=parent_tag,
             default_open=self._default_open
+        )
+
+
+@dataclass
+class ComboBox[T](DpgWidget, Container[T], DpgLabeled, DpgWidthAdjustable[int], DpgToggleable, DpgValueHandlerable[T]):
+    """Dpg: combo_box"""
+
+    _items: MutableSequence[T] = field(init=False, default_factory=list)
+
+    def _updateItems(self) -> None:
+        self.configure(
+            items=sorted(
+                map(str, self._items),
+            )
+        )
+
+    def update(self) -> None:
+        super().update()
+        self._updateItems()
+
+        if self._items:
+            self.setValue(self._items[0])
+
+    def add(self, item: T) -> Self:
+        self._items.append(item)
+
+        if self.isRegistered():
+            self._updateItems()
+
+        return self
+
+    def _createTag(self, parent_tag: DpgTag) -> DpgTag:
+        return dpg.add_combo(
+            parent=parent_tag,
+
         )
 
 

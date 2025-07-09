@@ -48,7 +48,6 @@ class DpgContainer[T: Deletable](DpgWidget, Container[T], ABC):
 
         self._deleted = True
 
-        # Очищаем все элементы
         for item in list(self._items.values()):
             item.detachDeleteObserver(self._onItemDeleted)
             item.delete()
@@ -58,6 +57,5 @@ class DpgContainer[T: Deletable](DpgWidget, Container[T], ABC):
 
     def _onRegister(self, tag: DpgTag) -> None:
         super()._onRegister(tag)
-        # Регистрируем все существующие элементы
         for item in self._items.values():
             self._registerItem(item)
