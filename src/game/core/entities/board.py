@@ -10,7 +10,7 @@ from typing import Optional
 from game.core.entities.player import Player
 from game.core.entities.rules import ScoreRules
 from rs.lina.vector import Vector2D
-from rs.misc.observer import Subject
+from rs.misc.subject import Subject
 
 
 @dataclass(frozen=True)
@@ -47,7 +47,7 @@ class Board:
     @size.setter
     def size(self, size: Pos) -> None:
         self._size = size
-        self.size_subject.notifyObservers(self._size)
+        self.size_subject.notify(self._size)
 
     def setSize(self, size: Pos) -> None:
         """setter версия"""
@@ -81,9 +81,8 @@ class Board:
         score = self._calcScore(cell, pos)
 
         player.score += score
-        player.team.score += score
 
-        self.move_subject.notifyObservers((player, pos))
+        self.move_subject.notify((player, pos))
         return Board.MakeMoveResult.Ok
 
     def _calcScore(self, cell: Cell, pos: Pos) -> int:

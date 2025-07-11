@@ -46,21 +46,22 @@ def _agents_task(env: Environment):
     sleep(0.1)
 
     for i in range(x):
-        team = env.team_registry.register(f"Team-{i}")
+
+        team = env.team_registry.register()
 
         for j in range(y):
             mac = Mac(bytes((0, 0, 0, 0, j, i)))
 
             env.onPlayerMessage(mac, f"User-{i}-{j}")
 
-            player = env.player_registry.getPlayers().get(mac)
-            player.team = team
+            player = env.player_registry.getAll().get(mac)
+            player.setTeam(team)
 
             k = i * x + j
 
             env.onPlayerMove(mac, Vector2D(k % x, k // x))
 
-            sleep(0.1)
+            # sleep(0.1)
 
     return
 

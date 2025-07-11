@@ -25,7 +25,7 @@ from dpg_ui.abc.traits import Visibility
 from dpg_ui.abc.traits import WidthAdjustable
 from dpg_ui.core.dpg.item import DpgItem
 from rs.misc.color import Color
-from rs.misc.observer import Subject
+from rs.misc.subject import Subject
 
 
 @dataclass(kw_only=True)
@@ -115,13 +115,13 @@ class DpgDeletable(DpgItem, Deletable):
     _delete_subject: Subject[Deletable] = field(init=False, default_factory=Subject)
 
     def attachDeleteObserver(self, f: Callable[[Deletable], Any]) -> None:
-        self._delete_subject.addObserver(f)
+        self._delete_subject.addListener(f)
 
     def detachDeleteObserver(self, f: Callable[[Deletable], Any]) -> None:
-        self._delete_subject.removeObserver(f)
+        self._delete_subject.removeListener(f)
 
     def delete(self) -> None:
-        self._delete_subject.notifyObservers(self)
+        self._delete_subject.notify(self)
         dpg.delete_item(self.tag())
 
 
@@ -159,12 +159,11 @@ class DpgVisibility(DpgItem, Visibility):
 class DpgValued[T](DpgItem, Valued[T], ABC):
     """Виджет со значением на стороне DPG"""
 
-    _value: Optional[T] = None
+    _value: T
     """Значение по умолчанию"""
 
     def _updateValue(self):
-        if self._value is not None:
-            dpg.set_value(self.tag(), self._value)
+        dpg.set_value(self.tag(), self._value)
 
     def _getValue(self) -> T:
         return dpg.get_value(self.tag())

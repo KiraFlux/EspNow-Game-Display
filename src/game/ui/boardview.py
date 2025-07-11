@@ -10,7 +10,7 @@ from dpg_ui.impl.containers import VBox
 from dpg_ui.impl.sliders import FloatSlider
 from game.core.entities.board import Board
 from game.core.entities.player import Player
-from game.core.entities.team import Team
+from game.core.entities.player import Team
 from game.ui.input2d import Int2DInput
 from rs.lina.vector import Vector2D
 from rs.misc.color import Color
@@ -29,8 +29,8 @@ class BoardView(CustomWidget):
         self._board: Final = board
         self._scale: int = 1
 
-        board.size_subject.addObserver(self._onBoardResized)
-        board.move_subject.addObserver(lambda args: self._onPlayerMove(*args))
+        board.size_subject.addListener(self._onBoardResized)
+        board.move_subject.addListener(lambda args: self._onPlayerMove(*args))
 
         self._canvas = DpgCanvas(2000, 2000)
 

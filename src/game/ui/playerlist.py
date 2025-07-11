@@ -12,8 +12,8 @@ from dpg_ui.impl.containers import VBox
 from dpg_ui.impl.text import Text
 from game.core.entities.player import Player
 from game.core.entities.player import PlayerRegistry
-from game.core.entities.team import Team
-from game.core.entities.team import TeamRegistry
+from game.core.entities.player import Team
+from game.core.entities.player import TeamRegistry
 from game.ui.dialog import EditDialog
 from rs.misc.color import Color
 from rs.misc.log import Logger
@@ -23,29 +23,32 @@ class PlayerEditDialog(EditDialog[Player]):
     """Модальный диалог редактирования игрока"""
 
     def __init__(self, team_registry: TeamRegistry) -> None:
-        self._username: Final = TextInput()
-        self._score: Final = IntInput(step=10, step_fast=100)
-        self._team: Final[ComboBox[Team]] = ComboBox()
+        self._name_input: Final = TextInput()
+        self._score_input: Final = IntInput(step=10, step_fast=100)
 
-        for t in team_registry.teams():
-            self._team.add(t)
+        self._team_combo: Final[ComboBox[Team]] = ComboBox(
+            _value=None,
+            _items_provider=team_registry.getAll
+        )
 
-        team_registry.on_team_add.addObserver(self._team.add)
+        team_registry.on_team_add.addListener(self._updateTeamList)
+        team_registry.on_team_update.addListener(self._updateTeamList)
+        team_registry.on_team_delete.addListener(self._updateTeamList)
 
         super().__init__(
             (
                 VBox()
                 .add(
-                    self._username
+                    self._name_input
                     .withLabel("Username")
                 )
                 .add(
-                    self._score
+                    self._score_input
                     .withLabel("Счёт")
                     .withInterval((0, 10000))
                 )
                 .add(
-                    self._team
+                    self._team_combo
                     .withLabel("Команда")
                 )
             )
@@ -53,35 +56,38 @@ class PlayerEditDialog(EditDialog[Player]):
 
     @classmethod
     def _getTitle(cls, value: Player) -> str:
-        return value.username
-
-    @classmethod
-    def _getDefault(cls) -> Player:
-        return Player.dummy()
+        return value.name
 
     def apply(self, player: Player) -> None:
-        super().apply(player)
-        player.username = self._username.getValue()
-        player.score = self._score.getValue()
-        player.team = self._team.getValue()
+        player.name = self._name_input.getValue()
+        player.score = self._score_input.getValue()
+        t = self._team_combo.getValue()
+        player.setTeam(t)
 
     def begin(self, player: Player) -> None:
         super().begin(player)
-        self._score.setValue(player.score)
-        self._username.setValue(player.username)
-        self._team.setValue(player.team)
+        self._score_input.setValue(player.score)
+        self._name_input.setValue(player.name)
+        self._team_combo.setValue(player.team)
+
+    def _updateTeamList(self, _=None) -> None:
+        self._team_combo.update()
 
 
 class PlayerCard(CustomWidget):
     """Карточка игрока"""
 
     def __init__(self, player: Player, open_modal: Button):
-        player.addObserver(self._update)
+        self._target_player: Final = player
+        self._current_team = player.team
 
-        self._mac = Text(f"MAC: {player.mac}", color=Color.grey())
-        self._username = Text(player.username)
-        self._team = Text(player.team.name, color=player.team.color)
-        self._score = IntDisplay(default=player.score)
+        self._mac_display = Text(f"MAC: {player.mac}", color=Color.grey())
+        self._name_display = Text(player.name)
+        self._score_display = IntDisplay(default=player.score)
+        self._team_name_display = Text(self._current_team.name, color=self._current_team.color)
+
+        player.subject_change.addListener(self._updatePlayer)
+        self._current_team.subject_change.addListener(self._updateTeam)
 
         super().__init__(
             ChildWindow()
@@ -91,7 +97,7 @@ class PlayerCard(CustomWidget):
                 .add(
                     VBox()
                     .withWidth(50)
-                    .add(self._score)
+                    .add(self._score_display)
                     .add(
                         open_modal
                     )
@@ -103,18 +109,32 @@ class PlayerCard(CustomWidget):
                 )
                 .add(
                     VBox()
-                    .add(self._mac)
-                    .add(self._username)
-                    .add(self._team)
+                    .add(self._mac_display)
+                    .add(self._name_display)
+                    .add(self._team_name_display)
                 )
             )
         )
 
-    def _update(self, p: Player) -> None:
-        self._username.setValue(p.username)
-        self._team.setValue(p.team.name)
-        self._team.setColor(p.team.color)
-        self._score.setValue(p.score)
+    def _updatePlayer(self, player: Player) -> None:
+        self._name_display.setValue(player.name)
+        self._score_display.setValue(player.score)
+
+        if player.team != self._current_team:
+            self._current_team.subject_change.removeListener(self._updateTeam)
+            self._current_team = player.team
+            self._current_team.subject_change.addListener(self._updateTeam)
+
+            self._updateTeam(self._current_team)
+
+    def _updateTeam(self, team: Team) -> None:
+        self._team_name_display.setValue(team.name)
+        self._team_name_display.setColor(team.color)
+
+    def delete(self) -> None:
+        super().delete()
+        self._current_team.subject_change.removeListener(self._updateTeam)
+        self._target_player.subject_change.removeListener(self._updatePlayer)
 
 
 class PlayerList(CustomWidget):
@@ -130,14 +150,14 @@ class PlayerList(CustomWidget):
 
         super().__init__(self._player_list)
 
-        for p in self._player_registry.getPlayers().values():
+        for p in self._player_registry.getAll().values():
             self._addPlayerCard(p)
 
-        self._player_registry.on_player_add.addObserver(self._addPlayerCard)
+        self._player_registry.player_add_subject.addListener(self._addPlayerCard)
 
     def _addPlayerCard(self, player: Player) -> None:
         card = PlayerCard(player, self._player_edit_dialog.createEditButton(player))
         card.attachDeleteObserver(lambda _: self._player_registry.unregister(player.mac))
         self._player_list.add(card)
 
-        self._log.write(f"add {player}: {card}")
+        self._log.write(f"add {player}")

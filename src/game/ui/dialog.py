@@ -4,7 +4,7 @@ from abc import abstractmethod
 from typing import Optional
 from typing import final
 
-from dpg_ui.abc.traits import Deletable
+from dpg_ui.abc.entities import Widget
 from dpg_ui.abc.traits import Labeled
 from dpg_ui.core.custom import CustomWidget
 from dpg_ui.impl.buttons import Button
@@ -38,18 +38,13 @@ class EditDialog[T](ModalDialog, ABC):
 
     @classmethod
     @abstractmethod
-    def _getDefault(cls) -> T:
-        """Значение по умолчанию"""
-
-    @classmethod
-    @abstractmethod
     def _getTitle(cls, value: T) -> str:
         """Получить заголовок из значения"""
 
-    def __init__(self, content: Deletable) -> None:
+    def __init__(self, content: Widget) -> None:
         super().__init__()
 
-        self.__value: T = self._getDefault()
+        self.__value: Optional[T] = None
 
         (
             self._window
@@ -66,7 +61,7 @@ class EditDialog[T](ModalDialog, ABC):
                 .add(
                     Button()
                     .withLabel("Применить")
-                    .withHandler(lambda: self.apply(self.__value))
+                    .withHandler(self._apply)
                 )
                 .add(
                     Button()
@@ -76,9 +71,15 @@ class EditDialog[T](ModalDialog, ABC):
             )
         )
 
+    def _apply(self) -> None:
+        self.hide()
+
+        if self.__value is not None:
+            self.apply(self.__value)
+
+    @abstractmethod
     def apply(self, value: T) -> None:
         """Применить изменения"""
-        self.hide()
 
     def begin(self, value: T) -> None:
         """Перенастроить диалог к редактированию этого игрока"""

@@ -20,7 +20,7 @@ class GameView(CustomWidget):
     def __init__(self, env: Environment) -> None:
         host_mac_display = TextDisplay("Хост", default="Ожидание...").withWidth(300)
 
-        env.host_mac_subject.addObserver(host_mac_display.setValue)
+        env.host_mac_subject.addListener(host_mac_display.setValue)
 
         base = (
             HBox()

@@ -8,11 +8,11 @@ from game.core.entities.board import Board
 from game.core.entities.mac import Mac
 from game.core.entities.player import PlayerRegistry
 from game.core.entities.rules import GameRules
-from game.core.entities.team import Team
-from game.core.entities.team import TeamRegistry
+from game.core.entities.player import Team
+from game.core.entities.player import TeamRegistry
 from rs.lina.vector import Vector2D
 from rs.misc.log import Logger
-from rs.misc.observer import Subject
+from rs.misc.subject import Subject
 
 
 class Environment:
@@ -39,25 +39,24 @@ class Environment:
     @host_mac.setter
     def host_mac(self, mac: Mac) -> None:
         self._host_mac = mac
-        self.host_mac_subject.notifyObservers(self._host_mac)
+        self.host_mac_subject.notify(self._host_mac)
 
     def onPlayerMessage(self, mac: Mac, message: str) -> str:
         """Обработчик сообщения от игрока"""
         self._log.write(f"got player message from {mac} : '{message}'")
 
-        player = self.player_registry.getPlayers().get(mac)
+        player = self.player_registry.getAll().get(mac)
 
         if player is None:
             self.player_registry.register(mac, message)
             return f"{mac} Зарегистрирован как '{player}'"
 
         else:
-            old_name = player.username
-
-            player.rename(message)
+            old_name = player.name
+            player.name = message
 
             self._log.write(f"rename: {player}")
-            return f"{mac} переименован: ({old_name} -> {player.username})"
+            return f"{mac} переименован: ({old_name} -> {player.name})"
 
     def onPlayerMove(self, mac: Mac, move: Vector2D[int]) -> str:
         """Обработчик хода игрока"""
@@ -68,7 +67,7 @@ class Environment:
             self._log.write(s)
             return s
 
-        player = self.player_registry.getPlayers().get(mac)
+        player = self.player_registry.getAll().get(mac)
 
         if player is None:
             s = f"Клиент {mac} (не зарегистрирован): Ход отклонён"

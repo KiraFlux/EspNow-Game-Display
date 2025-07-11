@@ -2,16 +2,15 @@ from __future__ import annotations
 
 from abc import ABC
 from dataclasses import dataclass
-from dataclasses import field
+from typing import Callable
 from typing import ClassVar
-from typing import MutableMapping
+from typing import Iterable
+from typing import Mapping
 from typing import MutableSequence
-from typing import Self
 from typing import final
 
 from dearpygui import dearpygui as dpg
 
-from dpg_ui.abc.entities import Container
 from dpg_ui.abc.entities import Widget
 from dpg_ui.core.dpg.container import DpgContainer
 from dpg_ui.core.dpg.item import DpgTag
@@ -70,39 +69,39 @@ class Details(_DpgWidgetContainer, DpgLabeled):
         )
 
 
-@dataclass
-class ComboBox[T](DpgWidget, Container[T], DpgLabeled, DpgWidthAdjustable[int], DpgToggleable, DpgValueHandlerable[T]):
+@dataclass(kw_only=True)
+class ComboBox[T](DpgWidget, DpgLabeled, DpgWidthAdjustable[int], DpgToggleable, DpgValueHandlerable[T]):
     """Dpg: combo_box"""
 
-    _items: MutableMapping[T] = field(init=False, default_factory=dict)
+    _items_provider: Callable[[], Iterable[T]]
+
+    def _items(self) -> Mapping[T, T]:
+        return {
+            str(i): i
+            for i in self._items_provider()
+        }
 
     def _updateItems(self) -> None:
         self.configure(
-            items=sorted(self._items.keys())
+            items=sorted(self._items().keys())
         )
 
     def _getValue(self) -> T:
-        return self._items[super()._getValue()]
+        items = self._items()
+        value = super()._getValue()
+        return items[value]
 
     def update(self) -> None:
         super().update()
         self._updateItems()
 
-        if self._items:
-            self.setValue(self._items[0])
-
-    def add(self, item: T) -> Self:
-        self._items[str(item)] = item
-
-        if self.isRegistered():
-            self._updateItems()
-
-        return self
+    def _updateValue(self):
+        value = str(self._value)
+        dpg.set_value(self.tag(), value)
 
     def _createTag(self, parent_tag: DpgTag) -> DpgTag:
         return dpg.add_combo(
             parent=parent_tag,
-
         )
 
 

@@ -7,7 +7,7 @@ from typing import MutableMapping
 from typing import MutableSequence
 from typing import Sequence
 
-from rs.misc.observer import Subject
+from rs.misc.subject import Subject
 
 
 class Logger:
@@ -22,7 +22,7 @@ class Logger:
     def __init__(self, key: str) -> None:
         self._key = key
 
-        self.on_create.notifyObservers(key)
+        self.on_create.notify(key)
 
         self.write("created")
 
@@ -41,7 +41,7 @@ class Logger:
 
         self.__class__._writes += 1
 
-        self.on_write.notifyObservers(None)
+        self.on_write.notify(None)
 
     @classmethod
     def getKeys(cls) -> Sequence[str]:

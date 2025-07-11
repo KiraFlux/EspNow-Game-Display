@@ -14,21 +14,18 @@ modal = (
     .withLabel("Modal")
 )
 
+combo = ComboBox(_items_provider=(lambda: (1, 2, 3)), _value=1).withWidth(100)
+
 w = (
     Window()
     .add(
-        ComboBox()
-        .withWidth(100)
-        .withHandler(lambda x: print(x))
-        .add(1)
-        .add(2)
-        .add(3)
+        combo
     )
     .add(
         Button()
         .withLabel("Show modal")
         .withWidth(100)
-        .withHandler(modal.show)
+        .withHandler(lambda: print(repr(combo.getValue())))
     )
     .add(
         Text(str(globals()))
