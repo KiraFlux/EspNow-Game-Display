@@ -2,11 +2,12 @@ from __future__ import annotations
 
 from abc import ABC
 from dataclasses import dataclass
+from dataclasses import field
 from typing import Callable
 from typing import ClassVar
 from typing import Iterable
-from typing import Mapping
 from typing import MutableSequence
+from typing import Optional
 from typing import final
 
 from dearpygui import dearpygui as dpg
@@ -73,36 +74,64 @@ class Details(_DpgWidgetContainer, DpgLabeled):
 class ComboBox[T](DpgWidget, DpgLabeled, DpgWidthAdjustable[int], DpgToggleable, DpgValueHandlerable[T]):
     """Dpg: combo_box"""
 
-    _items_provider: Callable[[], Iterable[T]]
+    # todo подчистить нейрошизу
 
-    def _items(self) -> Mapping[T, T]:
-        return {
-            str(i): i
-            for i in self._items_provider()
-        }
+    _items_provider: Callable[[], Iterable[T]]
+    _items_cache: dict[str, T] = field(init=False, default_factory=dict)
+    _current_value: Optional[T] = None
 
     def _updateItems(self) -> None:
-        self.configure(
-            items=sorted(self._items().keys())
-        )
+        current_str = dpg.get_value(self.tag()) if self.isRegistered() else None
+
+        self._items_cache = {
+            str(item): item for item in self._items_provider()
+        }
+
+        self.configure(items=sorted(self._items_cache.keys()))
+
+        if current_str and current_str in self._items_cache:
+            dpg.set_value(self.tag(), current_str)
 
     def _getValue(self) -> T:
-        items = self._items()
-        value = super()._getValue()
-        return items[value]
+        if not self.isRegistered():
+            return self._current_value
+
+        selected_str = dpg.get_value(self.tag())
+
+        return self._items_cache.get(selected_str, self._current_value)
+
+    def setValue(self, value: T) -> None:
+        self._current_value = value
+        if not self.isRegistered():
+            return
+
+        # Находим строковое представление для объекта
+        for s, item in self._items_cache.items():
+            if item == value:
+                dpg.set_value(self.tag(), s)
+                return
+
+        # Если не нашли, устанавливаем первое значение
+        if self._items_cache:
+            first_key = next(iter(self._items_cache.keys()))
+            dpg.set_value(self.tag(), first_key)
+
+    def _updateValue(self) -> None:
+        """Синхронизация при изменении значения в DPG"""
+        if self.isRegistered():
+            selected_str = dpg.get_value(self.tag())
+            self._current_value = self._items_cache.get(selected_str)
 
     def update(self) -> None:
         super().update()
         self._updateItems()
 
-    def _updateValue(self):
-        value = str(self._value)
-        dpg.set_value(self.tag(), value)
-
     def _createTag(self, parent_tag: DpgTag) -> DpgTag:
-        return dpg.add_combo(
-            parent=parent_tag,
-        )
+        tag = dpg.add_combo(parent=parent_tag)
+
+        # Обработчик изменений в реальном времени
+        dpg.set_item_callback(tag, self._updateValue)
+        return tag
 
 
 @final

@@ -12,7 +12,6 @@ from game.impl.valuegen.color import ColorGenerator
 from game.impl.valuegen.loopstep import LoopStepGenerator
 from game.impl.valuegen.phasedamplitude import PhasedAmplitudeGenerator
 from game.ui.app import GameApp
-from rs.lina.vector import Vector2D
 from rs.misc.log import Logger
 
 
@@ -45,21 +44,21 @@ def _agents_task(env: Environment):
 
     sleep(0.1)
 
-    for i in range(x):
+    for i in range(1):
 
         team = env.team_registry.register()
 
-        for j in range(y):
+        for j in range(5):
             mac = Mac(bytes((0, 0, 0, 0, j, i)))
 
             env.onPlayerMessage(mac, f"User-{i}-{j}")
 
             player = env.player_registry.getAll().get(mac)
-            player.setTeam(team)
+            # player.setTeam(team)
 
-            k = i * x + j
+            # k = i * x + j
 
-            env.onPlayerMove(mac, Vector2D(k % x, k // x))
+            # env.onPlayerMove(mac, Vector2D(k % x, k // x))
 
             # sleep(0.1)
 

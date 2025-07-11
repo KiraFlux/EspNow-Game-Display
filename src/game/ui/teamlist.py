@@ -60,7 +60,7 @@ class TeamCard(CustomWidget):
 
         base = (
             ChildWindow()
-            .withHeight(90)
+            .withHeight(100)
             .add(
                 HBox()
                 .add(
