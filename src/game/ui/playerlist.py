@@ -132,9 +132,9 @@ class PlayerCard(CustomWidget):
         self._team_name_display.setColor(team.color)
 
     def delete(self) -> None:
-        super().delete()
         self._current_team.subject_change.removeListener(self._updateTeam)
         self._target_player.subject_change.removeListener(self._updatePlayer)
+        super().delete()
 
 
 class PlayerList(CustomWidget):

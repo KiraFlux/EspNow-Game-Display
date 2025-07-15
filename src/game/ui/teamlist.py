@@ -53,10 +53,11 @@ class TeamCard(CustomWidget):
     """Карточка команды"""
 
     def __init__(self, team: Team, edit_button: Button):
+        self._team: Final = team
         self._name_display = Text(team.name, color=team.color)
         self._score_display = IntDisplay(default=team.score)
 
-        team.subject_change.addListener(self._update)
+        self._team.subject_change.addListener(self._update)
 
         base = (
             ChildWindow()
@@ -89,6 +90,10 @@ class TeamCard(CustomWidget):
         self._name_display.setColor(team.color)
         self._score_display.setValue(team.score)
 
+    def delete(self) -> None:
+        self._team.subject_change.removeListener(self._update)
+        super().delete()
+
 
 class TeamList(CustomWidget):
     """Список команд"""
@@ -116,6 +121,7 @@ class TeamList(CustomWidget):
 
     def _addTeamCard(self, team: Team) -> TeamCard:
         card = TeamCard(team, self._team_edit_dialog.createEditButton(team))
-        self._team_list.add(card)
         card.attachDeleteObserver(lambda _: self._team_registry.unregister(team))
+
+        self._team_list.add(card)
         return card

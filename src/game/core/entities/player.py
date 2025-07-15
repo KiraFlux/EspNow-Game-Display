@@ -225,21 +225,21 @@ class TeamRegistry:
 
     def unregister(self, team: Team) -> None:
         """Отменить регистрацию команды"""
-
         if team is Team.default():
-            self._log.write(f"cannot del: {team}")
             return
 
         if team not in self._teams:
-            self._log.write(f"cannot del: not exist: {team}")
             return
 
-        for player in tuple(team.players):
-            player.setTeam(Team.default())
-
+        # Удаляем команду из реестра до перевода игроков
         team.subject_change.removeListener(self.on_team_update.notify)
         self._teams.remove(team)
         self.on_team_delete.notify(team)
+
+        # Теперь безопасно переводим игроков
+        default_team = Team.default()
+        for player in tuple(team.players):
+            player.setTeam(default_team)
 
         self._log.write(f"unregistered: {team}")
 
