@@ -1,12 +1,23 @@
 from itertools import product
-from typing import Dict, Final, Mapping, Optional, Set, Tuple
+from typing import Dict
+from typing import Final
+from typing import Mapping
+from typing import Optional
+from typing import Set
+from typing import Tuple
 
 from dpg_ui.core.custom import CustomWidget
-from dpg_ui.core.dpg.draw import DpgCanvas, Rectangle
-from dpg_ui.impl.containers import ChildWindow, HBox, VBox
+from dpg_ui.core.dpg.draw import DpgCanvas
+from dpg_ui.core.dpg.draw import Rectangle
+from dpg_ui.impl.buttons import Button
+from dpg_ui.impl.containers import ChildWindow
+from dpg_ui.impl.containers import HBox
+from dpg_ui.impl.containers import VBox
 from dpg_ui.impl.sliders import FloatSlider
-from game.core.entities.board import Board, Cell
-from game.core.entities.player import Player, Team
+from game.core.entities.board import Board
+from game.core.entities.board import Cell
+from game.core.entities.player import Player
+from game.core.entities.player import Team
 from game.ui.input2d import Int2DInput
 from rs.lina.vector import Vector2D
 from rs.misc.color import Color
@@ -59,6 +70,11 @@ class BoardView(CustomWidget):
                 HBox()
                 .add(self._scale_slider)
                 .add(self._size_input)
+                .add(
+                    Button()
+                    .withLabel("Принудительно обновить")
+                    .withHandler(board.notifyUpdate)
+                )
             )
             .add(self._canvas_window)
         )
@@ -116,14 +132,14 @@ class BoardView(CustomWidget):
         rounding = cell_size * self.base_rounding_ratio
 
         rect.position_1 = Vector2D(
-            pos.x * cell_size + thickness,
-            pos.y * cell_size + thickness
-        )
+            pos.x,
+            pos.y
+        ) * cell_size + thickness
 
         rect.position_2 = Vector2D(
-            (pos.x + 1) * cell_size - thickness,
-            (pos.y + 1) * cell_size - thickness
-        )
+            (pos.x + 1),
+            (pos.y + 1)
+        ) * cell_size - thickness
 
         rect.rounding = rounding
         rect.contour_thickness = thickness

@@ -81,6 +81,10 @@ class Board:
     def reset(self) -> None:
         """Сбросить значения поля"""
         self._state.clear()
+        self.notifyUpdate()
+
+    def notifyUpdate(self) -> None:
+        """Уведомить об обновлении"""
         self.update_subject.notify(self.getState())
 
     def makeMove(self, player: Player, pos: Pos) -> MakeMoveResult:

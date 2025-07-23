@@ -44,8 +44,6 @@ class Player:
     def setTeam(self, new_team: Team):
         """Сменить команду"""
 
-        pass
-
         if self.__current_team == new_team:
             return
 
@@ -64,6 +62,11 @@ class Player:
     def score(self, new_score: int) -> None:
         self._score = new_score
         self.subject_change.notify(self)
+
+    def reset(self) -> None:
+        """Сбросить значения игрока"""
+        self.score = 0
+        self.last_send_secs = 0.0
 
     def __str__(self) -> str:
         return f"Игрок {self.mac} '{self.name}'"
@@ -85,7 +88,7 @@ class PlayerRegistry:
     def register(self, mac: Mac, username: str) -> Player:
         """Зарегистрировать игрока"""
 
-        self._players[mac] = p = Player(mac, username)
+        p = self._players[mac] = Player(mac, username)
         self.player_add_subject.notify(p)
 
         self._log.write(f"registered: {p}")
@@ -201,7 +204,7 @@ class TeamRegistry:
         self.on_team_delete: Final[Subject[Team]] = Subject()
         self.on_team_update: Final[Subject[Team]] = Subject()
 
-        self._teams.add(Team.default())
+        # self._teams.add(Team.default())
 
         self._log: Final = Logger("team-registry")
 
