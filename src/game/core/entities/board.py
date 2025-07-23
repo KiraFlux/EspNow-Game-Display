@@ -23,6 +23,17 @@ class Cell:
         """Другая клетка является дружественной?"""
         return self.owner.team == other.owner.team
 
+    def calcScore(self, rules: ScoreRules, other: Optional[Cell]) -> int:
+        """Рассчитать счёт за соседнюю клетку"""
+
+        if other is None:
+            return rules.empty_cell
+
+        if self.isFriendly(other):
+            return rules.friend_cell
+        else:
+            return rules.enemy_cell
+
 
 type Pos = Vector2D[int]
 
@@ -36,8 +47,9 @@ class Board:
         self._size = size
         self._state = dict[Pos, Cell]()
 
-        self.size_subject: Subject[Pos] = Subject()
-        self.move_subject: Subject[tuple[Player, Pos]] = Subject()
+        self.size_subject: Final[Subject[Pos]] = Subject()
+        self.move_subject: Final[Subject[tuple[Player, Pos]]] = Subject()
+        self.update_subject: Final[Subject[Mapping[Pos, Cell]]] = Subject()
 
     @property
     def size(self) -> Pos:
@@ -66,6 +78,11 @@ class Board:
         CellNotEmpty = auto()
         """Ошибка: Ход на занятую клетку"""
 
+    def reset(self) -> None:
+        """Сбросить значения поля"""
+        self._state.clear()
+        self.update_subject.notify(self.getState())
+
     def makeMove(self, player: Player, pos: Pos) -> MakeMoveResult:
         """Совершить ход"""
 
@@ -89,21 +106,25 @@ class Board:
         dy = Vector2D(0, 1)
         dx = Vector2D(1, 0)
 
-        lookup = (
-            (pos + dx),
-            (pos - dx),
-            (pos + dy),
-            (pos - dy),
-        )
+        lookup = list()
 
-        neighbours = map(self._state.get, lookup)
+        if self._score_rules.mode in ScoreRules.CellLookupMode.Orthogonal:
+            lookup.extend((
+                pos + dx,
+                pos - dx,
+                pos + dy,
+                pos - dy,
+            ))
+
+        if self._score_rules.mode in ScoreRules.CellLookupMode.Diagonal:
+            lookup.extend((
+                pos + dx + dy,
+                pos + dx - dy,
+                pos - dx + dy,
+                pos - dx - dy,
+            ))
 
         return sum(
-            (
-                self._score_rules.friend_cell
-                if cell.isFriendly(i) else
-                self._score_rules.enemy_cell
-            )
-            for i in neighbours
-            if i is not None
+            cell.calcScore(self._score_rules, other)
+            for other in map(self._state.get, lookup)
         )

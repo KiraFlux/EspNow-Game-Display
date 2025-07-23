@@ -8,7 +8,7 @@ class Assets:
 
     # paths
 
-    resources_path = Path("res")
+    resources_path = Path(r"A:\Projects\EspNow-Game-Display\res")
 
     fonts_path = resources_path / "fonts"
 

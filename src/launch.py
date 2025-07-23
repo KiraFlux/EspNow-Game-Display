@@ -12,6 +12,7 @@ from game.impl.valuegen.color import ColorGenerator
 from game.impl.valuegen.loopstep import LoopStepGenerator
 from game.impl.valuegen.phasedamplitude import PhasedAmplitudeGenerator
 from game.ui.app import GameApp
+from rs.lina.vector import Vector2D
 from rs.misc.log import Logger
 
 
@@ -44,23 +45,21 @@ def _agents_task(env: Environment):
 
     sleep(0.1)
 
-    for i in range(1):
+    for i in range(3):
 
         team = env.team_registry.register()
 
-        for j in range(5):
-            mac = Mac(bytes((0, 0, 0, 0, j, i)))
+        for j in range(2):
+            mac = Mac(bytes((0, 0, 0, 0, j % 255, i % 255)))
 
             env.onPlayerMessage(mac, f"User-{i}-{j}")
 
             player = env.player_registry.getAll().get(mac)
-            # player.setTeam(team)
+            player.setTeam(team)
 
-            # k = i * x + j
+            k = i * x + j
 
-            # env.onPlayerMove(mac, Vector2D(k % x, k // x))
-
-            # sleep(0.1)
+            env.onPlayerMove(mac, Vector2D(k % x, k // x))
 
     return
 
@@ -72,6 +71,8 @@ def _create_agents_task(env: Environment):
 def _main():
     rules = GameRules(
         score=ScoreRules(
+            mode=ScoreRules.CellLookupMode.Orthogonal,
+            empty_cell=10,
             friend_cell=50,
             enemy_cell=-25
         ),
@@ -93,7 +94,7 @@ def _main():
             )
         ),
         move_cooldown_secs=2.0,
-        move_available=True,
+        move_available=False,
     )
 
     env = Environment(rules)

@@ -1,5 +1,6 @@
 from itertools import product
 from typing import Final
+from typing import Mapping
 
 from dpg_ui.core.custom import CustomWidget
 from dpg_ui.core.dpg.draw import DpgCanvas
@@ -9,6 +10,7 @@ from dpg_ui.impl.containers import HBox
 from dpg_ui.impl.containers import VBox
 from dpg_ui.impl.sliders import FloatSlider
 from game.core.entities.board import Board
+from game.core.entities.board import Cell
 from game.core.entities.player import Player
 from game.core.entities.player import Team
 from game.ui.input2d import Int2DInput
@@ -31,6 +33,7 @@ class BoardView(CustomWidget):
 
         board.size_subject.addListener(self._onBoardResized)
         board.move_subject.addListener(lambda args: self._onPlayerMove(*args))
+        board.update_subject.addListener(self._onBoardUpdate)
 
         self._canvas = DpgCanvas(2000, 2000)
 
@@ -76,6 +79,10 @@ class BoardView(CustomWidget):
         #     self._canvas_window.getHeight() / self._board.size.y,
         # )
 
+    def _onBoardUpdate(self, state: Mapping[Pos, Cell]) -> None:
+        for pos, cell in state.items():
+            cell_figure = self._grid[pos]
+
     def _applyCellTransform(self, pos: Vector2D, rect: Rectangle) -> None:
         """Применить и вернуть"""
 
@@ -95,6 +102,10 @@ class BoardView(CustomWidget):
         )
 
         return rectangle
+
+    def _applyTeanStyleOnFigure(self, figure: Rectangle, team: Team):
+        figure.fill_color = team.color
+        figure.contour_color = team.color.darker(0.4)
 
     def _onBoardRescaled(self, scale: float) -> None:
         self._scale = scale
@@ -133,9 +144,5 @@ class BoardView(CustomWidget):
         self._log.write(f"Доска перестроена: {board_size} | {total=}, {showed=}, {hidden=}")
 
     def _onPlayerMove(self, player: Player, position: Vector2D[int]):
-
-        rectangle = self._grid[position]
-        rectangle.fill_color = player.team.color
-        rectangle.contour_color = player.team.color.darker(0.4)
-
+        self._applyTeanStyleOnFigure(self._grid[position], player.team)
         self._log.write(f"Отображен ход игрока '{player}' на позиции {position}")
