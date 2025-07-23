@@ -14,6 +14,7 @@ from game.core.entities.player import Player
 from game.core.entities.player import PlayerRegistry
 from game.core.entities.player import Team
 from game.core.entities.player import TeamRegistry
+from game.ui.dialog import ConfirmDialog
 from game.ui.dialog import EditDialog
 from rs.misc.color import Color
 from rs.misc.log import Logger
@@ -77,7 +78,7 @@ class PlayerEditDialog(EditDialog[Player]):
 class PlayerCard(CustomWidget):
     """Карточка игрока"""
 
-    def __init__(self, player: Player, open_modal: Button):
+    def __init__(self, player: Player, open_modal: Button, delete_dialog: ConfirmDialog):
         self._target_player: Final = player
         self._current_team = player.team
 
@@ -104,7 +105,12 @@ class PlayerCard(CustomWidget):
                     .add(
                         Button()
                         .withLabel("X")
-                        .withHandler(self.delete)
+                        .withHandler(
+                            lambda: delete_dialog.begin(
+                                self._target_player.__str__(),
+                                on_confirm=self.delete
+                            )
+                        )
                     )
                 )
                 .add(
@@ -146,6 +152,7 @@ class PlayerList(CustomWidget):
         self._player_registry: Final = player_registry
 
         self._player_edit_dialog: Final = PlayerEditDialog(team_registry)
+        self._player_delete_dialog: Final = ConfirmDialog(ok_button_label="Скатертью дорожка!").withLabel("Отправить погулять?")
         self._player_list: Final = ChildWindow(scrollable_y=True)
 
         super().__init__(self._player_list)
@@ -156,7 +163,7 @@ class PlayerList(CustomWidget):
         self._player_registry.player_add_subject.addListener(self._addPlayerCard)
 
     def _addPlayerCard(self, player: Player) -> None:
-        card = PlayerCard(player, self._player_edit_dialog.createEditButton(player))
+        card = PlayerCard(player, self._player_edit_dialog.createEditButton(player), self._player_delete_dialog)
         card.attachDeleteObserver(lambda _: self._player_registry.unregister(player.mac))
         self._player_list.add(card)
 

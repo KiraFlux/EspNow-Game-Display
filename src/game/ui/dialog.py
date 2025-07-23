@@ -1,6 +1,7 @@
 """Модальное диалоговое окно"""
 from abc import ABC
 from abc import abstractmethod
+from typing import Callable
 from typing import Optional
 from typing import final
 
@@ -8,10 +9,11 @@ from dpg_ui.abc.entities import Widget
 from dpg_ui.abc.traits import Labeled
 from dpg_ui.core.custom import CustomWidget
 from dpg_ui.impl.buttons import Button
-from dpg_ui.impl.containers import HBox
+from dpg_ui.impl.containers import VBox
 from dpg_ui.impl.containers import Window
 from dpg_ui.impl.misc import Separator
 from dpg_ui.impl.misc import Spacer
+from dpg_ui.impl.text import Text
 from game.res import Assets
 
 
@@ -31,6 +33,68 @@ class ModalDialog(CustomWidget, Labeled):
 
     def setLabel(self, label: Optional[str]) -> None:
         self._window.setLabel(label)
+
+
+class ConfirmDialog(ModalDialog):
+    """Диалог подтверждения"""
+
+    def __init__(
+            self,
+            *,
+            ok_button_label: str = "Ok"
+    ):
+        super().__init__()
+
+        self._text = Text()
+        self._button = Button()
+
+        (
+            self._window
+
+            .add(
+                VBox()
+
+                .withWidth(400)
+
+                .add(
+                    self._text
+                )
+
+                .add(Separator())
+                .add(
+                    Spacer()
+                    .withHeight(20)
+                )
+
+                .add(
+                    self._button
+                    .withLabel(ok_button_label)
+                    .withWidth(-1)
+                )
+            )
+
+        )
+
+    def begin(
+            self,
+            text: str,
+            *,
+            on_confirm: Callable[[], None]
+    ) -> None:
+        """
+        Запустить процедуру окна
+        :param text:
+        :param on_confirm:
+        """
+
+        def _f():
+            on_confirm()
+            self.hide()
+
+        self._text.setValue(text)
+        self._button.setHandler(_f)
+
+        self.show()
 
 
 class EditDialog[T](ModalDialog, ABC):
@@ -56,18 +120,10 @@ class EditDialog[T](ModalDialog, ABC):
             .add(Spacer().withHeight(30))
 
             .add(
-                HBox()
-                .withWidth(400)
-                .add(
-                    Button()
-                    .withLabel("Применить")
-                    .withHandler(self._apply)
-                )
-                .add(
-                    Button()
-                    .withLabel("Отмена")
-                    .withHandler(self.hide)
-                )
+                Button()
+                .withLabel("Применить")
+                .withWidth(-1)
+                .withHandler(self._apply)
             )
         )
 

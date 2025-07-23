@@ -13,12 +13,12 @@ from dpg_ui.impl.buttons import Button
 from dpg_ui.impl.containers import ChildWindow
 from dpg_ui.impl.containers import HBox
 from dpg_ui.impl.containers import VBox
+from dpg_ui.impl.misc import Spacer
 from dpg_ui.impl.sliders import FloatSlider
 from game.core.entities.board import Board
 from game.core.entities.board import Cell
 from game.core.entities.player import Player
 from game.core.entities.player import Team
-from game.ui.input2d import Int2DInput
 from rs.lina.vector import Vector2D
 from rs.misc.color import Color
 from rs.misc.log import Logger
@@ -50,30 +50,28 @@ class BoardView(CustomWidget):
         self._canvas = DpgCanvas(2000, 2000)
         self._canvas_window = ChildWindow(scrollable_y=True, scrollable_x=True).add(self._canvas)
 
-        self._scale_slider = FloatSlider(
-            "Масштаб",
-            default=self._scale,
-            interval=(0.1, 2.0),
-            digits=2
-        ).withHandler(self._handleScaleChange).withWidth(200)
-
-        self._size_input = Int2DInput(
-            "Поле",
-            (1, 20),
-            on_change=board.setSize,
-            default=board.size,
-        )
-
         super().__init__(
             VBox()
             .add(
                 HBox()
-                .add(self._scale_slider)
-                .add(self._size_input)
                 .add(
                     Button()
-                    .withLabel("Принудительно обновить")
+                    .withLabel("Обновить")
                     .withHandler(board.notifyUpdate)
+                )
+                .add(
+                    Spacer()
+                    .withWidth(50)
+                )
+                .add(
+                    FloatSlider(
+                        "Масштаб",
+                        default=self._scale,
+                        interval=(0.1, 2.0),
+                        digits=2
+                    )
+                    .withHandler(self._handleScaleChange)
+                    .withWidth(200)
                 )
             )
             .add(self._canvas_window)
@@ -89,7 +87,7 @@ class BoardView(CustomWidget):
 
     def _createAllCells(self) -> None:
         """Создает все возможные клетки для максимального размера доски"""
-        max_size = self._size_input.getIntervalMax()
+        max_size = Board.max_size
 
         for x, y in product(range(max_size), range(max_size)):
             pos = Vector2D(x, y)
@@ -117,10 +115,12 @@ class BoardView(CustomWidget):
 
     def _applyCellStyle(self, rect: Rectangle, cell: Optional[Cell] = None) -> None:
         """Применяет стиль клетки на основе её состояния"""
-        if cell and cell.owner.team:
+
+        if cell:
             team_color = cell.owner.team.color
             rect.fill_color = team_color
             rect.contour_color = team_color.darker(0.4)
+
         else:
             rect.fill_color = Color.none()
             rect.contour_color = self.empty_cell_border_color

@@ -1,13 +1,11 @@
 from dpg_ui.core.custom import CustomWidget
 from dpg_ui.impl.boxes import TextDisplay
-from dpg_ui.impl.buttons import CheckBox
 from dpg_ui.impl.containers import ChildWindow
 from dpg_ui.impl.containers import HBox
 from dpg_ui.impl.containers import Tab
 from dpg_ui.impl.containers import TabBar
 from dpg_ui.impl.containers import VBox
 from dpg_ui.impl.misc import Separator
-from dpg_ui.impl.misc import Spacer
 from game.core.environment import Environment
 from game.res import Assets
 from game.ui.boardview import BoardView
@@ -18,7 +16,7 @@ from game.ui.teamlist import TeamList
 class GameView(CustomWidget):
 
     def __init__(self, env: Environment) -> None:
-        host_mac_display = TextDisplay("Хост", default="Ожидание...").withWidth(300)
+        host_mac_display = TextDisplay("Хост", default="Ожидание...")
 
         env.host_mac_subject.addListener(host_mac_display.setValue)
 
@@ -43,20 +41,13 @@ class GameView(CustomWidget):
             .add(
                 VBox()
                 .add(
-                    HBox()
+                    host_mac_display
+                    .withWidth(300)
                     .withFont(Assets.label_font)
-                    .add(
-                        CheckBox(_value=env.rules.move_available)
-                        .withLabel("Разрешить ходы")
-                        .withHandler(env.rules.setMoveAvailable)
-                    )
-                    .add(Spacer().withWidth(200))
-                    .add(host_mac_display)
+                    .withLabel("MAC адрес хоста")
                 )
                 .add(Separator())
-                .add(
-                    BoardView(env.board)
-                )
+                .add(BoardView(env.board))
             )
         )
 

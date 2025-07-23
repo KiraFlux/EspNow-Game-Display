@@ -11,6 +11,7 @@ from dpg_ui.impl.containers import VBox
 from dpg_ui.impl.text import Text
 from game.core.entities.player import Team
 from game.core.entities.player import TeamRegistry
+from game.ui.dialog import ConfirmDialog
 from game.ui.dialog import EditDialog
 from rs.misc.color import Color
 
@@ -52,7 +53,7 @@ class TeamEditDialog(EditDialog[Team]):
 class TeamCard(CustomWidget):
     """Карточка команды"""
 
-    def __init__(self, team: Team, edit_button: Button):
+    def __init__(self, team: Team, edit_button: Button, delete_dialog: ConfirmDialog):
         self._team: Final = team
         self._name_display = Text(team.name, color=team.color)
         self._score_display = IntDisplay(default=team.score)
@@ -72,7 +73,12 @@ class TeamCard(CustomWidget):
                     .add(
                         Button()
                         .withLabel("X")
-                        .withHandler(self.delete)
+                        .withHandler(
+                            lambda: delete_dialog.begin(
+                                self._team.__str__(),
+                                on_confirm=self.delete
+                            )
+                        )
                     )
                 )
                 .add(
@@ -102,6 +108,7 @@ class TeamList(CustomWidget):
         self._team_registry: Final = team_registry
         self._team_list: Final = ChildWindow(scrollable_y=True)
         self._team_edit_dialog: Final = TeamEditDialog()
+        self._team_delete_dialog: Final = ConfirmDialog(ok_button_label="Отправить в испепелитесь").withLabel("Удалить команду?")
 
         for team in team_registry.getAll():
             self._addTeamCard(team)
@@ -120,7 +127,7 @@ class TeamList(CustomWidget):
         )
 
     def _addTeamCard(self, team: Team) -> TeamCard:
-        card = TeamCard(team, self._team_edit_dialog.createEditButton(team))
+        card = TeamCard(team, self._team_edit_dialog.createEditButton(team), self._team_delete_dialog)
         card.attachDeleteObserver(lambda _: self._team_registry.unregister(team))
 
         self._team_list.add(card)

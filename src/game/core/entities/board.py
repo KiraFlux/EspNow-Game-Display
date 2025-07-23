@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from enum import StrEnum
 from enum import auto
+from typing import ClassVar
 from typing import Final
 from typing import Mapping
 from typing import Optional
@@ -40,6 +41,8 @@ type Pos = Vector2D[int]
 
 class Board:
     """Сведения об игровом поле"""
+
+    max_size: ClassVar = 20
 
     def __init__(self, size: Pos, score_rules: ScoreRules) -> None:
         self._score_rules: Final = score_rules
