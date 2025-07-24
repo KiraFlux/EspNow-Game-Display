@@ -20,8 +20,19 @@ def _create_task[T](f: Callable[[T], None], arg: T) -> Thread:
     return Thread(target=f, args=(arg,), daemon=True)
 
 
-def _protocol_task(protocol: GameProtocol):
+def _protocol_task(env: Environment):
     log = Logger("protocol-task")
+
+    ports = SerialStream.getPorts()
+
+    if not ports:
+        log.write("Нет доступных портов, завершение")
+        return
+
+    log.write(f"Найдены порты: {ports}")
+
+    stream = SerialStream(ports[0], 115200)
+    protocol = GameProtocol(stream, env)
 
     protocol.request_mac(None)
 
@@ -32,42 +43,29 @@ def _protocol_task(protocol: GameProtocol):
             log.write(result.err().unwrap())
 
 
-def _create_protocol_task(env: Environment) -> Thread:
-    stream = SerialStream("COM8", 115200)
-    protocol = GameProtocol(stream, env)
-
-    return _create_task(_protocol_task, protocol)
-
-
 def _agents_task(env: Environment):
+    sleep(0.1)
+
+    x = env.board.size.x // 2
+    y = env.board.size.y
+
+    for i in range(y):
+
+        team = env.team_registry.register()
+
+        for j in range(x):
+            mac = Mac(bytes((0, 0, 0, 0, j % 255, i % 255)))
+
+            env.onPlayerMessage(mac, f"User-{i}-{j}")
+
+            player = env.player_registry.getAll().get(mac)
+            player.setTeam(team)
+
+            k = i * x + j
+
+            env.onPlayerMove(mac, Vector2D(k % x, k // x))
+
     return
-
-    # x = env.board.size.x // 2
-    # y = env.board.size.y // 2
-    #
-    # sleep(0.1)
-    #
-    # for i in range(3):
-    #
-    #     team = env.team_registry.register()
-    #
-    #     for j in range(2):
-    #         mac = Mac(bytes((0, 0, 0, 0, j % 255, i % 255)))
-    #
-    #         env.onPlayerMessage(mac, f"User-{i}-{j}")
-    #
-    #         player = env.player_registry.getAll().get(mac)
-    #         player.setTeam(team)
-    #
-    #         k = i * x + j
-    #
-    #         env.onPlayerMove(mac, Vector2D(k % x, k // x))
-    #
-    # return
-
-
-def _create_agents_task(env: Environment):
-    return _create_task(_agents_task, env)
 
 
 def _main():
@@ -102,8 +100,8 @@ def _main():
     env = Environment(rules)
 
     GameApp(env).run("Game", 1280, 720, user_tasks=(
-        _create_agents_task(env),
-        _create_protocol_task(env)
+        # _create_task(_agents_task, env),
+        _create_task(_protocol_task, env),
     ))
 
 

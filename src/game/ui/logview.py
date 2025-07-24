@@ -28,7 +28,7 @@ class LogView(CustomWidget):
                     VBox()
                     .add(
                         Text("Каналы")
-                        .withFont(Assets.label_font)
+                        .withFont(Assets.title_font)
                     )
                     .add(
                         ChildWindow(

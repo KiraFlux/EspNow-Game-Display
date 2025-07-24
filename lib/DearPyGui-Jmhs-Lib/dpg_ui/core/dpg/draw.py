@@ -313,23 +313,34 @@ class Circle(DpgFigure, Positioned, SupportContourColor, SupportContourThickness
 
 
 @final
-@dataclass
 class TextFigure(DpgFigure, Positioned, SupportFillColor, DpgHeightAdjustable):
     """Нарисованный текст"""
 
     _height_key: ClassVar = 'size'
 
-    _text: str
+    def __init__(
+            self,
+            text: str,
+            position: Vector2D,
+            fill_color: Color = Color.white(),
+            height: float = 20.0
+    ):
+        # Инициализируем родительские классы с правильными параметрами
+        DpgFigure.__init__(self)
+        Positioned.__init__(self, _position=position)
+        SupportFillColor.__init__(self, _fill_color=fill_color)
+        DpgHeightAdjustable.__init__(self, _height=height)
+
+        # Инициализируем специфичные для TextFigure поля
+        self._text = text
 
     @property
     def text(self):
-        """Текст"""
         return self._text
 
     @text.setter
     def text(self, x):
         self._text = x
-
         if self.isRegistered():
             self._updateText()
 
@@ -342,7 +353,8 @@ class TextFigure(DpgFigure, Positioned, SupportFillColor, DpgHeightAdjustable):
 
     def _createTag(self, parent_tag: DpgTag) -> DpgTag:
         return dpg.draw_text(
-            (0, 0),
-            "",
+            self.position.toTuple(),
+            self.text,
             parent=parent_tag,
+            size=self.getHeight()
         )

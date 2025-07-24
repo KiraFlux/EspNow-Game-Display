@@ -20,7 +20,7 @@ class Assets:
 
     label_font = default_font.sub(size=32)
 
-    title_font = DpgFont(fonts_path / r"SuperBrigadeHalftone-Jpax7.otf", 48)
+    title_font = DpgFont(fonts_path / r"Library3am-5V3Z.otf", 48)
 
     def __new__(cls):
         raise TypeError

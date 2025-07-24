@@ -26,6 +26,11 @@ class Logger:
 
         self.write("created")
 
+    @property
+    def key(self) -> str:
+        """Ключ канала лога"""
+        return self._key
+
     def write(self, message: str) -> None:
         """Записать сообщение в лог"""
 

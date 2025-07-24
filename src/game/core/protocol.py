@@ -43,6 +43,8 @@ class GameProtocol(Protocol):
     def __init__(self, stream: Stream, env: Environment) -> None:
         super().__init__(stream, u8, u8)
 
+        env.protocol_message_sender = self._sendEspnowServerMessage
+
         self._log = Logger("protocol")
         self._esp_log = Logger("device")
 
@@ -99,6 +101,8 @@ class GameProtocol(Protocol):
         return self._sendEspnowServerMessage(mac, f"Клиент {mac} отправил непредвиденный пакет: ({size} Байт)")
 
     def _sendEspnowServerMessage(self, mac: Mac, message: str):
+        """Отправить сообщение адресату"""
+
         self._log.write(f"send to {mac} : '{message}'")
 
         stream = ByteBufferOutputStream()

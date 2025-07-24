@@ -20,8 +20,8 @@ class GameRulesPanel(CustomWidget):
             .withWidth(400)
 
             .add(
-                Text("Баланс", color=Color.nitro())
-                .withFont(Assets.label_font)
+                Text("Игровой баланс", color=Color.nitro())
+                .withFont(Assets.title_font)
             )
 
             .add(Spacer().withHeight(40))

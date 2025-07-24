@@ -1,15 +1,17 @@
 from __future__ import annotations
 
 import time
+from typing import Any
+from typing import Callable
 from typing import Final
 from typing import Optional
 
 from game.core.entities.board import Board
 from game.core.entities.mac import Mac
 from game.core.entities.player import PlayerRegistry
-from game.core.entities.rules import GameRules
 from game.core.entities.player import Team
 from game.core.entities.player import TeamRegistry
+from game.core.entities.rules import GameRules
 from rs.lina.vector import Vector2D
 from rs.misc.log import Logger
 from rs.misc.subject import Subject
@@ -29,7 +31,12 @@ class Environment:
         self.team_registry: Final = TeamRegistry(self.rules.team_color_generator)
         self.player_registry: Final = PlayerRegistry(self.team_registry)
 
-        self.board: Final = Board(Vector2D(12, 8), self.rules.score)
+        self.board: Final = Board(Vector2D(Board.max_size, Board.max_size), self.rules.score)
+
+        self.protocol_message_sender: Callable[[Mac, str], Any] = self._mockMessageSender
+
+    def _mockMessageSender(self, mac: Mac, message: str) -> None:
+        self._log.write(f"MOCK: Отправка {mac} : '{message}'")
 
     @property
     def host_mac(self) -> Mac:

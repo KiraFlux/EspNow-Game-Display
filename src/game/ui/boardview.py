@@ -29,7 +29,8 @@ type Pos = Vector2D[int]
 class BoardView(CustomWidget):
     """Визуализация игрового поля с сохранением всех клеток и правильным управлением видимостью"""
 
-    empty_cell_border_color: Final[Color] = Team.default().color.darker(0.6)
+    empty_cell_border_color: Final[Color] = Team.default().color.darker(0.58)
+
     base_thickness_ratio: Final[float] = 0.1
     base_rounding_ratio: Final[float] = 0.25
     default_scale: Final[float] = 1.0
@@ -79,6 +80,10 @@ class BoardView(CustomWidget):
 
         self._initializeBoard()
 
+    def _prepareColor(self, pos: Pos, source: Color) -> Color:
+        x = (2 * pos.x + 3 * pos.y) % 6
+        return source.darker(0.04 * x)
+
     def _initializeBoard(self) -> None:
         """Инициализирует доску при создании виджета"""
         self._createAllCells()
@@ -102,9 +107,9 @@ class BoardView(CustomWidget):
         """Создает новую клетку с заданной позицией"""
         rect = Rectangle(
             _fill_color=Color.none(),
-            _contour_color=self.empty_cell_border_color
+            _contour_color=self._prepareColor(pos, self.empty_cell_border_color)
         )
-        self._applyCellStyle(rect, self._board.getState().get(pos))
+        self._applyCellStyle(pos, rect, self._board.getState().get(pos))
         self._applyCellTransform(pos, rect)
         self._canvas.add(rect)
         return rect
@@ -113,17 +118,19 @@ class BoardView(CustomWidget):
         """Рассчитывает размер клетки с учетом масштаба и размеров окна"""
         return 100 * self._scale
 
-    def _applyCellStyle(self, rect: Rectangle, cell: Optional[Cell] = None) -> None:
+    def _applyCellStyle(self, pos: Pos, rect: Rectangle, cell: Optional[Cell] = None) -> None:
         """Применяет стиль клетки на основе её состояния"""
 
         if cell:
             team_color = cell.owner.team.color
             rect.fill_color = team_color
-            rect.contour_color = team_color.darker(0.4)
+            contour = team_color.darker(0.4)
 
         else:
             rect.fill_color = Color.none()
-            rect.contour_color = self.empty_cell_border_color
+            contour = self.empty_cell_border_color
+
+        rect.contour_color = self._prepareColor(pos, contour)
 
     def _applyCellTransform(self, pos: Pos, rect: Rectangle) -> None:
         """Применяет позицию и размер к клетке"""
@@ -177,7 +184,7 @@ class BoardView(CustomWidget):
         if rect := self._grid.get(pos):
             # Всегда получаем актуальное состояние из доски
             cell_state = self._board.getState().get(pos)
-            self._applyCellStyle(rect, cell_state)
+            self._applyCellStyle(pos, rect, cell_state)
             self._applyCellTransform(pos, rect)
 
     def _handleScaleChange(self, scale: float) -> None:
