@@ -93,7 +93,7 @@ def _main():
                 amplitude=0.2
             )
         ),
-        move_cooldown_secs=2.0,
+        move_cooldown_secs=5.0,
         move_available=True,
     )
 

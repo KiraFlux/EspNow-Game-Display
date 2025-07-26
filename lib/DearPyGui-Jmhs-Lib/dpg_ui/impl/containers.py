@@ -100,6 +100,7 @@ class ComboBox[T](DpgWidget, DpgLabeled, DpgWidthAdjustable[int], DpgToggleable,
 
         return self._items_cache.get(selected_str, self._current_value)
 
+    # noinspection PyFinal
     def setValue(self, value: T) -> None:
         self._current_value = value
         if not self.isRegistered():
