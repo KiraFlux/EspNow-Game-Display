@@ -100,7 +100,7 @@ def _main():
     env = Environment(rules)
 
     GameApp(env).run("Game", 1280, 720, user_tasks=(
-        # _create_task(_agents_task, env),
+        _create_task(_agents_task, env),
         _create_task(_protocol_task, env),
     ))
 
