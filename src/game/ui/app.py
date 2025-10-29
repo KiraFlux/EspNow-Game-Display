@@ -3,7 +3,7 @@ from dpg_ui.impl.containers import Tab
 from dpg_ui.impl.containers import TabBar
 from dpg_ui.impl.containers import Window
 from game.core.environment import Environment
-from game.res import Assets
+from game.assets import Assets
 from game.ui.gamecontrol import GameControlPanel
 from game.ui.gameview import GameView
 from game.ui.logview import LogView

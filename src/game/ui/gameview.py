@@ -7,7 +7,7 @@ from dpg_ui.impl.containers import TabBar
 from dpg_ui.impl.containers import VBox
 from dpg_ui.impl.misc import Separator
 from game.core.environment import Environment
-from game.res import Assets
+from game.assets import Assets
 from game.ui.boardview import BoardView
 from game.ui.playerlist import PlayerList
 from game.ui.teamlist import TeamList

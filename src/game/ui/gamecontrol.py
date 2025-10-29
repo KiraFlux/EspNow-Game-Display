@@ -16,7 +16,7 @@ from game.core.entities.board import Board
 from game.core.entities.player import Player
 from game.core.entities.player import Team
 from game.core.environment import Environment
-from game.res import Assets
+from game.assets import Assets
 from game.ui.input2d import Int2DInput
 from rs.misc.color import Color
 

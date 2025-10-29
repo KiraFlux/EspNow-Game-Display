@@ -4,7 +4,7 @@ from dpg_ui.impl.containers import ChildWindow
 from dpg_ui.impl.containers import HBox
 from dpg_ui.impl.containers import VBox
 from dpg_ui.impl.text import Text
-from game.res import Assets
+from game.assets import Assets
 from rs.misc.log import Logger
 
 

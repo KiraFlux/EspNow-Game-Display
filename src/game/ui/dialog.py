@@ -14,7 +14,7 @@ from dpg_ui.impl.containers import Window
 from dpg_ui.impl.misc import Separator
 from dpg_ui.impl.misc import Spacer
 from dpg_ui.impl.text import Text
-from game.res import Assets
+from game.assets import Assets
 
 
 class ModalDialog(CustomWidget, Labeled):
