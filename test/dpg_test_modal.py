@@ -1,8 +1,8 @@
-from dpg_ui.core.app import App
-from dpg_ui.impl.buttons import Button
-from dpg_ui.impl.containers import ComboBox
-from dpg_ui.impl.containers import Window
-from dpg_ui.impl.text import Text
+from kf_dpg.core.app import App
+from kf_dpg.impl.buttons import Button
+from kf_dpg.impl.containers import ComboBox
+from kf_dpg.impl.containers import Window
+from kf_dpg.impl.text import Text
 
 modal = (
     Window(

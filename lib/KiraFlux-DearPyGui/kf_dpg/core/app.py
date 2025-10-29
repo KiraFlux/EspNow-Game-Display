@@ -6,8 +6,8 @@ from typing import final
 
 from dearpygui import dearpygui as dpg
 
-from dpg_ui.core.dpg.font import DpgFont
-from dpg_ui.impl.containers import Window
+from kf_dpg.core.dpg.font import DpgFont
+from kf_dpg.impl.containers import Window
 
 
 class App:

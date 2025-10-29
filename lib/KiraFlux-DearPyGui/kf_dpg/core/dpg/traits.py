@@ -12,18 +12,18 @@ from typing import final
 
 from dearpygui import dearpygui as dpg
 
-from dpg_ui.abc.traits import Colored
-from dpg_ui.abc.traits import Deletable
-from dpg_ui.abc.traits import Handlerable
-from dpg_ui.abc.traits import HeightAdjustable
-from dpg_ui.abc.traits import Intervaled
-from dpg_ui.abc.traits import Labeled
-from dpg_ui.abc.traits import Sizable
-from dpg_ui.abc.traits import Toggleable
-from dpg_ui.abc.traits import Valued
-from dpg_ui.abc.traits import Visibility
-from dpg_ui.abc.traits import WidthAdjustable
-from dpg_ui.core.dpg.item import DpgItem
+from kf_dpg.abc.traits import Colored
+from kf_dpg.abc.traits import Deletable
+from kf_dpg.abc.traits import Handlerable
+from kf_dpg.abc.traits import HeightAdjustable
+from kf_dpg.abc.traits import Intervaled
+from kf_dpg.abc.traits import Labeled
+from kf_dpg.abc.traits import Sizable
+from kf_dpg.abc.traits import Toggleable
+from kf_dpg.abc.traits import Valued
+from kf_dpg.abc.traits import Visibility
+from kf_dpg.abc.traits import WidthAdjustable
+from kf_dpg.core.dpg.item import DpgItem
 from rs.misc.color import Color
 from rs.misc.subject import Subject
 

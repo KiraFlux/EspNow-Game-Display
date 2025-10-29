@@ -2,12 +2,12 @@ from typing import Any
 from typing import Callable
 from typing import Optional
 
-from dpg_ui.abc.entities import Font
-from dpg_ui.abc.entities import Widget
-from dpg_ui.abc.traits import Deletable
-from dpg_ui.abc.traits import Visibility
-from dpg_ui.core.dpg.item import DpgTag
-from dpg_ui.core.dpg.widget import DpgWidget
+from kf_dpg.abc.entities import Font
+from kf_dpg.abc.entities import Widget
+from kf_dpg.abc.traits import Deletable
+from kf_dpg.abc.traits import Visibility
+from kf_dpg.core.dpg.item import DpgTag
+from kf_dpg.core.dpg.widget import DpgWidget
 
 
 class CustomWidget(Widget[DpgWidget], Deletable, Visibility):

@@ -8,9 +8,9 @@ from typing import final
 
 from dearpygui import dearpygui as dpg
 
-from dpg_ui.abc.entities import Font
-from dpg_ui.core.dpg.item import DpgItem
-from dpg_ui.core.dpg.item import DpgTag
+from kf_dpg.abc.entities import Font
+from kf_dpg.core.dpg.item import DpgItem
+from kf_dpg.core.dpg.item import DpgTag
 
 
 @dataclass

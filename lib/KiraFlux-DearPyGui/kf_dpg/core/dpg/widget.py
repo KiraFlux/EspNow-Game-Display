@@ -8,11 +8,11 @@ from typing import final
 
 from dearpygui import dearpygui as dpg
 
-from dpg_ui.abc.entities import Font
-from dpg_ui.abc.entities import Widget
-from dpg_ui.core.dpg.item import DpgTag
-from dpg_ui.core.dpg.traits import DpgDeletable
-from dpg_ui.core.dpg.traits import DpgVisibility
+from kf_dpg.abc.entities import Font
+from kf_dpg.abc.entities import Widget
+from kf_dpg.core.dpg.item import DpgTag
+from kf_dpg.core.dpg.traits import DpgDeletable
+from kf_dpg.core.dpg.traits import DpgVisibility
 
 
 @dataclass

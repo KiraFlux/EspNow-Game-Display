@@ -5,10 +5,10 @@ from typing import final
 
 from dearpygui import dearpygui as dpg
 
-from dpg_ui.core.dpg.item import DpgTag
-from dpg_ui.core.dpg.traits import DpgColored
-from dpg_ui.core.dpg.traits import DpgValued
-from dpg_ui.core.dpg.widget import DpgWidget
+from kf_dpg.core.dpg.item import DpgTag
+from kf_dpg.core.dpg.traits import DpgColored
+from kf_dpg.core.dpg.traits import DpgValued
+from kf_dpg.core.dpg.widget import DpgWidget
 from rs.misc.color import Color
 
 

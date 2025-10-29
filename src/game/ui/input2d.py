@@ -1,13 +1,13 @@
 from typing import Callable
 from typing import Final
 
-from dpg_ui.abc.traits import Intervaled
-from dpg_ui.abc.traits import Valued
-from dpg_ui.core.custom import CustomWidget
-from dpg_ui.impl.boxes import IntInput
-from dpg_ui.impl.containers import HBox
-from dpg_ui.impl.containers import VBox
-from dpg_ui.impl.text import Text
+from kf_dpg.abc.traits import Intervaled
+from kf_dpg.abc.traits import Valued
+from kf_dpg.core.custom import CustomWidget
+from kf_dpg.impl.boxes import IntInput
+from kf_dpg.impl.containers import HBox
+from kf_dpg.impl.containers import VBox
+from kf_dpg.impl.text import Text
 from rs.lina.vector import Vector2D
 
 

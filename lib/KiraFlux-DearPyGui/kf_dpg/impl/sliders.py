@@ -5,11 +5,11 @@ from typing import final
 
 from dearpygui import dearpygui as dpg
 
-from dpg_ui.core.dpg.item import DpgTag
-from dpg_ui.core.dpg.traits import DpgIntervaled
-from dpg_ui.core.dpg.traits import DpgValueHandlerable
-from dpg_ui.core.dpg.traits import DpgWidthAdjustable
-from dpg_ui.core.dpg.widget import DpgWidget
+from kf_dpg.core.dpg.item import DpgTag
+from kf_dpg.core.dpg.traits import DpgIntervaled
+from kf_dpg.core.dpg.traits import DpgValueHandlerable
+from kf_dpg.core.dpg.traits import DpgWidthAdjustable
+from kf_dpg.core.dpg.widget import DpgWidget
 
 
 @dataclass(kw_only=True)

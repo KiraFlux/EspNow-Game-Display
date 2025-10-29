@@ -5,15 +5,15 @@ from typing import Callable
 from typing import Optional
 from typing import final
 
-from dpg_ui.abc.entities import Widget
-from dpg_ui.abc.traits import Labeled
-from dpg_ui.core.custom import CustomWidget
-from dpg_ui.impl.buttons import Button
-from dpg_ui.impl.containers import VBox
-from dpg_ui.impl.containers import Window
-from dpg_ui.impl.misc import Separator
-from dpg_ui.impl.misc import Spacer
-from dpg_ui.impl.text import Text
+from kf_dpg.abc.entities import Widget
+from kf_dpg.abc.traits import Labeled
+from kf_dpg.core.custom import CustomWidget
+from kf_dpg.impl.buttons import Button
+from kf_dpg.impl.containers import VBox
+from kf_dpg.impl.containers import Window
+from kf_dpg.impl.misc import Separator
+from kf_dpg.impl.misc import Spacer
+from kf_dpg.impl.text import Text
 from game.assets import Assets
 
 

@@ -8,14 +8,14 @@ from typing import final
 
 import dearpygui.dearpygui as dpg
 
-from dpg_ui.abc.entities import Canvas
-from dpg_ui.abc.entities import Figure
-from dpg_ui.core.dpg.container import DpgContainer
-from dpg_ui.core.dpg.item import DpgItem
-from dpg_ui.core.dpg.item import DpgTag
-from dpg_ui.core.dpg.traits import DpgDeletable
-from dpg_ui.core.dpg.traits import DpgHeightAdjustable
-from dpg_ui.core.dpg.traits import DpgVisibility
+from kf_dpg.abc.entities import Canvas
+from kf_dpg.abc.entities import Figure
+from kf_dpg.core.dpg.container import DpgContainer
+from kf_dpg.core.dpg.item import DpgItem
+from kf_dpg.core.dpg.item import DpgTag
+from kf_dpg.core.dpg.traits import DpgDeletable
+from kf_dpg.core.dpg.traits import DpgHeightAdjustable
+from kf_dpg.core.dpg.traits import DpgVisibility
 from rs.lina.vector import Vector2D
 from rs.misc.color import Color
 

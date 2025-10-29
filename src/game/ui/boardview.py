@@ -6,15 +6,15 @@ from typing import Optional
 from typing import Set
 from typing import Tuple
 
-from dpg_ui.core.custom import CustomWidget
-from dpg_ui.core.dpg.draw import DpgCanvas
-from dpg_ui.core.dpg.draw import Rectangle
-from dpg_ui.impl.buttons import Button
-from dpg_ui.impl.containers import ChildWindow
-from dpg_ui.impl.containers import HBox
-from dpg_ui.impl.containers import VBox
-from dpg_ui.impl.misc import Spacer
-from dpg_ui.impl.sliders import FloatSlider
+from kf_dpg.core.custom import CustomWidget
+from kf_dpg.core.dpg.draw import DpgCanvas
+from kf_dpg.core.dpg.draw import Rectangle
+from kf_dpg.impl.buttons import Button
+from kf_dpg.impl.containers import ChildWindow
+from kf_dpg.impl.containers import HBox
+from kf_dpg.impl.containers import VBox
+from kf_dpg.impl.misc import Spacer
+from kf_dpg.impl.sliders import FloatSlider
 from game.core.entities.board import Board
 from game.core.entities.board import Cell
 from game.core.entities.player import Player

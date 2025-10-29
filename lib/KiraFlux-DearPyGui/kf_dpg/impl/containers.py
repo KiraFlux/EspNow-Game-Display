@@ -12,15 +12,15 @@ from typing import final
 
 from dearpygui import dearpygui as dpg
 
-from dpg_ui.abc.entities import Widget
-from dpg_ui.core.dpg.container import DpgContainer
-from dpg_ui.core.dpg.item import DpgTag
-from dpg_ui.core.dpg.traits import DpgLabeled
-from dpg_ui.core.dpg.traits import DpgSizable
-from dpg_ui.core.dpg.traits import DpgToggleable
-from dpg_ui.core.dpg.traits import DpgValueHandlerable
-from dpg_ui.core.dpg.traits import DpgWidthAdjustable
-from dpg_ui.core.dpg.widget import DpgWidget
+from kf_dpg.abc.entities import Widget
+from kf_dpg.core.dpg.container import DpgContainer
+from kf_dpg.core.dpg.item import DpgTag
+from kf_dpg.core.dpg.traits import DpgLabeled
+from kf_dpg.core.dpg.traits import DpgSizable
+from kf_dpg.core.dpg.traits import DpgToggleable
+from kf_dpg.core.dpg.traits import DpgValueHandlerable
+from kf_dpg.core.dpg.traits import DpgWidthAdjustable
+from kf_dpg.core.dpg.widget import DpgWidget
 
 
 @dataclass

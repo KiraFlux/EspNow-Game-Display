@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from dpg_ui.core.app import App
-from dpg_ui.impl.containers import ChildWindow
-from dpg_ui.impl.containers import Window
-from dpg_ui.impl.sliders import IntSlider
+from kf_dpg.core.app import App
+from kf_dpg.impl.containers import ChildWindow
+from kf_dpg.impl.containers import Window
+from kf_dpg.impl.sliders import IntSlider
 
 w = Window("")
 

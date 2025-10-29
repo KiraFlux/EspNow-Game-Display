@@ -1,9 +1,9 @@
-from dpg_ui.core.custom import CustomWidget
-from dpg_ui.impl.buttons import CheckBox
-from dpg_ui.impl.containers import ChildWindow
-from dpg_ui.impl.containers import HBox
-from dpg_ui.impl.containers import VBox
-from dpg_ui.impl.text import Text
+from kf_dpg.core.custom import CustomWidget
+from kf_dpg.impl.buttons import CheckBox
+from kf_dpg.impl.containers import ChildWindow
+from kf_dpg.impl.containers import HBox
+from kf_dpg.impl.containers import VBox
+from kf_dpg.impl.text import Text
 from game.assets import Assets
 from rs.misc.log import Logger
 

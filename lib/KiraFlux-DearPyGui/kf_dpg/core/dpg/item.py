@@ -6,7 +6,7 @@ from typing import final
 
 from dearpygui import dearpygui as dpg
 
-from dpg_ui.abc.entities import Item
+from kf_dpg.abc.entities import Item
 
 DpgTag = int | str
 

@@ -3,9 +3,9 @@ from typing import final
 
 import dearpygui.dearpygui as dpg
 
-from dpg_ui.core.dpg.item import DpgTag
-from dpg_ui.core.dpg.traits import DpgSizable
-from dpg_ui.core.dpg.widget import DpgWidget
+from kf_dpg.core.dpg.item import DpgTag
+from kf_dpg.core.dpg.traits import DpgSizable
+from kf_dpg.core.dpg.widget import DpgWidget
 
 
 @final

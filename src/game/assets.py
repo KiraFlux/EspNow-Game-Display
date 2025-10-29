@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Final
 from typing import final
 
-from dpg_ui.core.dpg.font import DpgFont
+from kf_dpg.core.dpg.font import DpgFont
 
 
 @final

@@ -5,10 +5,10 @@ from dataclasses import field
 from typing import Self
 from typing import final
 
-from dpg_ui.abc.entities import Container
-from dpg_ui.abc.traits import Deletable
-from dpg_ui.core.dpg.item import DpgTag
-from dpg_ui.core.dpg.widget import DpgWidget
+from kf_dpg.abc.entities import Container
+from kf_dpg.abc.traits import Deletable
+from kf_dpg.core.dpg.item import DpgTag
+from kf_dpg.core.dpg.widget import DpgWidget
 
 
 @dataclass
