@@ -3,14 +3,16 @@ from time import sleep
 from typing import Callable
 
 from bytelang.impl.stream.serials import SerialStream
+from game.assets import Assets
 from game.core.entities.mac import Mac
 from game.core.entities.rules import GameRules
 from game.core.entities.rules import ScoreRules
 from game.core.environment import Environment
 from game.core.protocol import GameProtocol
 from game.impl.valuegen.color import ColorGenerator
-from game.impl.valuegen.loopstep import LoopStepGenerator
+from game.impl.valuegen.loopstep import RingStepGenerator
 from game.impl.valuegen.phasedamplitude import PhasedAmplitudeGenerator
+from game.impl.valuegen.teamname import TeamNameGenerator
 from game.ui.app import GameApp
 from rs.lina.vector import Vector2D
 from rs.misc.log import Logger
@@ -49,11 +51,11 @@ def _agents_task(env: Environment):
     x = env.board.size.x // 2
     y = env.board.size.y
 
-    for i in range(y):
+    for i in range(255):
 
         team = env.team_registry.register()
 
-        for j in range(x):
+        for j in range(1):
             mac = Mac(bytes((0, 0, 0, 0, j % 255, i % 255)))
 
             env.onPlayerMessage(mac, f"User-{i}-{j}")
@@ -77,7 +79,7 @@ def _main():
             enemy_cell=-25
         ),
         team_color_generator=ColorGenerator(
-            hue=LoopStepGenerator(
+            hue=RingStepGenerator(
                 start=15,
                 step=200,
                 loop=360,
@@ -92,6 +94,9 @@ def _main():
                 base=0.6,
                 amplitude=0.2
             )
+        ),
+        team_name_generator=TeamNameGenerator(
+            team_name_folder=Assets.team_name_texts
         ),
         move_cooldown_secs=5.0,
         move_available=True,

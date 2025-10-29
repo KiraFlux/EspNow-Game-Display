@@ -4,7 +4,7 @@ from game.abc.valuegen import ValueGenerator
 
 
 @dataclass(frozen=True, kw_only=True)
-class LoopStepGenerator(ValueGenerator[float]):
+class RingStepGenerator(ValueGenerator[float]):
     """Закольцованный шагающий генератор"""
 
     start: float

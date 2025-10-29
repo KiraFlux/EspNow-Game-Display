@@ -8,6 +8,7 @@ from typing import Optional
 
 from game.core.entities.mac import Mac
 from game.impl.valuegen.color import ColorGenerator
+from game.impl.valuegen.teamname import TeamNameGenerator
 from rs.misc.color import Color
 from rs.misc.log import Logger
 from rs.misc.subject import Subject
@@ -193,8 +194,13 @@ class Team:
 class TeamRegistry:
     """Реестр команд"""
 
-    def __init__(self, color_generator: ColorGenerator) -> None:
+    def __init__(
+            self,
+            color_generator: ColorGenerator,
+            name_generator: TeamNameGenerator
+    ) -> None:
         self._color_generator: Final = color_generator
+        self._name_generator: Final = name_generator
 
         self.__last_team_index: int = 0
 
@@ -212,7 +218,7 @@ class TeamRegistry:
         """Зарегистрировать команду"""
 
         team = Team(
-            name or f"Команда {self.__last_team_index}",
+            name or self._name_generator.calc(self.__last_team_index),
             self._color_generator.calc(self.__last_team_index)
         )
         self.__last_team_index += 1

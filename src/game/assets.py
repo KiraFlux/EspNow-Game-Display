@@ -28,5 +28,11 @@ class Assets:
 
     title_font: Final = DpgFont(fonts_path / r"Library3am-5V3Z.otf", 48)
 
+    # texts
+
+    texts_path: Final = resources_path / "texts"
+
+    team_name_texts: Final = texts_path / "team-name"
+
     def __new__(cls):
         raise TypeError

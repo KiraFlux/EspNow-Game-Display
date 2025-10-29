@@ -6,6 +6,7 @@ from enum import auto
 from typing import Iterable
 
 from game.impl.valuegen.color import ColorGenerator
+from game.impl.valuegen.teamname import TeamNameGenerator
 
 
 @dataclass(kw_only=True)
@@ -57,6 +58,9 @@ class GameRules:
 
     team_color_generator: ColorGenerator
     """Генератор цвета команды"""
+
+    team_name_generator: TeamNameGenerator
+    """Генератор имени команды"""
 
     move_cooldown_secs: float
     """Кул-даун ходов игрока"""

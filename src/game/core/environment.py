@@ -28,7 +28,7 @@ class Environment:
         self._host_mac: Optional[Mac] = None
         self.host_mac_subject: Final[Subject[Mac]] = Subject()
 
-        self.team_registry: Final = TeamRegistry(self.rules.team_color_generator)
+        self.team_registry: Final = TeamRegistry(self.rules.team_color_generator, self.rules.team_name_generator)
         self.player_registry: Final = PlayerRegistry(self.team_registry)
 
         self.board: Final = Board(Vector2D(Board.max_size, Board.max_size), self.rules.score)

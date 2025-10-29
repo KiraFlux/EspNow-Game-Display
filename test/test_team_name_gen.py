@@ -1,8 +1,9 @@
 from pathlib import Path
 
+
 from game.impl.valuegen.teamname import TeamNameGenerator
 
-p = r"A:\Projects\EspNow-Game-Display\res\text\team-name"
+p = r"../res/texts/team-name"
 
 t = TeamNameGenerator(Path(p))
 
